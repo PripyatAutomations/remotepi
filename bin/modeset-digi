@@ -1,0 +1,14 @@
+#!/bin/bash
+. /opt/remotepi/etc/config.sh
+
+/opt/remotepi/bin/modeset-off
+
+# Configure mixer
+amixer -c$CARD set 'Speaker',0 ${DIGI_SPKR}
+amixer -c$CARD set 'Mic',0 ${DIGI_MIC}
+
+# Start rigctld
+#/opt/remotepi/bin/ft891-rigctl.start
+
+# User can start wsjtx/etc as needed...
+echo "* Digital mode enabled!"

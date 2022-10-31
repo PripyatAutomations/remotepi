@@ -1,0 +1,27 @@
+<DIALTEMPLATE>
+ <TEMPLATE MATCH="911" Timeout="0"/> <!-- Emergency -->
+ <TEMPLATE MATCH="999" Timeout="0"/> <!-- Emergency -->
+ <TEMPLATE MATCH="112" Timeout="0"/> <!-- Emergency -->
+ <TEMPLATE MATCH="1........." Timeout="0"/> <!-- 10 digit US # 1 prefixed -->
+ <TEMPLATE MATCH="00*" Timeout="5"/> <!-- International, 00 prefixed. No fixed length -->
+ <TEMPLATE MATCH="\*.." Timeout="0"/> <!-- Asterisk *.. codes -->
+ <TEMPLATE MATCH="\*.." Timeout="0"/> <!-- Asterisk direct test numbers -->
+ <TEMPLATE MATCH="1..." Timeout="0"/> <!-- Internal numbers -->
+ <TEMPLATE MATCH="2..." Timeout="0"/>  <!-- Internal numbers -->
+ <TEMPLATE MATCH="3..." Timeout="0"/>  <!-- Internal numbers -->
+ <TEMPLATE MATCH="4..." Timeout="0"/>  <!-- Internal numbers -->
+ <TEMPLATE MATCH="5..." Timeout="0"/>  <!-- Internal numbers -->
+ <TEMPLATE MATCH="6..." Timeout="0"/>  <!-- Internal numbers -->
+ <TEMPLATE MATCH="7..." Timeout="0"/>  <!-- Internal numbers -->
+ <TEMPLATE MATCH="8..." Timeout="0"/>  <!-- Internal numbers -->
+ <TEMPLATE MATCH="9..." Timeout="0"/>  <!-- Internal numbers -->
+ <TEMPLATE MATCH="2.." Timeout="1"/> <!-- Internal Extensions -->
+ <TEMPLATE MATCH="3.." Timeout="1"/>
+ <TEMPLATE MATCH="4.." Timeout="1"/>
+ <TEMPLATE MATCH="5.." Timeout="1"/>
+ <TEMPLATE MATCH="6.." Timeout="1"/>
+ <TEMPLATE MATCH="7.." Timeout="1"/>
+ <TEMPLATE MATCH="8.." Timeout="1"/>
+ <TEMPLATE MATCH="9.." Timeout="1"/>
+ <TEMPLATE MATCH="*" Timeout="5"/> <!-- Anything else -->
+</DIALTEMPLATE>

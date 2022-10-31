@@ -1,0 +1,26 @@
+*0		HANGUP
+*1		ATXFER cancel
+		Automon (record)
+*2		ATXFER complete it (end call)
+		Attended Transfer
+*3		ATXFER threeway (complete and join the call)
+		AutoMixMon
+*4		ATXFER swap (switch calls)
+*8		Pickup parked call
+*43		Echo test
+*60		Time
+*65		ANI (Number readback)
+*97		Voicemail
+# or #1		Blind XFER
+#72		Park Call
+
+411		Easter Egg (Weasels have eaten phone; fwd telespammers here ;)
+911		Recording saying to use a mobile phone to call 911.
+999		Non-emergency assistances
+
+200		Deskphone (Living Room) (7945)
+300		Radio Control (7965)
+301		Mobile client (Zoiper on Android)
+3000		Group ring for 300 & 301
+5000		Hamradio stuff
+	9 - Dial Hamshack Hotline #s

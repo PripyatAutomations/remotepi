@@ -1,0 +1,19 @@
+#!/bin/bash
+. /opt/remotepi/etc/config.sh
+
+/opt/remotepi/bin/modeset-off
+
+echo "baresip -f /opt/remotepi/etc/baresip-ft891/ -e \"/dial ${CONF_EXTEN}\"" > ${RUN}/baresip-launch.sh
+chmod 0755 ${RUN}/baresip-launch.sh
+#
+tmux new-session -s phone -d
+tmux send-keys "${RUN}/baresip-launch.sh" C-m
+tmux rename-window 'baresi-cli'
+
+# Configure mixer
+amixer -c$CARD set 'Speaker',0 ${PHONE_SPKR}
+amixer -c$CARD set 'Mic',0 ${PHONE_MIC}
+
+# Start SIP softphone
+echo "* Phone mode enabled!"
+tmux attach-session -t phone

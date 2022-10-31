@@ -1,0 +1,83 @@
+#!/bin/bash
+######
+# Here we startup an Xvnc instance, put flrig into it
+# and make it accessible via http, if desired.
+#
+#. /opt/remotepi/etc/config.sh
+
+WM=xfce4-session
+WIN_SZ=1024x768
+BPP=24
+DPI=96
+RFB_DISPLAY=31
+DISPLAY=":${RFB_DISPLAY}"
+RFB_PORT=$((44560+${RFB_DISPLAY}))
+HTML_PORT=$((45560+${RFB_DISPLAY}))
+#LOCAL_ONLY="-interface 127.0.0.1 -localhost"
+HOST=remote-pi.remotepi.lan
+#PASSWD_FILE=/opt/remotepi/etc/wsjtx-vnc.pass
+#RUN=/opt/remotepi/run
+RUN=/tmp
+
+############################
+
+# Generate a new fairly secure password. This wont contain special symbols to make easier to type...
+#if [ ! -f ${PASSWD_FILE} ]; then
+#   NEW_PASSWD="$(dd if=/dev/urandom bs=1 count=100 2>/dev/null | tr -dc _A-Z-a-z-0-9 | base64 -w 0 | rev | cut -c 3-19)"
+#else
+#   NEW_PASSWD="$(cat ${PASSWD_FILE})"
+#fi
+#echo "${NEW_PASSWD}" > ${RUN}/wsjtx-vnc.pass.raw
+NEW_PASSWD=tacos
+echo "${NEW_PASSWD}" | vncpasswd -f 2>/dev/null > ${RUN}/wsjtx-vnc.pass
+
+echo "- Launching Xvnc server on port ${RFB_PORT}"
+Xvnc :${RFB_DISPLAY} \
+	-geometry ${WIN_SZ} \
+	-depth ${BPP} \
+	-desktop "${RADIO_NAME}-wsjtx" \
+	-rfbport ${RFB_PORT} \
+	-rfbauth ${RUN}/wsjtx-vnc.pass \
+	-alwaysshared \
+	-dontdisconnect \
+	-nolock \
+	-nolisten tcp \
+	-dpi ${DPI} \
+	nologo -nopn ${LOCAL_ONLY} &
+VNC_PID=$!
+echo "${VNC_PID}" > ${RUN}/wsjtx-vnc.pid
+
+echo "*** DISPLAY ${DISPLAY} ***"
+export DISPLAY=:${RFB_DISPLAY}
+
+####### sorta optional - move wsjtx window to 0,0 ####
+[ ! -z "$WM" ] && $WM &
+
+######################
+# Enable noVNC html5 #
+######################
+#if [ ! -z "${LOCAL_ONLY}" ]; then
+#	/opt/remotepi/ext/noVNC/utils/novnc_proxy --vnc localhost:${RFB_PORT} --listen localhost:${HTML_PORT} &
+#	PROXY_PID=$!
+#	echo "${PROXY_PID}" > ${RUN}/wsjtx-vnc-proxy.pid
+#	echo "novnc proxy is running at port localhost:6081 (PID: ${PROXY_PID})"
+#else
+#	/opt/remotepi/ext/noVNC/utils/novnc_proxy --vnc localhost:${RFB_PORT} --listen ${HTML_PORT} &
+#	PROXY_PID=$!
+#	echo "${PROXY_PID}" > ${RUN}/wsjtx-vnc-proxy.pid
+#	echo "novnc proxy is running at port localhost:6081  (PID: ${PROXY_PID})"
+#fi
+
+echo "**********************"
+echo "* wsjtx-vnc  running *"
+echo "**********************"
+echo ""
+echo "You should be able to access wsjtx on the following ports/URLS:"
+echo -e "\tX11	  export DISPLAY=\"${DISPLAY}\""
+echo -e "\tHTTP - http://${HOST}:${HTML_PORT}/vnc.html"
+echo -e "\tVNC    vnc://${HOST}:${RFB_PORT}  ( Port ${RFB_PORT} )"
+
+[ ! -z "${LOCAL_ONLY}" ] && echo -e "* Access is allowed ONLY from localhost (127.0.0.1)*"
+echo -e "Your session password is ${NEW_PASSWD}"
+
+xfreerdp /bpp:8  /relax-order-checks

@@ -1,0 +1,18 @@
+#!/bin/bash
+# Turn off all mode support bits. Called when changing modes
+. /opt/remotepi/etc/config.sh
+
+echo "* Killing processes..."
+killall -TERM ${EXTRA_DIGI}
+sleep 3
+killall -KILL ${EXTRA_DIGI}
+
+echo "* Sending PTT off command"
+# XXX: Do this, for safety.
+
+echo "* Killing tmux sessions"
+tmux kill-session digi
+tmux kill-session phone
+tmux kill-session winlink
+
+echo "* Services halted"

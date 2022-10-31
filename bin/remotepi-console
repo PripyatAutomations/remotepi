@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# XXX: Find if our session already exists
+
+# yes? Attach to it
+
+# no? Start new session & attach programs:
+# [asterisk] sudo asterisk -r

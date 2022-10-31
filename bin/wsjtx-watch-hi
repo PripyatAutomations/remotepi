@@ -1,0 +1,1 @@
+ watch --interval 10 'egrep  B[KLM][0-9]+ ~/.local/share/WSJT-X/$(date +%Y-%m)-ALL.TXT |sort -r|head --lines $((${LINES}-1))'

@@ -1,0 +1,4 @@
+mkdir -p ~/.local/share/applications
+sed '/Exec=wsjtx/ s/$/ -stylesheet :\/qdarkstyle\/style.qss/' \
+  /usr/share/applications/wsjtx.desktop >~/.local/share/applications/wsjtx.desktop
+update-desktop-database ~/.local/share/applications/

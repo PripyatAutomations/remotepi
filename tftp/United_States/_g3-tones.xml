@@ -1,0 +1,14 @@
+<!-- stock -->
+<!--
+<tone c1="31538" i1="-5346" d="1" t="recording">
+<part m="on" t="425"/>
+<part m="off" t="15000"/>
+<repeat c="65535"/>
+-->
+<!-- gentle -->
+<!--
+<tone c1="25000" i1="-5346" d="1" t="recording">
+<part m="off" t="425"/>
+<part m="off" t="15000"/>
+<repeat c="1"/>
+-->

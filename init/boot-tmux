@@ -1,0 +1,21 @@
+#!/bin/bash
+. /opt/remotepi/etc/config.sh
+
+tmux new-session -d -s ${TMUX_SESS}
+# Configure mixer
+amixer -c$CARD set 'Speaker',0 ${PHONE_SPKR}
+amixer -c$CARD set 'Mic',0 ${PHONE_MIC}
+
+# Make baresip script, so we can surprise it easier...
+echo "baresip -f /opt/remotepi/etc/baresip-ft891/ -e \"/dial ${CONF_EXTEN}\"" > ${RUN}/baresip-launch.sh
+chmod 0755 ${RUN}/baresip-launch.sh
+
+tmux new-window -d -t "${TMUX_SESS}" -n 'asterisk'
+tmux send-keys -t 'asterisk' "sudo asterisk -r" C-m
+tmux new-window -d -t "${TMUX_SESS}" -n 'baresip'
+tmux send-keys -t "baresip" -n 'baresip' "${RUN}/baresip-launch.sh" C-m
+
+
+# Start SIP softphone
+echo "* SSB mode enabled!"
+tmux attach-session -s baresip

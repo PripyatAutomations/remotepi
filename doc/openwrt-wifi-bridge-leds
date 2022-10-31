@@ -1,0 +1,55 @@
+# in /etc/config/system:
+# This will setup DAP-1330 and similar LEDs to show RSSI, heartbeat, and net activity (red LEDs)
+#
+# This confiugration provides visual confirmation that the link is working
+config led 'led_rssilow'
+	option sysfs 'red:rssilow'
+	option trigger 'rssi'
+	option iface 'rssid_wlan0'
+	option minq '1'
+	option maxq '25'
+	option offset '0'
+	option factor '1'
+
+config led 'led_rssimediumlow'
+	option sysfs 'green:rssimediumlow'
+	option trigger 'rssi'
+	option iface 'rssid_wlan0'
+	option minq '1'
+	option maxq '100'
+	option offset '0'
+	option factor '1'
+
+config led 'led_rssimediumhigh'
+	option sysfs 'green:rssimediumhigh'
+	option trigger 'rssi'
+	option iface 'rssid_wlan0'
+	option minq '51'
+	option maxq '100'
+	option offset '0'
+	option factor '1'
+
+config led 'led_rssihigh'
+	option sysfs 'green:rssihigh'
+	option trigger 'rssi'
+	option iface 'rssid_wlan0'
+	option minq '76'
+	option maxq '100'
+	option offset '0'
+	option factor '1'
+
+config led
+	option sysfs 'green:power'
+	option trigger 'heartbeat'
+
+config led
+	option sysfs 'red:status'
+	option trigger 'netdev'
+	option dev 'eth0'
+	list mode 'tx'
+
+config led
+	option sysfs 'red:rssilow'
+	option trigger 'netdev'
+	option dev 'wlan0'
+	list mode 'rx'

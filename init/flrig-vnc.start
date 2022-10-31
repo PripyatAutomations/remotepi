@@ -1,0 +1,75 @@
+#!/bin/bash
+######
+# Here we startup an Xvnc instance, put flrig into it
+# and make it accessible via http, if desired.
+#
+. /opt/remotepi/etc/config.sh
+
+############################
+echo "* Cleaning up processes..."
+/opt/remotepi/init/flrig-vnc.stop
+
+# Generate a new fairly secure password. This wont contain special symbols to make easier to type...
+if [ ! -f /opt/remotepi/etc/flrig-vnc.pass ]; then
+   NEW_PASSWD="$(dd if=/dev/urandom bs=1 count=100 2>/dev/null | tr -dc _A-Z-a-z-0-9 | base64 -w 0 | rev | cut -c 3-19)"
+else
+   NEW_PASSWD="$(cat /opt/remotepi/etc/flrig-vnc.pass)"
+fi
+echo "${NEW_PASSWD}" > ${RUN}/flrig-vnc.pass.raw
+echo "${NEW_PASSWD}" | vncpasswd -f 2>/dev/null > ${RUN}/flrig-vnc.pass
+
+echo "- Launching Xvnc server on port ${RFB_PORT}"
+Xvnc :${RFB_DISPLAY} \
+	-geometry ${FLRIG_SZ} \
+	-depth ${BPP} \
+	-desktop "${RADIO_NAME}-flrig" \
+	-rfbport ${RFB_PORT} \
+	-rfbauth ${RUN}/flrig-vnc.pass \
+	-alwaysshared \
+	-dontdisconnect \
+	-nolock \
+	-nolisten tcp \
+	-dpi ${DPI} \
+	nologo -nopn ${LOCAL_ONLY} &
+VNC_PID=$!
+echo "${VNC_PID}" > ${RUN}/flrig-vnc.pid
+
+echo "*** DISPLAY ${DISPLAY} ***"
+export DISPLAY=:${RFB_DISPLAY}
+
+#####################
+# flrig and rigcltd #
+#####################
+flrig </dev/null 2>&1 &
+sleep 5
+rigctld  -m 4 -P RIG -t 4532 </dev/null 2>&1 &
+
+####### sorta optional - move flrig window to 0,0 ####
+[ ! -z "$WM" ] && $WM &
+
+######################
+# Enable noVNC html5 #
+######################
+if [ ! -z "${LOCAL_ONLY}" ]; then
+	/opt/remotepi/ext/noVNC/utils/novnc_proxy --vnc localhost:${RFB_PORT} --listen localhost:${HTML_PORT} &
+	PROXY_PID=$!
+	echo "${PROXY_PID}" > ${RUN}/flrig-vnc-proxy.pid
+	echo "novnc proxy is running at port localhost:6081 (PID: ${PROXY_PID})"
+else
+	/opt/remotepi/ext/noVNC/utils/novnc_proxy --vnc localhost:${RFB_PORT} --listen ${HTML_PORT} &
+	PROXY_PID=$!
+	echo "${PROXY_PID}" > ${RUN}/flrig-vnc-proxy.pid
+	echo "novnc proxy is running at port localhost:6081  (PID: ${PROXY_PID})"
+fi
+
+echo "**********************"
+echo "* flrig-vnc  running *"
+echo "**********************"
+echo ""
+echo "You should be able to access flrig on the following ports/URLS:"
+echo -e "\tX11	  export DISPLAY=\"${DISPLAY}\""
+echo -e "\tHTTP - http://${HOST}:${HTML_PORT}/vnc.html"
+echo -e "\tVNC    vnc://${HOST}:${RFB_PORT}  ( Port ${RFB_PORT} )"
+
+[ ! -z "${LOCAL_ONLY}" ] && echo -e "* Access is allowed ONLY from localhost (127.0.0.1)*"
+echo -e "Your session password is ${NEW_PASSWD}"

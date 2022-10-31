@@ -1,0 +1,35 @@
+#!/bin/bash
+. /opt/remotepi/etc/config.sh
+[ ! -f /tmp/flrig-vnc.pid ] && {
+   echo "* Cannot find pid file /tmp/flrig-vnc.pid, try manually killing it:"
+}
+echo "* Killing noVNC service'"
+ps auwwx|grep noVNC|grep -v grep|awk '{ print $2 }'|xargs kill -9
+
+VNC_PID=$(cat /tmp/flrig-vnc.pid)
+kill -TERM ${VNC_PID}
+sleep 3
+kill -KILL ${VNC_PID}
+
+echo "* Killed ${VNC_PID}"
+
+# XXX: Probably shouldnt just kill all the novnc_proxy
+killall -TERM flrig rigctld novnc_proxy
+sleep 2
+
+# BUG: See above re: killing novnc_proxy
+killall -KILL flrig rigcltd novnc_proxy
+
+[ -f ${RUN}/flrig-vnc.pid ] && {
+	VNC_PID=$(cat ${RUN}/flrig-vnc.pid)
+	rm ${RUN}/flrig-vnc.pid
+	kill -9 ${VNC_PID}
+	unset VNC_PID
+}
+
+[ -f ${RUN}/flrig-vnc-proxy.pid ] && {
+	PROXY_PID=$(cat ${RUN}/flrig-vnc-proxy.pid)
+	rm ${RUN}/flrig-vnc-proxy.pid
+	kill -9 ${PROXY_PID}
+	unset PROXY_PID
+}

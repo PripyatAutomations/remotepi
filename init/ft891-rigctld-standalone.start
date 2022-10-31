@@ -1,0 +1,4 @@
+#!/bin/bash
+# This will start up rigctld so that wsjtx and mod_hamradio can control things
+. /opt/remotepi/etc/config.sh
+rigctld -m 1036 -s 38400 -P RIG -t 4532 -r /dev/ttyUSB0 &
