@@ -8,6 +8,10 @@ Install:
 
 Start up using /opt/remotepi/init/system-startup.sh then connect to asterisk.
 
+Move /etc/asterisk out of the way and make a symlink to /opt/remotepi/etc/asterisk
+	sudo mv /etc/asterisk{.,old}
+	sudo ln -s /opt/remotepi/etc/asterisk /etc/
+
 You'll need to add the following to an extension in your asterisk config (not included):
 	[remotepi]
 	exten => 5000,1,NoOp()
