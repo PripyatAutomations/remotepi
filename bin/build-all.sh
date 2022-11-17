@@ -1,8 +1,4 @@
 #!/bin/bash
-echo "* fetching git submodules..."
-git submodule init
-git submodule update
-
 # Build chan_sccp-b to support cisco devices better
 echo "* building chan_sccp-b..."
 /opt/remotepi/ext/build-chan-sccp.sh
