@@ -7,14 +7,35 @@
 amixer -c$CARD set 'Speaker',0 ${PKT_SPKR}
 amixer -c$CARD set 'Mic',0 ${PKT_MIC}
 
+CF=${RUN}/kiss-setup.sh
+echo "#!/bin/bash" > ${CF}
+echo ". /opt/remotepi/etc/config.sh" >> ${CF}
+echo "killall -TERM kissattach" >> ${CF}
+echo "sleep 3" >> ${CF}
+echo "killall -KILL kissattach" >> ${CF}
+echo "KISS_PTS=\$(readlink /tmp/kisstnc)" >> ${CF}
+echo "kissattach \${KISS_PTS} \${MYCALL}" >> ${CF}
+echo "# Set kiss params (txdelay 300ms, txtail 10ms, persist 80 and half duplex) for port" >> ${CF}
+echo "kissparms -p \${MYCALL} -t 200 -l 20 -s 100 -r 63 -f n" >> ${CF}
+chmod 0755 ${CF}
+
+rm -f /tmp/kisstnc
+
 # Start rigctld
 #/opt/remotepi/init/flrig-vnc.start
 mkdir -p /opt/remotepi/logs/
 cd /opt/remotepi/logs/
 tmux new-session -s winlink -d
-tmux send-keys "ardopc" C-m
-tmux rename-window 'ardopc'
-tmux new-window -n 'pat'
 tmux send-keys "pat http" C-m
-echo "* Winlink mode enabled!"
-tmux attach-session -t winlink
+tmux rename-window 'pat'
+# XXX: Add a mode-switch
+tmux new-window -n 'ardopc'
+tmux send-keys "ardopc" C-m
+#tmux new-window -n 'direwolf'
+#	tmux send-keys "direwolf -c /opt/remotepi/etc/direwolf.conf -t 0 -p" C-m
+#tmux new-window -n 'kiss'
+#tmux send-keys "sudo ${RUN}/kiss-setup.sh" C-m
+
+echo "* Winlink mode enabled in tmux session 'winlink'!"
+echo "To connect, please run:"
+echo -e "\ttmux attach-session -t winlink"

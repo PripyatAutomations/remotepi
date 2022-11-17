@@ -10,5 +10,10 @@ amixer -c$CARD set 'Mic',0 ${DIGI_MIC}
 # Start rigctld
 #/opt/remotepi/bin/ft891-rigctl.start
 
+echo "* Setting rig to DATA-U"
+rigctl -m 4 M DATA-U 0
+echo "* Setting power to 35W"
+rigctl -m 4 L RFPOWER 0.35
+
 # User can start wsjtx/etc as needed...
 echo "* Digital mode enabled!"

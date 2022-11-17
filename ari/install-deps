@@ -1,0 +1,1 @@
+sudo apt install espeak-ng libespeak-ng-dev libsamplerate-dev libsamplerate0

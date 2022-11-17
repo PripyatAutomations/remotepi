@@ -3,16 +3,16 @@
 . /opt/remotepi/etc/config.sh
 
 echo "* Killing processes..."
-killall -TERM ${EXTRA_DIGI}
+killall -TERM ${EXTRA_DIGI} baresip 2>&1 > /dev/null
 sleep 3
-killall -KILL ${EXTRA_DIGI}
+killall -KILL ${EXTRA_DIGI} baresip 2>&1 > /dev/null
 
-echo "* Sending PTT off command"
-# XXX: Do this, for safety.
+PTT_STATE=$(rigctl -m 4 get_ptt)
+echo "* Sending PTT off command (currently: ${PTT_STATE})"
+rigctl -m 4 set_ptt 0
 
-echo "* Killing tmux sessions"
-tmux kill-session digi
-tmux kill-session phone
-tmux kill-session winlink
-
+#echo "* Killing tmux sessions"
+#tmux kill-session -t digi
+#tmux kill-session -t phone
+#tmux kill-session -t winlink
 echo "* Services halted"
