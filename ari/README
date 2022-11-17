@@ -27,7 +27,7 @@ PTT=manual		# or vox
 [DSP]		*7,<LEVEL>#	Control DSP Noise Reduction level (0=OFF)
 [NOTCH]		*8,<LEVEL>#	Set DSP notch filter level (0=OFF)
 [TUNE-STEP]	*9,<OPTION>#	Tuning step
-			0=100hz, 1=500hz, 2=1khz, 3=2.5khz, 4=5khz, 5=10khz, 6=12.5khz, 7=15khz, 8=20khz, 9=30khz
+			0=10hz, 1=100hz, 2=500hz, 3=1khz, 4=2.5khz
 [TUNE-STEP-RB]	*9#		Readback tuning step
 [TUNE-UP]	1		tunes up 1 ${TUNE_STEP} hz
 [TUNE-DOWN]	4		tunes down 1 ${TUNE_STEP} hz
