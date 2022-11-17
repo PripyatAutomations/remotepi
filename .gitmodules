@@ -7,3 +7,6 @@
 [submodule "ext/ardop"]
 	path = ext/ardop
 	url = https://github.com/hamarituc/ardop.git
+[submodule "www/rmsmap"]
+	path = www/rmsmap
+	url = https://github.com/PripyatAutomations/rmsmap.git
