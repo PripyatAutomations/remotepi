@@ -17,7 +17,8 @@ PTT=manual		# or vox
 [VOX]		*1,[OPTION]#	Set VOX
 			0=OFF, 1=ON, absent=toggle
 [RFGAIN]	*2,<GAIN>#	Set RF gain
-[FREQ]		*3,<FREQINHZ>#	Tune to freq in hz.
+[FREQ]		*3,<FREQINHZ>#	Tune to freq in hz. (7 or more digits)
+[FREQKHZ]	*3<FREQINKHZ>#	Tune to a freq in hz (6 or less digits)
 [FREQ-RB]	*3#		Readback frequency
 [IF-SHIFT]	*4,<SHIFT>#	IF shift in hz
 [POWER]		*5,<POWER>#	Power in Watts

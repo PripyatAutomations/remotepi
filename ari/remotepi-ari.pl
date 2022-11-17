@@ -705,8 +705,16 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
                print "[dtmf] Set RF gain: $1\n";
                $rig->set_level($Hamlib::RIG_LEVEL_RF, int($1));
             } elsif ($rdigits =~ m/^\*3(\d+)#/) {
-               print "[dtmf] Set Freq: $1\n";
-               rig_set_freq(int($1), $chan_id);
+               my $my_freq;
+
+               # is it 6 or less digits? If so, it's khz not hertz
+               if (length($1) <= 6) {
+                  $my_freq = int($1) * 1000;
+               } else {
+                  $my_freq = $1;
+               }
+               print "[dtmf] Set Freq: $my_freq\n";
+               rig_set_freq($my_freq, $chan_id);
             } elsif ($rdigits =~ m/^\*3#/) {
                my $vfo_freq = rig_readback_freq($chan_id);
             } elsif ($rdigits =~ m/^\*4(\d+)#/) {
