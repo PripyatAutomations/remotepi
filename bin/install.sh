@@ -1,4 +1,9 @@
 #!/bin/bash
+echo "* updating submodules..."
+git submodule init
+git submodule pull
+
+echo "* building needed components..."
 # Build chan_sccp-b to support cisco devices better
 echo "* building chan_sccp-b..."
 /opt/remotepi/ext/build-chan-sccp.sh
@@ -15,3 +20,5 @@ echo "* building ardop mpdems..."
    touch /opt/remotepi/src/.novnc_patched
    cd -
 }
+
+echo "export PATH=\$PATH:/opt/remotepi/bin" >> /etc/profile.d/remotepi.sh
