@@ -1,3 +1,9 @@
 [submodule "ext/noVNC"]
 	path = ext/noVNC
 	url = https://github.com/novnc/noVNC.git
+[submodule "ext/chan-sccp"]
+	path = ext/chan-sccp
+	url = https://github.com/chan-sccp/chan-sccp.git
+[submodule "ext/ardop"]
+	path = ext/ardop
+	url = https://github.com/hamarituc/ardop.git
