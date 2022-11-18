@@ -6,7 +6,6 @@ tmux new-session -d -s ${TMUX_SESS}
 amixer -c$CARD set 'Speaker',0 ${PHONE_SPKR}
 amixer -c$CARD set 'Mic',0 ${PHONE_MIC}
 
-# Make baresip script, so we can surprise it easier...
 echo "baresip -f /opt/remotepi/etc/baresip-ft891/ -e \"/dial ${CONF_EXTEN}\"" > ${RUN}/baresip-launch.sh
 chmod 0755 ${RUN}/baresip-launch.sh
 

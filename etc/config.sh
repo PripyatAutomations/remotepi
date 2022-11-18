@@ -36,3 +36,19 @@ HTML_PORT=$((45560+${RFB_DISPLAY}))
 #LOCAL_ONLY="-interface 127.0.0.1 -localhost"
 HOST=remote-pi.remotepi.lan
 TMUX_SESS=remotepi
+
+# SIP configuration
+UA_CHAN=radio0
+UA_PORT=15060
+UA_DIR=/opt/remotepi/etc/baresip-${UA_CHAN}
+UA_USER=radio0
+UA_PASS=abcde12345
+UA_CONTEXT=radio0
+AU_OUTDEV=alsa,default
+AU_INDEV=alsa,default
+AU_ALERTDEV=alsa,default
+
+LISTENER_USER=guest
+LISTENER_PASS=guest
+ADMIN_USER=joe-mobile
+ADMIN_PASS=1234567890

@@ -1,3 +1,4 @@
+* Add reconnection if asterisk is restarted
 * Add support for multiple radios and bridges
 * Error handling
 * Investigate https://iaxmodem.sourceforge.net/ iaxmodem for APRS (bell.202)

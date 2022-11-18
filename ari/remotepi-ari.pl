@@ -31,10 +31,19 @@ my $ari = {
 
 my $station = {
    "callsign" => "N0CALL",
-   "default_mode" => "phone",
+   "default_mode" => "",
+#   "default_mode" => "phone",
    "gridsquare" => "FN19",
    "selcall_dtmf" => "987654321",
    "shutdown_dtmf" => "##90210352##"
+};
+
+my $client = {
+   "chan_id" => "",
+   "chan_name" => "",
+   "current_bridge" => "",
+   "permissions" => "*",		# * for all, admin,listen,speak
+   "username" => "guest"
 };
 
 my $radio0 = {
@@ -57,7 +66,7 @@ my $radio0 = {
    "ptt_blocked" => 1,
    "ptt_active" => 0,
    "power_divider" => 100,
-   "station_mode" => "phone",		# Default station mode at startup
+   "station_mode" => "phone",		# station mode
    "tuning_limit_low" => 3000,
    "tuning_limit_high" => 56000000,
    "using_vox" => 0
@@ -469,7 +478,7 @@ sub start_baresip_channel {
    defined(my $pid = fork) or die "fork: $!";
    if (!$pid) {
       open STDOUT, '>&', $fh;
-      exec("baresip", ("baresip", "-f", "/opt/remotepi/etc/baresip-$chan_name", "-e", "$dialstring", "-d"));
+      exec("baresip", ("baresip", "-f", "/opt/remotepi/etc/baresip-$active_rig", "-e", "$dialstring", "-d"));
    }
    waitpid $pid, 0;
    my $retcode = $?;
@@ -660,12 +669,12 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
                     if ($radio0->{'ptt_active'}) {
                        $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_OFF);
                        $radio0->{'ptt_active'} = 0;
-                       print "[dtmf] radio0 ptt off\n";
+                       print "[dtmf] radio0 PTT OFF\n";
                     } else {
                        if (!($radio0->{'ptt_blocked'})) {
                           $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_ON_DATA);
                           $radio0->{'ptt_active'} = 1;
-                          print "[dtmf] radio0 ptt on\n";
+                          print "[dtmf] radio0 PTT ON\n";
                        } else {
                           print "[ptt] PTT for $active_rig is blocked, igoring PTT ON request\n";
                           ari_play($chan_id, "sound:beeperr")
@@ -717,18 +726,27 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
                rig_set_freq($my_freq, $chan_id);
             } elsif ($rdigits =~ m/^\*3#/) {
                my $vfo_freq = rig_readback_freq($chan_id);
-            } elsif ($rdigits =~ m/^\*4(\d+)#/) {
+            } elsif ($rdigits =~ m/\*4(\*)?(\d+)#/) {
+               my $r_sign = $1;
+               my $r_val = $2;
+               my $ifshift;
+
+               if (defined($r_sign)) {
+                  $ifshift = -$r_val;
+               } else {
+                  $ifshift = $r_val;
+               }
                print "[dtmf] * Set IF-Shift: $1\n";
             } elsif ($rdigits =~ m/^\*4#/) {
                my $if_shift = $radio0->{'if_shift'};
                print "[dtmf] * Readback IF shift: $if_shift\n";
+#               system("rigctl"
             } elsif ($rdigits =~ m/^\*5#/) {
-               my $tx_power = $rig->get_level_i($radio0->{'active_vfo'}, $Hamlib::RIG_LEVEL_RFPOWER) * $radio0->{'power_divider'};
-#               my $tx_poxer = $rig->get_level_i($radio0->{'active_vfo'}, "RFPOWER");
-               print "[dtmf] * Readback TX power: $tx_power\n";
+               my $tx_power = $rig->get_level_i($Hamlib::RIG_LEVEL_RFPOWER) * $radio0->{'power_divider'};
+               print "[dtmf] * Readback TX power: $tx_power Watt(s)\n";
             } elsif ($rdigits =~ m/^\*5(\d+)#/) {
                my $hamlib_power = int($1) / $radio0->{'power_divider'};
-               print "[dtmf] Set TX Power: $1 ($hamlib_power)\n";
+               print "[dtmf] Set TX Power: $1 Watt(s) ($hamlib_power)\n";
                $rig->set_level($Hamlib::RIG_LEVEL_RFPOWER, $hamlib_power);
             } elsif ($rdigits =~ m/^\*6(\d+)#/) {
                my $modmode = $Hamlib::RIG_MODE_LSB;
@@ -851,7 +869,7 @@ $ari_conn->connect(
       my $bridge = ari_bridge_find_or_create($active_rig);
 
       # set default operating mode
-      if (defined($station->{'default_mode'})) {
+      if (defined($station->{'default_mode'}) && !($station->{'default_mode'} eq "")) {
          my $mode = $station->{'default_mode'};
          print "[station] Switching to default mode ($mode) as configured\n";
          station_modeset($mode);
