@@ -4,6 +4,7 @@ git submodule init
 git submodule pull
 
 echo "* Installing host packages (apt)"
+sudo apt install pipewire pipewire-alsa pipewire-bin pipewire-audio-client-libraries pipewire-jack pipewire-pulse pipewire-v4l2  pipewire-doc wireplumber
 sudo apt install espeak-ng libespeak-ng-dev libsamplerate-dev libsamplerate0
 sudo apt install libhttp-request-params-perl libio-async-loop-epoll-perl libnet-async-http-perl libjson-perl libdata-dumper-simple-perl libhamlib-perl
 sudo apt install asterisk asterisk-core-sounds-en asterisk-flite asterisk-dev asterisk-modules baresip baresip-ffmpeg 
