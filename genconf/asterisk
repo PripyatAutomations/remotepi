@@ -2,13 +2,13 @@
 . /opt/remotepi/etc/config.sh
 
 # Generate teh asterisk bits
-sudo rm -f /opt/remotepi/etc/asterisk/pjsip_wizard_remotepi.conf
 sudo chown asterisk:devuan /opt/remotepi/etc/asterisk
 sudo chmod g+wx /opt/remotepi/etc/asterisk
+sudo rm -f /opt/remotepi/etc/asterisk/pjsip_wizard_remotepi.conf
 cat > /opt/remotepi/etc/asterisk/pjsip_wizard_remotepi.conf <<EOF
 [radio0]
 type = wizard
-max_contacts = 32
+max_contacts = 4
 accepts_auth = yes
 accepts_registrations = yes
 has_phoneprov = no
@@ -17,9 +17,11 @@ has_hint = yes
 hint_exten = 0
 inbound_auth/username = ${UA_USER}
 inbound_auth/password = ${UA_PASS}
-endpoint/allow = g722,opus,gsm,ulaw,alaw
+;endpoint/allow = g722,opus,gsm,ulaw,alaw
+endpoint/allow = g722
 endpoint/context = ${UA_CONTEXT}
 EOF
+sudo rm -f /opt/remotepi/etc/asterisk/extensions_remotepi.conf
 
 sudo mkdir -p /opt/remotepi/etc/ssl/
 sudo cp /etc/letsencrypt/live/istabpeople.com/*.pem /opt/remotepi/etc/ssl/

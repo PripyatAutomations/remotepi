@@ -1,2 +1,5 @@
 etc/flrig-vnc.pass
 etc/config.ini
+#etc/config.sh
+# Private configuration data
+etc/asterisk/*.remotepi.conf

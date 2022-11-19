@@ -1,6 +1,0 @@
-#!/bin/bash
-KILLPROG="baresip wsjtx js8call fldigi flrig"
-
-killall -TERM ${KILLPROG}
-sleep 3
-killall -KILL ${KILLPROG}
