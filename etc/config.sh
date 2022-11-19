@@ -5,15 +5,22 @@
 MYCALL=N0CALL
 # Sound card (USB)
 CARD=0
+
 # Digital modes volume preset
 DIGI_MIC=12
 DIGI_SPKR=29
+# this is in hamlib units (ugh) - 35 watts
+DIGI_POWER=0.35
+
 # Phone mode volume presets
 PHONE_MIC=38
 PHONE_SPKR=30
+PHONE_POWER=1.0
+
 # Packet mode volume presets
 PKT_MIC=10
 PKT_SPKR=30
+PKT_POWER=0.35
 
 # digi mode programs to kill when switching to phone
 EXTRA_DIGI="fldigi js8call wsjtx ardopc pat direwolf"
