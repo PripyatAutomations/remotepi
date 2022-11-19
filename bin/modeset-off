@@ -2,6 +2,10 @@
 # Turn off all mode support bits. Called when changing modes
 . /opt/remotepi/etc/config.sh
 
+tmux detach
+unset TMUX
+unset TMUX_PANE
+
 echo "* Killing processes..."
 killall -TERM ${EXTRA_DIGI} baresip 2>&1 > /dev/null
 sleep 3
@@ -12,7 +16,7 @@ echo "* Sending PTT off command (currently: ${PTT_STATE})"
 rigctl -m 4 set_ptt 0
 
 #echo "* Killing tmux sessions"
-#tmux kill-session -t digi
-#tmux kill-session -t phone
-#tmux kill-session -t winlink
+tmux kill-session -t digi
+tmux kill-session -t phone
+tmux kill-session -t winlink
 echo "* Services halted"

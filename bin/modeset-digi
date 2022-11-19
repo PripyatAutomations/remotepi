@@ -11,7 +11,7 @@ amixer -c$CARD set 'Mic',0 ${DIGI_MIC}
 #/opt/remotepi/bin/ft891-rigctl.start
 
 echo "* Setting rig to DATA-U"
-rigctl -m 4 M DATA-U 0
+rigctl -m 4 M PKTUSB 0
 echo "* Setting power to 35W"
 rigctl -m 4 L RFPOWER 0.35
 

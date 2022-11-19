@@ -19,11 +19,11 @@ echo "* building ardop mpdems..."
 /opt/remotepi/ext/build-ardop.sh
 
 # patch novnc so we can send passwords via url
-[ ! -f /opt/remotepi/src/.novnc_patched ] && {
+[ ! -f /opt/remotepi/ext/.novnc_patched ] && {
    echo "* patching noVNC to allow passing password in URL..."
    cd /opt/remotepi/ext/noVNC
    patch -p1<../noVNC-password-in-url.patch
-   touch /opt/remotepi/src/.novnc_patched
+   touch /opt/remotepi/ext/.novnc_patched
    cd -
 }
 
