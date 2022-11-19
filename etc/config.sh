@@ -23,7 +23,7 @@ PKT_SPKR=30
 PKT_POWER=0.35
 
 # digi mode programs to kill when switching to phone
-EXTRA_DIGI="fldigi js8call wsjtx ardopc pat direwolf"
+EXTRA_DIGI="fldigi js8call wsjtx ardopc direwolf"
 
 # Extension to dial into
 CONF_EXTEN=0
@@ -57,7 +57,7 @@ AU_ALERTDEV=alsa,default
 
 LISTENER_USER=guest
 LISTENER_PASS=guest
-ADMIN_USER=joe-mobile
+ADMIN_USER=mobile
 ADMIN_PASS=1234567890
 
 # ham radio menu password, for "untrusted" phones

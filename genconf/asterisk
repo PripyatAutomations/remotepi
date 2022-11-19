@@ -13,8 +13,8 @@ remove_existing=yes
 [guest]
 type=auth
 auth_type=userpass
-username=remotepi
-password=remotepi
+username=guest
+password=guest
  
 [guest]
 type=endpoint

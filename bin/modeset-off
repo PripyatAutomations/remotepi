@@ -12,7 +12,7 @@ echo "* Sending PTT off command (currently: ${PTT_STATE})"
 rigctl -m 4 set_ptt 0
 
 #echo "* Killing tmux sessions"
-tmux kill-session -t digi
-tmux kill-session -t phone
-tmux kill-session -t winlink
+#tmux kill-session -t digi
+#tmux kill-session -t phone
+#tmux kill-session -t winlink
 echo "* Services halted"

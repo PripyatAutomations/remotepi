@@ -36,18 +36,18 @@ rigctl -m 4 M PKTUSB 0
 echo "* Setting power to 35W"
 rigctl -m 4 L RFPOWER 0.35
 
-tmux new-session -s winlink -d
-tmux send-keys "pat http" C-m
-tmux rename-window 'pat'
-tmux new-window -n 'ardopc'
-tmux send-keys "ardopc" C-m
+#tmux new-session -s winlink -d
+#tmux send-keys "pat http" C-m
+#tmux rename-window 'pat'
+#tmux new-window -n 'ardopc'
+#tmux send-keys "ardopc" C-m
 #tmux new-window -n 'direwolf'
 #	tmux send-keys "direwolf -c /opt/remotepi/etc/direwolf.conf -t 0 -p" C-m
 #tmux new-window -n 'kiss'
 #tmux send-keys "sudo ${RUN}/kiss-setup.sh" C-m
 
-#ardopc &
-#pat http &
+ardopc &
+pat http &
 
 echo "* Winlink mode enabled in tmux session 'winlink'!"
 echo "To connect, please run:"
