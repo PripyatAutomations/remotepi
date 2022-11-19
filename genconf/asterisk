@@ -5,30 +5,31 @@
 sudo chown asterisk:devuan /opt/remotepi/etc/asterisk
 sudo chmod g+wx /opt/remotepi/etc/asterisk
 cat > /opt/remotepi/etc/asterisk/pjsip.remotepi.conf<<EOF
-[webrtc_client]
+[guest]
 type=aor
 max_contacts=5
 remove_existing=yes
   
-[webrtc_client]
+[guest]
 type=auth
 auth_type=userpass
 username=remotepi
 password=remotepi
  
-[webrtc_client]
+[guest]
 type=endpoint
-aors=webrtc_client
-auth=webrtc_client
+aors=guest
+auth=guest
 dtls_auto_generate_cert=yes
 webrtc=yes
-context=default
+context=guest
 disallow=all
-allow=opus,speex,g722,ulaw,gsm
+;allow=opus,speex,g722,ulaw,gsm
+allow=speex,g722,ulaw,gsm
 
 [mobile]
 type=aor
-max_contacts=5
+max_contacts=1
 remove_existing=yes
   
 [mobile]
@@ -43,13 +44,14 @@ aors=mobile
 auth=mobile
 dtls_auto_generate_cert=yes
 webrtc=yes
-context=default
+context=mobile
 disallow=all
-allow=opus,speex,g722,ulaw,gsm
+;allow=opus,speex,g722,ulaw,gsm
+allow=g722,speex,gsm,ulaw,alaw
 
 [radio0]
 type=aor
-max_contacts=5
+max_contacts=1
 remove_existing=yes
   
 [radio0]
@@ -64,44 +66,11 @@ aors=radio0
 auth=radio0
 dtls_auto_generate_cert=yes
 webrtc=yes
-context=default
+context=radio0
 disallow=all
-allow=opus,speex,g722,ulaw,gsm
+;allow=opus,speex,g722,ulaw,gsm
+allow=g722
 
-EOF
-
-cat > /opt/remotepi/etc/asterisk/pjsip_wizard_remotepi.conf <<EOF
-[radio0]
-type = wizard
-max_contacts = 4
-accepts_auth = yes
-accepts_registrations = yes
-sends_registrations = no
-has_phoneprov = no
-transport = transport-udp
-has_hint = yes
-hint_exten = 0
-inbound_auth/username = ${UA_USER}
-inbound_auth/password = ${UA_PASS}
-;endpoint/allow = g722,opus,gsm,ulaw,alaw
-endpoint/allow = g722
-endpoint/context = ${UA_CONTEXT}
-
-[mobile]
-type = wizard
-max_contacts = 1
-accepts_auth = yes
-accepts_registrations = yes
-sends_registrations = no
-has_phoneprov = no
-transport = transport-udp
-has_hint = yes
-hint_exten = 0
-inbound_auth/username = mobile
-inbound_auth/password = abcde12345
-;endpoint/allow = g722,opus,gsm,ulaw,alaw
-endpoint/allow = g722
-endpoint/context = mpbile
 EOF
 
 cat > /opt/remotepi/etc/asterisk/ari.remotepi.conf <<EOF
@@ -174,5 +143,4 @@ sudo mkdir -p /opt/remotepi/etc/ssl/
 sudo cp /etc/letsencrypt/live/istabpeople.com/*.pem /opt/remotepi/etc/ssl/
 sudo chown -R asterisk:asterisk /opt/remotepi/etc/ssl/
 sudo chmod o-rwx /opt/remotepi/etc/ssl
-
-#sudo service asterisk restart
+sudo service asterisk restart
