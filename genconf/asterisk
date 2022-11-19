@@ -4,7 +4,6 @@
 # Generate teh asterisk bits
 sudo chown asterisk:devuan /opt/remotepi/etc/asterisk
 sudo chmod g+wx /opt/remotepi/etc/asterisk
-sudo rm -f /opt/remotepi/etc/asterisk/pjsip_wizard_remotepi.conf
 cat > /opt/remotepi/etc/asterisk/pjsip_wizard_remotepi.conf <<EOF
 [radio0]
 type = wizard
@@ -21,7 +20,79 @@ inbound_auth/password = ${UA_PASS}
 endpoint/allow = g722
 endpoint/context = ${UA_CONTEXT}
 EOF
-sudo rm -f /opt/remotepi/etc/asterisk/extensions_remotepi.conf
+
+cat > /opt/remotepi/etc/asterisk/ari.remotepi.conf <<EOF
+[remotepi]
+type = user
+read_only = no
+password = remotepi
+EOF
+
+cat > /opt/remotepi/etc/asterisk/extensions.remotepi.conf <<EOF
+;;;;;;;;;;;;;;;
+; ft891 radio ;
+;;;;;;;;;;;;;;;
+[radio0]
+exten => 0,1,NoOp()
+ same => n,Set(VOLUME(TX)=4)
+ same => n,Stasis(remotepi,\${CONTEXT})
+
+[readbackfreq]
+exten => 1,1,Noop()
+ same => n,Verbose(Speaking \${SAY_DATA})
+ same => n,Espeak("Frequency \${SAY_DATA}",any)
+ same => n,WaitExten()
+; same => n,Hangup()
+
+[joe-mobile]
+; Ham-radio stuff
+exten => 5000,1,Goto(ham-menu,s,1)
+include => common
+
+[ham-login]
+; Do we need to login?
+;; Is this c79651 or joe-mobile?? If so, no login needed!
+
+exten => s,1,Noop()
+
+;; Nope - Skip to menu
+;exten => s,n,Goto(ham-menu,s,1)
+
+; Login required...
+exten => s,n,Goto(ham-login,1,1)
+
+; Read and check password
+exten => 1,1,Authenticate($MENU_PASS)
+ same => n,Goto(ham-menu,s,1)
+ same => n,Hangup()
+exten => t,1,Hangup()
+
+[ham-menu]
+exten => *,1,Playback(conf-unmuted)
+ same => n,Goto(ham-menu,s,3)
+exten => #,1,Playback(conf-muted)
+ same => n,Goto(ham-menu,s,3)
+
+; Listen
+exten => 0,1,NoOp()
+ same => n,Stasis(remotepi,\${CONTEXT})
+ same => n,Hangup()
+
+;;; User requests logout
+exten => 8,1,Playback(goodbye)
+ same => n,,Hangup()
+exten => 9,1,Goto(hhux-out,s,1)
+
+;;; User didn't enter anything
+exten => t,1,Goto(ham-menu,s,3)
+exten => i,1,Playback(invalid)
+ same => n,Goto(ham-menu,s,2)
+
+exten => s,1,Answer()
+; 1 = LISTEN, 2 = MODE, 3 = FREQ, * = MUTE, # = UNMUTE, 9 = HHO
+ same => n,Playback(extension)
+ same => n,WaitExten(3)
+EOF
 
 sudo mkdir -p /opt/remotepi/etc/ssl/
 sudo cp /etc/letsencrypt/live/istabpeople.com/*.pem /opt/remotepi/etc/ssl/

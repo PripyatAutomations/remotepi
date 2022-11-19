@@ -52,3 +52,6 @@ LISTENER_USER=guest
 LISTENER_PASS=guest
 ADMIN_USER=joe-mobile
 ADMIN_PASS=1234567890
+
+# ham radio menu password, for "untrusted" phones
+HAM_PASS=4321
