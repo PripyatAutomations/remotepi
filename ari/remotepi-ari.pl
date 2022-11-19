@@ -819,6 +819,8 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
          my $res = ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
       } elsif ($rdata->{'type'} =~ m/^StasisEnd$/i) {
          # NoOp
+      } elsif ($rdata->{'type'} =~ m/^ChannelConnectedLine#/i) {
+         print "[chan] Channel connected: $chan_name ($chan_id) to bridge " . ari_bridgr_str($radio0->{'bridge_id'}) . "\n";
       } elsif ($rdata->{'type'} =~ m/^ChannelDestroyed$/i) {
          print "[chan] Channel Destroyed $chan_name ($chan_id)\n";
       } elsif ($rdata->{'type'} =~ m/^ChannelEnteredBridge$/i) {
