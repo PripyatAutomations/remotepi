@@ -4,12 +4,79 @@
 # Generate teh asterisk bits
 sudo chown asterisk:devuan /opt/remotepi/etc/asterisk
 sudo chmod g+wx /opt/remotepi/etc/asterisk
+cat > /opt/remotepi/etc/asterisk/pjsip.remotepi.conf<<EOF
+[webrtc_client]
+type=aor
+max_contacts=5
+remove_existing=yes
+  
+[webrtc_client]
+type=auth
+auth_type=userpass
+username=remotepi
+password=remotepi
+ 
+[webrtc_client]
+type=endpoint
+aors=webrtc_client
+auth=webrtc_client
+dtls_auto_generate_cert=yes
+webrtc=yes
+context=default
+disallow=all
+allow=opus,speex,g722,ulaw,gsm
+
+[mobile]
+type=aor
+max_contacts=5
+remove_existing=yes
+  
+[mobile]
+type=auth
+auth_type=userpass
+username=${ADMIN_USER}
+password=${ADMIN_PASS}
+ 
+[mobile]
+type=endpoint
+aors=mobile
+auth=mobile
+dtls_auto_generate_cert=yes
+webrtc=yes
+context=default
+disallow=all
+allow=opus,speex,g722,ulaw,gsm
+
+[radio0]
+type=aor
+max_contacts=5
+remove_existing=yes
+  
+[radio0]
+type=auth
+auth_type=userpass
+username=${UA_USER}
+password=${UA_PASS}
+ 
+[radio0]
+type=endpoint
+aors=radio0
+auth=radio0
+dtls_auto_generate_cert=yes
+webrtc=yes
+context=default
+disallow=all
+allow=opus,speex,g722,ulaw,gsm
+
+EOF
+
 cat > /opt/remotepi/etc/asterisk/pjsip_wizard_remotepi.conf <<EOF
 [radio0]
 type = wizard
 max_contacts = 4
 accepts_auth = yes
 accepts_registrations = yes
+sends_registrations = no
 has_phoneprov = no
 transport = transport-udp
 has_hint = yes
@@ -25,6 +92,7 @@ type = wizard
 max_contacts = 1
 accepts_auth = yes
 accepts_registrations = yes
+sends_registrations = no
 has_phoneprov = no
 transport = transport-udp
 has_hint = yes
@@ -107,4 +175,4 @@ sudo cp /etc/letsencrypt/live/istabpeople.com/*.pem /opt/remotepi/etc/ssl/
 sudo chown -R asterisk:asterisk /opt/remotepi/etc/ssl/
 sudo chmod o-rwx /opt/remotepi/etc/ssl
 
-sudo service asterisk restart
+#sudo service asterisk restart
