@@ -533,7 +533,8 @@ sub station_modeset {
 
    if ($new_mode eq "phone") {
       Log "station", $LOG_INFO, "Switching to PHONE mode";
-      system("/opt/remotepi/bin/modeset-phone");
+      system("/opt/remotepi/bin/modeset-off");
+      system("/opt/remotepi/genconf/baresip-ua");
       start_baresip_channel($active_rig);
    } elsif ($new_mode eq "digi") {
       Log "station", $LOG_INFO, "Switching to DIGI mode";
@@ -859,7 +860,7 @@ sub parse_ari {
    } elsif ($rdata->{'type'} =~ m/^ChannelLeftBridge$/i) {
       Log "bridge", $LOG_INFO, "Channel $chan_name ($chan_id) left bridge: " . ari_bridge_str($radio0->{'bridge_id'});
    } elsif ($rdata->{'type'} =~ m/^ChannelStateChange$/i) {
-      Log "ari", $LOG_INFO, "ChannelStateChange: " . Dumper($rdata);
+      Log "ari", $LOG_DEBUG, "ChannelStateChange: " . Dumper($rdata);
    } elsif ($rdata->{'type'} =~ m/^ChannelVarset$/i) {
       Log "ari", $LOG_DEBUG, "ChannelVarset: " . Dumper($rdata);
    } elsif ($rdata->{'type'} =~ m/^PlaybackStarted$/i) {
@@ -885,8 +886,8 @@ Log "ari", $LOG_INFO, "Initializing ARI connection";
 my $ari_conn = Net::Async::WebSocket::Client->new(
    on_text_frame => sub {
       my ( $self, $frame ) = @_;
-   our $rdata = decode_json($frame) or die("Failed parsing JSON");
-   parse_ari($rdata);
+      our $rdata = decode_json($frame) or die("Failed parsing JSON");
+      parse_ari($rdata);
    },
 );
 

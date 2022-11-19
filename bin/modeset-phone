@@ -2,18 +2,15 @@
 . /opt/remotepi/etc/config.sh
 /opt/remotepi/bin/modeset-off
 
-tmux detach
+#tmux detach
 
 # Configure mixer
 amixer -c$CARD set 'Speaker',0 ${PHONE_SPKR}
 amixer -c$CARD set 'Mic',0 ${PHONE_MIC}
 
-#echo "* Setting power to 100W"
-#rigctl -m 4 L RFPOWER 1
-
 /opt/remotepi/genconf/baresip-ua
 
-# Start tmux session
+ Start tmux session
 tmux new-session -s phone -d
 tmux send-keys "${RUN}/baresip-launch.sh" C-m
 tmux rename-window 'baresip-cli'

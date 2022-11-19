@@ -19,6 +19,21 @@ inbound_auth/password = ${UA_PASS}
 ;endpoint/allow = g722,opus,gsm,ulaw,alaw
 endpoint/allow = g722
 endpoint/context = ${UA_CONTEXT}
+
+[mobile]
+type = wizard
+max_contacts = 1
+accepts_auth = yes
+accepts_registrations = yes
+has_phoneprov = no
+transport = transport-udp
+has_hint = yes
+hint_exten = 0
+inbound_auth/username = mobile
+inbound_auth/password = abcde12345
+;endpoint/allow = g722,opus,gsm,ulaw,alaw
+endpoint/allow = g722
+endpoint/context = mpbile
 EOF
 
 cat > /opt/remotepi/etc/asterisk/ari.remotepi.conf <<EOF
@@ -44,21 +59,14 @@ exten => 1,1,Noop()
  same => n,WaitExten()
 ; same => n,Hangup()
 
-[joe-mobile]
+[mobile]
 ; Ham-radio stuff
 exten => 5000,1,Goto(ham-menu,s,1)
 include => common
 
 [ham-login]
 ; Do we need to login?
-;; Is this c79651 or joe-mobile?? If so, no login needed!
-
 exten => s,1,Noop()
-
-;; Nope - Skip to menu
-;exten => s,n,Goto(ham-menu,s,1)
-
-; Login required...
 exten => s,n,Goto(ham-login,1,1)
 
 ; Read and check password

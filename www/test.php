@@ -6,7 +6,7 @@
 <html>
  <head>
   <title>Remote Radio Access</title>
-  <script src="js/jquery-3.6.0.min.js"></script>
+  <script src="js/jquery.min.js"></script>
   <script src="js/jquery.mobile-1.4.5.min.js"></script>
   <script src="js/SIPml-api.js"></script>
   <link rel="stylesheet" href="css/dark.css"/>
