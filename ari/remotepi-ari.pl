@@ -588,7 +588,7 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
                   # do the things
                   if ($digit eq 1) {
                      my $newfreq;
-                     if ($duration <= $dtmf_long_thres) {
+                     if ($duration < $dtmf_long_thres) {
                         $newfreq = rig_get_freq() + ($tuning_step_multipliers[$tuning_step_multiplier]);
                         print "[dtmf] Tuning UP (short) to " . $newfreq/1000 . "\n";
                      } elsif ($duration >= $dtmf_long_thres) {
@@ -598,7 +598,7 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
                      rig_set_freq($newfreq, $chan_id);
                   } elsif ($digit eq 4) {
                      my $newfreq;
-                     if ($duration <= $dtmf_long_thres) {
+                     if ($duration < $dtmf_long_thres) {
                         $newfreq = rig_get_freq() - ($tuning_step_multipliers[$tuning_step_multiplier]);
                         print "[dtmf] Tuning DOWN (short) to " . $newfreq/1000 . "\n";
                      } elsif ($duration >= $dtmf_long_thres) {
