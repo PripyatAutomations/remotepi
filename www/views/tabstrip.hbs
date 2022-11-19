@@ -1,0 +1,27 @@
+<!-- Tab-strip control for switching between windows -->
+<div class="tabstrip">
+</div>
+<script>
+
+function tabstrip_clear() {
+}
+
+function tabstrip_add($name) {
+}
+
+function tabstrip_update() {
+  tabstrip_clear();
+
+  // Find open windows:
+  var $wins = find_window(null);
+
+  // for each window
+  $wins.each(function(k, v) {
+     // Add to tabstrip
+     tabstrip_add($wins[k]);
+  });
+}
+
+$(document).ready(function() {
+});
+</script>

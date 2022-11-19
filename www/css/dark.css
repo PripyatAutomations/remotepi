@@ -1,0 +1,115 @@
+/* Some default styles while the loader does it's thing */
+html, body {
+   background: #0c0c0c;
+   color: #c0c0c0;
+   padding: 0px;
+   margin: 0px;
+}
+
+a, a:visited, a:active {
+  color: #7070a0;
+  text-decoration: underline;
+}
+
+a:hover {
+  text-decoration: italic, underline;
+}
+
+progress {
+}
+
+progress:not([value]) {
+}
+
+div#loadingsplash, div#noscript {
+  background: black;
+  color: #f00000;
+  border: 2px solid #f00000;
+  margin: 10px;
+  padding: 10px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: CALC(100% - 40px);
+  width: CALC(100% - 40px);
+  z-index: 10000;
+}
+
+div#loading {
+  color: red;
+  text-align: center;
+  border: 2px solid #f00000;
+  padding: 10px;
+  position: absolute;
+  left: 30%;
+  top: 30%;
+  width: 40%;
+  height: 5em;
+}
+
+/********
+ * menu *
+ ********/
+div#menubar {
+}
+
+button#menu {
+  background: #707aca;
+  border: 2px dashed #101a6a;
+  border-radius: 5px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 1.6em;
+  height: 1.6em;
+  width: 4em;
+}
+
+button#menu[value=false] {
+  background: #707aca;
+  border: 2px dashed #101a6a;
+  color: white;
+}
+
+button#menu[value=true] {
+  background: #101a6a;
+  border: 2px dashed #707aca;
+  color: white;
+}
+
+div#menu {
+  display: none;
+  background: #101a6a;
+  border: 2px solid #707aca;
+  color: white;
+  position: fixed;
+  height: CALC(100% - 3em - 2px);
+  left: 1px;
+  top: CALC(2em + 11px);
+  padding-top: 2px;
+  padding-left: 4px;
+  width: 10em;
+}
+
+div#win_flrig1 {
+   border: 2px solid green;
+   border-top-right-radius: 20px;
+   position: fixed;
+   top: 0px;
+   left: 10.5em;
+   height: 327px;
+   width: 430px;
+   overflow: hidden;
+}
+
+iframe#flrig {
+  height: 100%;
+  width: 100%;
+}
+ 
+div#win_webrtc {
+  position: fixed;
+  border: 2px solid green;
+  top: 0px;
+  left: CALC(10.5em + 450px);
+  height: 100%;
+}
