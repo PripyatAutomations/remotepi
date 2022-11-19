@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <title>Connecting...</title>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="js/underscore.min.js"></script>
+  <script src="js/handlebars.min.js"></script>
+  <script src="js/jquery/jquery-autobars.js"></script>
+  <link rel="stylesheet" href="css/crt.css"/>
+  <link rel="license" href="/api/help/license"/>
+  <meta charset="utf-8">
+  <meta name="author" content="sales@osdev.ninja"/>
+  <meta name="description" content="osdev.ninja"/>
+  <meta name="viewport" content="width=device-width; initial-scale=1"/>
+  <meta name="abuse-contact" content="mailto:odn-noc@osdev.ninja?subject=ODN+Social+Abuse"/>
+  <meta name="gdpr-statement" content="https://social.osdev.ninja/api/doc/gdpr"/>
+ </head>
+ <body>
+  <script>
+  $(document).ready(function() {
+    (function($){$.fn.typeWrite=function(s){
+        var o={content:$(this).text(),delay:40,t:this,i:0};
+        if(s){$.extend(o,s);}o.t.text('');
+        var i=setInterval(function() {
+            o.t.text(o.t.text()+o.content.charAt(o.i++));    
+            if(o.i==o.content.length){clearInterval(i);}}
+        ,o.delay);
+      return o.t;  
+    };})(jQuery);
+    
+      var audioplayer = document.getElementById("dialupNoise");
+      // Allow user to skip annoying retro intro ;)
+      var SkippedIntro = false;
+
+      function skipIntro() {
+         SkippedIntro = true;
+          audioplayer.pause();
+          // Hide the skipIntro button & note...
+          $('span#skipIntro').hide();
+          // Hide all the bits of the dialup process
+          window.location.href = '/man.html';
+      };
+
+      /* ESCape - SKIP intro */
+      $(document).keydown(function(event) {
+         if (event.keyCode == 27) {
+             if (!SkippedIntro) {
+                SkippedIntro = true;
+                skipIntro();
+                // Stop processing this event (don't send it lower) */
+                event.preventDefault();
+             }
+         }
+      });
+
+      $('#skipIntro').click(function() { skipIntro(); });
+
+      // Begin the show!
+      $('#dialup1').show();
+      $('#local').typeWrite({content: "picocom /dev/ttyS0"});
+
+      setTimeout(function() {
+         $('#local2').show("fast");
+
+         setTimeout(function() {
+            if (!SkippedIntro) {
+               $('#dialup2').show("fast");
+               $('#dialup2').typeWrite({content: "+++ATZ"});
+            }
+          }, 500);
+      }, 1000);
+
+      document.getElementById('dialupNoise').oncanplay = function() {
+         setTimeout(function() {
+            if (!SkippedIntro) {
+               $('#dialup3').show("fast");
+               setTimeout(function() {
+                 $('#dialup5').show("fast");
+                 $('#dialup6').show("slow");
+                 $('#dialup6').typeWrite({content:'ATDT15702340003'});
+               }, 500);
+            }
+            audioplayer.play();
+          }, 1250);
+
+         // Start the dialup noises...
+         setTimeout(function() {
+            if (!SkippedIntro)  {
+               $('#dialup7').show("fast");
+            }
+         }, 28500);
+
+         setTimeout(function() {
+                  $('#shell1').show();
+                  $('#shell2').show();
+         }, 29000);
+         
+         setTimeout(function() {
+                  $('#shell3').show();
+                  $('#shell3').typeWrite({ content: "rtm/fsckit"});
+         }, 29500);
+
+         setTimeout(function() {
+                  $('#shell4').show("fast");
+         }, 30500);
+
+         setTimeout(function() {
+           $('#shell5').show("fast");
+         }, 31000);
+      };
+
+      // If we haven't already hidden it, hide the intro..
+      setTimeout(function() {
+         if (!SkippedIntro)
+            skipIntro();
+      },35000);
+  });
+  </script>
+  <div id="wrappedcontent" class="ow_scanline">
+   <video preload="auto" id="dialupNoise">
+    <source src="https://arcane.codes/audio/dialup.ogg" type="audio/ogg"/>
+    <source src="https://arcane.codes/audio/dialup.mp3" type="audio/mpeg"/>
+   </video>
+   <div id="skipIntro">Click here or Press ESC to Skip Intro</div>
+   * There should be sweet glorious sound. If not, refresh (F5) your browser *<br/><br/>
+   <div id="dialup1">
+     fsckit<green>@</green>toaster<green>:</green>~<red>&gt; </red><span id="local"></span><br/>
+     <span id="local2">Opened /dev/ttyS0 at 115200bps</span>
+    </div>
+    <div id="dialup2"></div>
+    <div id="dialup3"></div>
+    <div id="dialup4"></div>
+    <div id="dialup5">OK</div>
+    <div id="dialup6"></div>
+    <div id="dialup7">CONNECT 57600</div>
+    <div id="shell1">
+     <pre>
+     Thank you for calling The Underground!
+     
+     We do not recognize the line you are calling from...
+     
+     Security check OK, allowing caller.
+     </pre>
+    </div>
+    <span id="shell2">Login:</span>
+    <span id="shell3"></span><br/>
+    <span id="shell4">Password:</span><br/>
+    <div id="shell5"><br/>Welcome back, fsckit! You have new mail.</div>
+   </div>
+  </div>
+ </body>
+</html>

@@ -1,3 +1,12 @@
+html, body {
+    background-color: black;
+    color: #c0c0c0;
+}
+
+a, a:visited, a:active {
+    color: cyan;
+    text-decoration: underline;
+}
 /* Some default styles while the loader does it's thing */
 html, body {
    background: #0c0c0c;
@@ -112,4 +121,29 @@ div#win_webrtc {
   top: 0px;
   left: CALC(10.5em + 450px);
   height: 100%;
+}
+
+#menu {
+ width: 100%;
+ height: 16px;
+ border: 1px solid #0acf00;
+}
+
+/* IFRAME containing flrig window. Must match the VNC size */
+#if_flrig {
+ border: 1px solid red;
+ position: absolute;
+ height: 90%;
+ width: 492px;
+ left: 10px;
+ top: 28px;
+}
+
+#if_sipml {
+ border: 1px solid blue;
+ position: absolute;
+ left: CALC(50% - 3px);
+ top: 28px;
+ height: 90%;
+ width: 49.5%;
 }
