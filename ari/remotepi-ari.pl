@@ -12,14 +12,25 @@ use Net::Async::WebSocket::Client;
 use JSON;
 use Data::Dumper;
 use Hamlib;
+use POSIX qw(strftime);
+
 require LWP::UserAgent;
 
 # disable linebuffering on output, so we can log easier
 $| = 1;
 
 ####XXX: Move to config file####
-my $debug = 0;
 my $app_name = "remotepi";
+
+# Log levels for messages
+my $LOG_NOISE = 6;
+my $LOG_DEBUG = 5;
+my $LOG_INFO = 4;
+my $LOG_WARN = 3;
+my $LOG_BUG = 2;
+my $LOG_FATAL = 1;
+
+my $debug_level = $LOG_INFO;
 
 my $ari = {
    "host" => "127.0.0.1",
@@ -103,6 +114,52 @@ print "The standard Dangerous Devices warranty applies.\n";
 print "-- If it breaks, you get to keep both pieces. If there are more than two pieces, please return them for product improvement!\n";
 print "http://github.com/PripyatAutomations/remotepi\n\n";
 
+#############
+# Utilities #
+#############
+sub Log {
+#   # Capture the log_type and level from arguments
+   my $log_type = shift;
+   my $log_level = shift;
+
+   if ($debug_level < $log_level) {
+      return 0;
+   }
+
+   my $datestamp = strftime("%Y/%m/%d %M:%H:%S", localtime);
+   my $lvl;
+
+my $LOG_NOISE = 6;
+my $LOG_DEBUG = 5;
+my $LOG_INFO = 4;
+my $LOG_WARN = 3;
+my $LOG_BUG = 2;
+my $LOG_FATAL = 1;
+
+   if ($log_level == $LOG_NOISE) {
+      $lvl = "noise";
+   } elsif ($log_level == $LOG_DEBUG) {
+      $lvl = "debug";
+   } elsif ($log_level == $LOG_INFO) {
+      $lvl = "info";
+   } elsif ($log_level == $LOG_WARN) {
+      $lvl = "warn";
+   } elsif ($log_level == $LOG_BUG) {
+      $lvl = "BUG";
+   } elsif ($log_level == $LOG_FATAL) {
+      $lvl = "FATAL";
+   } else {
+      $lvl = "UNNOWN";
+   }
+   print $datestamp . " [$log_type/$lvl]";
+
+   foreach my $a(@_) {
+      print " " . $a;
+   }
+   print "\n";
+}
+
+
 #################
 # Call Handling #
 #################
@@ -111,72 +168,72 @@ print "http://github.com/PripyatAutomations/remotepi\n\n";
 # Hamlib #
 ##########
 sub hamlib_debug_level {
-    my $new_lvl = $_[0];
+   my $new_lvl = $_[0];
 
-    if ($new_lvl =~ m/none/i) {
-      return $Hamlib::RIG_DEBUG_NONE;
-    } elsif ($new_lvl =~ m/bug/i) {
-      return $Hamlib::RIG_DEBUG_BUG;
-    } elsif ($new_lvl =~ m/err/i) {
-      return $Hamlib::RIG_DEBUG_ERR;
-    } elsif ($new_lvl =~ m/warn/i) {
-      return $Hamlib::RIG_DEBUG_WARN;
-    } elsif ($new_lvl =~ m/verbose/i) {
-      return $Hamlib::RIG_DEBUG_VERBOSE;
-    } elsif ($new_lvl =~ m/trace/i) {
-      return $Hamlib::RIG_DEBUG_TRACE;
-    } elsif ($new_lvl =~ m/cache/i) {
-      return $Hamlib::RIG_DEBUG_CACHE;
-    } else {
-      return $Hamlib::RIG_DEBUG_VERBOSE;
-    }
+   if ($new_lvl =~ m/none/i) {
+     return $Hamlib::RIG_DEBUG_NONE;
+   } elsif ($new_lvl =~ m/bug/i) {
+     return $Hamlib::RIG_DEBUG_BUG;
+   } elsif ($new_lvl =~ m/err/i) {
+     return $Hamlib::RIG_DEBUG_ERR;
+   } elsif ($new_lvl =~ m/warn/i) {
+     return $Hamlib::RIG_DEBUG_WARN;
+   } elsif ($new_lvl =~ m/verbose/i) {
+     return $Hamlib::RIG_DEBUG_VERBOSE;
+   } elsif ($new_lvl =~ m/trace/i) {
+     return $Hamlib::RIG_DEBUG_TRACE;
+   } elsif ($new_lvl =~ m/cache/i) {
+     return $Hamlib::RIG_DEBUG_CACHE;
+   } else {
+     return $Hamlib::RIG_DEBUG_VERBOSE;
+   }
 }
 
 sub rig_get_freq {
-    my $vfo = $radio0->{'active_vfo'};
-    if ($vfo eq $Hamlib::RIG_VFO_A) {
-       return $radio0->{'freq_a'} = $rig->get_freq();
-    } elsif ($vfo eq $Hamlib::RIG_VFO_B) {
-       return $radio0->{'freq_b'} = $rig->get_freq();
-    } elsif ($vfo eq $Hamlib::RIG_VFO_C) {
-       return $radio0->{'freq_c'} = $rig->get_freq();
-    }
+   my $vfo = $radio0->{'active_vfo'};
+   if ($vfo eq $Hamlib::RIG_VFO_A) {
+      return $radio0->{'freq_a'} = $rig->get_freq();
+   } elsif ($vfo eq $Hamlib::RIG_VFO_B) {
+      return $radio0->{'freq_b'} = $rig->get_freq();
+   } elsif ($vfo eq $Hamlib::RIG_VFO_C) {
+      return $radio0->{'freq_c'} = $rig->get_freq();
+   }
 }
 
 
 sub cancel_autoreadback {
-    if (defined($auto_readback_timer)) {
-       $loop->remove($auto_readback_timer);
-       undef($auto_readback_timer);
-    }
+   if (defined($auto_readback_timer)) {
+      $loop->remove($auto_readback_timer);
+      undef($auto_readback_timer);
+   }
 }
 
 sub rig_set_freq {
-    my $freq = $_[0];
-    my $chan_id = $_[1];
-    my $vfo = $radio0->{'active_vfo'};
+   my $freq = $_[0];
+   my $chan_id = $_[1];
+   my $vfo = $radio0->{'active_vfo'};
 
-    if ($vfo eq $Hamlib::RIG_VFO_A) {
-       $rig->set_freq($Hamlib::RIG_VFO_A, $freq);
-       $radio0->{'freq_a'} = $freq;
-    } elsif ($vfo eq $Hamlib::RIG_VFO_B) {
-       $rig->set_freq($Hamlib::RIG_VFO_B, $freq);
-       $radio0->{'freq_b'} = $freq;
-    } elsif ($vfo eq $Hamlib::RIG_VFO_C) {
-       $rig->set_freq($Hamlib::RIG_VFO_C, $freq);
-       $radio0->{'freq_c'} = $freq;
-    }
+   if ($vfo eq $Hamlib::RIG_VFO_A) {
+      $rig->set_freq($Hamlib::RIG_VFO_A, $freq);
+      $radio0->{'freq_a'} = $freq;
+   } elsif ($vfo eq $Hamlib::RIG_VFO_B) {
+      $rig->set_freq($Hamlib::RIG_VFO_B, $freq);
+      $radio0->{'freq_b'} = $freq;
+   } elsif ($vfo eq $Hamlib::RIG_VFO_C) {
+      $rig->set_freq($Hamlib::RIG_VFO_C, $freq);
+      $radio0->{'freq_c'} = $freq;
+   }
 
-#    cancel_autoreadback();	# Cancel last autoreadback timer
-#    $auto_readback_timer = IO::Async::Timer::Countdown->new(
-#       delay => $dtmf_announce_delay,
-#       on_expire => sub {
-#          print "[dtmf] Readback timeout ($dtmf_announce_delay)\n";
-#          rig_readback_freq($chan_id);
-#          rig_readback_mode($chan_id);
-#       }
-#    );
-#    $loop->add(($auto_readback_timer)->start);
+#   cancel_autoreadback();	# Cancel last autoreadback timer
+#   $auto_readback_timer = IO::Async::Timer::Countdown->new(
+#      delay => $dtmf_announce_delay,
+#      on_expire => sub {
+#         Log "dtmf", $LOG_INFO, Readback timeout ($dtmf_announce_delay)";
+#         rig_readback_freq($chan_id);
+#         rig_readback_mode($chan_id);
+#      }
+#   );
+#   $loop->add(($auto_readback_timer)->start);
 }
 
 sub rig_readback_freq {
@@ -184,13 +241,12 @@ sub rig_readback_freq {
    my $chan_id = $_[0];
    cancel_autoreadback();
    $vfo_freq = rig_get_freq();
-   print "[dtmf] * Readback [VFO" . $radio0->{'active_vfo'} . "] freq: " . $vfo_freq/1000 . "\n";
+   Log "dtmf", $LOG_DEBUG, "Readback [VFO" . $radio0->{'active_vfo'} . "] freq: " . $vfo_freq/1000;
    ari_bridge_add_chan($alert_bridge->{'id'}, $chan_id);
    my $body_args = { "SAY_DATA" => "Frequency " . $vfo_freq/1000 };
    my $tmpchan = ari_originate_tts("readbackfreq", $body_args);
    my $res = ari_bridge_add_chan($alert_bridge->{'id'}, $tmpchan);
 
-   print "rig_readback_freq res: " . Dumper($res) . "\n";
    return $vfo_freq;
 }
 
@@ -203,7 +259,7 @@ sub rig_refresh() {
 }
 
 # Initialize hamlib interface
-print "[hamlib] Initializing hamlib interface to rig $active_rig\n";
+Log "hamlib", $LOG_INFO, "Initializing hamlib interface to rig $active_rig";
 Hamlib::rig_set_debug(hamlib_debug_level($radio0->{'debug_level'}));
 $radio0->{'hamlib'} = new Hamlib::Rig($radio0->{'model'}) or die("Failed connecting to hamlib\n");
 $rig = $radio0->{'hamlib'};
@@ -212,62 +268,56 @@ $rig->open();
 
 my $ptt = $rig->get_ptt($radio0->{'active_vfo'});
 if ($ptt) {
-   print "[ptt] Clearing $active_rig PTT...\n";
+   Log "ptt", $LOG_BUG, "Clearing $active_rig PTT...";
    $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_OFF);
 }
 
-
-print "[hamlib] Backend copyright:\t$rig->{caps}->{copyright}\n";
-print "[hamlib] Model:\t\t\t$rig->{caps}->{model_name}\n";
-print "[hamlib] Manufacturer:\t\t$rig->{caps}->{mfg_name}\n";
-print "[hamlib] Backend version:\t$rig->{caps}->{version}\n";
-my $inf = $rig->get_info();
-print "[hamlib] Connected Rig:\t\t$inf";
-
+$radio0->{'hamlib_riginfo'} = $rig->get_info();
+Log "hamlib", $LOG_INFO, "Backend copyright:\t$rig->{caps}->{copyright}";
+Log "hamlib", $LOG_INFO, "Model:\t\t$rig->{caps}->{model_name}";
+Log "hamlib", $LOG_INFO, "Manufacturer:\t\t$rig->{caps}->{mfg_name}";
+Log "hamlib", $LOG_INFO, "Backend version:\t$rig->{caps}->{version}";
+Log "hamlib", $LOG_INFO, "Connected Rig:\t" . $radio0->{'hamlib_riginfo'};
 
 ########
 # DTMF #
 ########
 sub cancel_dtmf_timeout {
-    if (defined($dtmf_digit_timer)) {
-       # Free the old timer
-       $loop->remove($dtmf_digit_timer);
-       if ($debug) {
-          print "[dtmf/debug] clearing timeout for active channel.";
-       }
-       undef($dtmf_digit_timer);
-    } else {
-       if ($debug) {
-          print "[dtmf/debug] clearing timeout (not present).\n";
-       }
-    }
+   if (defined($dtmf_digit_timer)) {
+      # Free the old timer
+      $loop->remove($dtmf_digit_timer);
+      Log "dtmf", $LOG_DEBUG, "clearing timeout for active channel.";
+      undef($dtmf_digit_timer);
+   } else {
+      Log "dtmf", $LOG_DEBUG, "clearing timeout (not present).";
+   }
 }
 
 sub dtmf_timeout_update {
-    my $chan_id = $_[0];
-    my $rfside = $_[1];
-    cancel_dtmf_timeout();
+   my $chan_id = $_[0];
+   my $rfside = $_[1];
+   cancel_dtmf_timeout();
 
-    $dtmf_digit_timer = IO::Async::Timer::Countdown->new(
-       delay => $dtmf_timeout,
-       on_expire => sub {
-          print "[dtmf] digit timeout ($dtmf_timeout), clearing " . ($rfside ? "RF" : "VoIP") . " digit buffer for ($chan_id)\n";
+   $dtmf_digit_timer = IO::Async::Timer::Countdown->new(
+      delay => $dtmf_timeout,
+      on_expire => sub {
+         Log "dtmf", $LOG_INFO, "digit timeout ($dtmf_timeout), clearing " . ($rfside ? "RF" : "VoIP") . " digit buffer for ($chan_id)";
 
-          if ($rfside) {
-             $digits_rf = '';
-          } else {
-             $digits_local = '';
-          }
-       }
-    );
-    $loop->add(($dtmf_digit_timer)->start);
+         if ($rfside) {
+            $digits_rf = '';
+         } else {
+            $digits_local = '';
+         }
+      }
+   );
+   $loop->add(($dtmf_digit_timer)->start);
 }
 
 ###########################
 # Asterisk REST Interface #
 ###########################
 sub ari_bridge_enumerate {
-   print "[ari] Enumerating bridges\n";
+   Log "ari", $LOG_INFO, "Enumerating bridges";
    my $ari_bridges_json = ari_get("/bridges");
    our $ari_bridges;
    our $bridge;
@@ -283,9 +333,7 @@ sub ari_bridge_enumerate {
 
          # if a bridge name is new or is updated
          if (!defined($bridge_names->{$brid}) || !($bridge_names->{$brid} eq $brname)) {
-            if ($debug) {
-               print "[bridge/debug] caching name $brname => [$brid]\n";
-            }
+            Log "bridge", $LOG_DEBUG, "caching name $brname => [$brid]";
 
             # Store the name in the array
             $bridge_names->{$brid} = $brname;
@@ -303,14 +351,13 @@ sub ari_bridge_find_or_create {
 
    for $bridge (@$active_bridges) {
       if ($bridge->{'name'} eq $target_bridge) {
-         print "[ari] Selecting bridge " . ari_bridge_str($bridge->{'id'}) . "\n";
+         Log "ari", $LOG_INFO, "Selecting bridge " . ari_bridge_str($bridge->{'id'});
          return $bridge;
       }
    }
 
    if (!defined($bridge)) {
-      # Otherwise, create a new bridge
-      print "[ari] Creating new bridge: \@$target_bridge\n";
+      Log "ari", $LOG_INFO, "Creating new bridge: \@$target_bridge";
       my $my_bridge = ari_post("/bridges", {"name" => $target_bridge, "type" => "mixing,dtmf_events,proxy_media" });
       return "";
    }
@@ -321,11 +368,11 @@ sub ari_bridge_add_chan {
    my $chan_id = $_[1];
 
    if (!defined($bridge) || !defined($chan_id)) {
-      print "[bridge] add_chan missing argument: bridge=" . defined($bridge) . " chan_id=" . defined($chan_id) . "\n";
+      Log "bridge", $LOG_BUG, "add_chan missing argument: bridge=" . defined($bridge) . " chan_id=" . defined($chan_id);
       return;
    }
 
-   print "[bridge] adding channel $chan_id to bridge " . ari_bridge_str($bridge) . "\n";
+   Log "bridge", $LOG_INFO, "adding channel $chan_id to bridge " . ari_bridge_str($bridge);
    our $res = ari_post("/bridges/$bridge/addChannel", {
       'channel' => $chan_id,
       # Ensure DTMF doesn't get out to the radio
@@ -336,38 +383,36 @@ sub ari_bridge_add_chan {
 }
 
 sub ari_originate_tts {
-  my $endpoint = $_[0];
-  my $body_args = $_[1];
-  my $chan_id;
-  our $res;
+   my $endpoint = $_[0];
+   my $body_args = $_[1];
+   my $chan_id;
+   our $res;
 
-  my $query_args = { "endpoint" => "Local/1\@" . $endpoint,
-                     "extension" => "1",
-                     "context" => $endpoint,
-                     "otherChannelId" => "tts-$tts_seqno" };
-  $res = ari_post("/channels/create", $query_args, $body_args);
-  $tts_seqno++;
-  print "res: " . Dumper($res) . "\n";
-#  $chan_id = $res->{'channel'}{'id'};
-  $chan_id = "tts-$tts_seqno";
+   my $query_args = { "endpoint" => "Local/1\@" . $endpoint,
+                      "extension" => "1",
+                      "context" => $endpoint,
+                      "otherChannelId" => "tts-$tts_seqno" };
+   $res = ari_post("/channels/create", $query_args, $body_args);
+   $tts_seqno++;
+   Log "tts", $LOG_DEBUG, "originate_tts: res: " . Dumper($res) . "\n";
+ #  $chan_id = $res->{'channel'}{'id'};
+   $chan_id = "tts-$tts_seqno";
 
-  print "\n[tts] originating Local channel (tts-$tts_seqno) for tts: " . Dumper($body_args) . "\n";
+   Log "tts", $LOG_INFO, "originating Local channel (tts-$tts_seqno) for tts: " . Dumper($body_args);
 
-  if (!defined($endpoint) || !defined($chan_id)) {
-      print "[tts] ari_originate_tts: endpoint=" . defined($endpoint) . " chan_id=" . defined($chan_id) . "\n";
+   if (!defined($endpoint) || !defined($chan_id)) {
+      Log"tts", $LOG_INFO, "ari_originate_tts: endpoint=" . defined($endpoint) . " chan_id=" . defined($chan_id);
       return;
    }
 
-  print "[tts] originate $endpoint ($chan_id)\n";
-  return $chan_id;
+   Log "tts", $LOG_INFO, "originate $endpoint ($chan_id)";
+   return $chan_id;
 }
 
 sub ari_post {
    my $url = "http://" . $ari->{'host'} . ":" . $ari->{'port'} . $ari->{'prefix'} . $_[0];
 
-   if ($debug) {
-      print "[ari/debug] POST $url\n";
-   }
+   Log "ari", $LOG_DEBUG, "POST $url";
 
    my $ua      = LWP::UserAgent->new(); 
    $ua->timeout(20);
@@ -381,16 +426,14 @@ sub ari_post {
 
    $request->authorization_basic($ari->{'user'}, $ari->{'pass'});
    my $res = $ua->request($request, $_[1]);
-#   print "Res: " . Dumper($res) . "\n";
+   Log "ari", $LOG_DEBUG, "post Res: " . Dumper($res) . "\n";
    return $res->content;
 }
 
 sub ari_get {
    my $url = "http://" . $ari->{'host'} . ":" . $ari->{'port'} . $ari->{'prefix'} . $_[0];
 
-   if ($debug) {
-      print "[ari/debug] GET $url\n";
-   }
+   Log "ari", $LOG_DEBUG, "GET $url";
 
    my $ua      = LWP::UserAgent->new(); 
    $ua->timeout(20);
@@ -409,9 +452,7 @@ sub ari_get {
 sub ari_delete {
    my $url = "http://" . $ari->{'host'} . ":" . $ari->{'port'} . $ari->{'prefix'} . $_[0];
 
-   if ($debug) {
-      print "[ari/debug] DELETE $url\n";
-   }
+   Log "ari", $LOG_DEBUG, "DELETE $url";
 
    my $ua = LWP::UserAgent->new();
    $ua->timeout(20);
@@ -424,12 +465,12 @@ sub ari_delete {
 
 sub ari_bridge_destroy_all() {
    my $target_bridge = $_[0];
-   print "[ari] Enumerating bridges\n";
+   Log "ari", $LOG_INFO, "Enumerating bridges";
    my $ari_bridges = ari_get("/bridges");
    my $active_bridges = JSON->new->utf8->decode($ari_bridges);
 
    for our $bridge (@$active_bridges) {
-      print "[ari] Killing bridge " . $bridge->{'name'} . " [" . $bridge->{'id'} . "]\n";
+      Log "ari", $LOG_INFO, "Killing bridge " . $bridge->{'name'} . " [" . $bridge->{'id'} . "]";
       my $url = "/bridge/" . $bridge->{'id'};
       ari_delete($url);
    }
@@ -440,12 +481,12 @@ sub ari_bridge_str {
    our $out;
 
    if (!defined($bridge_id)) {
-      print "[ari] ari_bridge_str: no bridge-id passed\n";
+      Log "ari", $LOG_BUG, "ari_bridge_str: no bridge-id passed";
       return;
    }
 
    if (!defined($bridge_names->{$bridge_id})) {
-      print "[bridge/debug] bridge_str miss for id " . $bridge_id . "\n";
+      Log "bridge", $LOG_DEBUG, "bridge_str miss for id " . $bridge_id;
       return "[" . $_[0] . "]";
    }
    $out = '@' . $bridge_names->{$bridge_id} . " [" . $bridge_id . "]";
@@ -458,7 +499,7 @@ sub ari_play {
    $tts_seqno++;
    ari_post("/channels/$chan_id/play/$tts_seqno?media=$media");
    
-   print "[tts] Playing \"$media\" on $chan_id ($tts_seqno)\n";
+   Log "tts", $LOG_DEBUG, "Playing \"$media\" on $chan_id ($tts_seqno)";
    return $tts_seqno;
 }
 
@@ -472,7 +513,7 @@ sub start_baresip_channel {
    my $chan_name = $_[0];
    my $dialstring = $radio0->{'dialstring'};
 
-   print "[audio] starting baresip for channel $chan_name with dialstring \"$dialstring\"\n";
+   Log "audio", $LOG_INFO, "starting baresip for channel $chan_name with dialstring \"$dialstring\"";
    my $file = "/opt/remotepi/logs/baresip-$chan_name.log";
    open my $fh, '>', $file;
    defined(my $pid = fork) or die "fork: $!";
@@ -482,7 +523,7 @@ sub start_baresip_channel {
    }
    waitpid $pid, 0;
    my $retcode = $?;
-   print "* baresip-$chan_name running as pid $pid with status $retcode\n";
+   Log "audio", $LOG_INFO, "baresip-$chan_name running as pid $pid with status $retcode";
 }
 
 sub station_modeset {
@@ -491,372 +532,361 @@ sub station_modeset {
    $radio0->{'station_mode'} = $new_mode;
 
    if ($new_mode eq "phone") {
-      print "[station] Switching to PHONE mode\n";
+      Log "station", $LOG_INFO, "Switching to PHONE mode";
       system("/opt/remotepi/bin/modeset-phone");
       start_baresip_channel($active_rig);
    } elsif ($new_mode eq "digi") {
-      print "[station] Switching to DIGI mode\n";
+      Log "station", $LOG_INFO, "Switching to DIGI mode";
       system("/opt/remotepi/bin/modeset-digi");
    } elsif ($new_mode eq "winlink") {
-      print "[station] Switching to WINLINK mode\n";
+      Log "station", $LOG_INFO, "Switching to WINLINK mode";
       system("/opt/remotepi/bin/modeset-winlink");
+   }
+}
+
+########
+# DTMF #
+########
+sub parse_ari {
+   my $rdata = $_[0];
+   my $digit = $rdata->{'digit'};
+   my $duration = $rdata->{'duration_ms'};
+   my $chan_name = $rdata->{'channel'}{'name'};
+   my $chan_id = $rdata->{'channel'}{'id'};
+   my $chan_state = $rdata->{'channel'}{'state'};
+   my $rfside = 0;
+   my $rdigits;
+
+   if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'dialplan'}) &&
+       defined($rdata->{'channel'}{'dialplan'}{'context'}) && $rdata->{'channel'}{'dialplan'}{'context'} =~ m/^radio(\d+)$/) {
+      $rfside = 1;
+   }
+
+   if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'caller'}) &&
+       defined($rdata->{'channel'}{'caller'}{'number'}) && $rdata->{'channel'}{'caller'}{'number'} =~ m/^radio(\d+)$/) {
+      $rfside = 1;
+   }
+
+   if ($rdata->{'type'} =~ m/^ApplicationReplaced$/i) {
+      # Do things, if necessary (not yet)
+   } elsif ($rdata->{'type'} =~ m/^ChannelDtmfReceived$/i) {
+      dtmf_timeout_update($chan_id, $rfside);
+      if ($rfside) {
+         Log "dtmf", $LOG_DEBUG, "Got Digit: $digit ($duration) from $chan_name ($chan_id)";
+         $digits_rf = $digits_rf . $digit;
+      } else {
+         Log "dtmf", $LOG_DEBUG, "Got Digit: $digit ($duration) from $chan_name ($chan_id)";
+
+         # Parse single digit things
+         if ($digits_local eq "") {
+            $digits_local = $digit;
+         } else {
+            $digits_local = $digits_local . $digit;
+         }
+      }
+
+      if ($digit eq '*') {
+         cancel_dtmf_timeout();
+         if ($rfside) {
+            if ($duration >= 1000) {
+               $digits_rf = '';
+               Log "dtmf", $LOG_INFO, "Clearing DTMF buffer (RF)";
+            }
+         } else {
+            if ($duration >= 1000) {
+               $digits_local = '';
+               Log "dtmf", $LOG_INFO, "Clearing DTMF buffer (VoIP)";
+               play_beep($chan_id);
+            } elsif ($digits_local eq '***') {
+               my $curr_blocked = $radio0->{'ptt_blocked'};
+               my $blocked;
+
+               if ($curr_blocked) {
+                  $blocked = 0;
+               } else {
+                  $blocked = 1;
+               }
+
+               Log "ptt", $LOG_INFO, "Toggling PTT blocked status on $active_rig to: " . ($blocked ? "true" : "false");
+               $radio0->{'ptt_blocked'} = $blocked;
+               $digits_local = '';
+            }
+         }
+      } elsif ($digit =~ m/^(\d+)$/) {
+         cancel_dtmf_timeout();
+         if (!($rfside)) {
+            if ($digits_local eq $digit) {
+               rig_get_freq();
+               # do the things
+               if ($digit eq 1) {
+                  my $newfreq;
+                  if ($duration < $dtmf_long_thres) {
+                     $newfreq = rig_get_freq() + ($tuning_step_multipliers[$tuning_step_multiplier]);
+                     Log "dtmf", $LOG_INFO, "Tuning UP (short) to " . $newfreq/1000;
+                  } elsif ($duration >= $dtmf_long_thres) {
+                     $newfreq = rig_get_freq() + ($tuning_step_multipliers[$tuning_step_multiplier] * $tuning_step_long_multiplier);
+                     Log "dtmf", $LOG_INFO, "Tuning UP (long) to " . $newfreq/1000;
+                  }
+                  rig_set_freq($newfreq, $chan_id);
+               } elsif ($digit eq 4) {
+                  my $newfreq;
+                  if ($duration < $dtmf_long_thres) {
+                     $newfreq = rig_get_freq() - ($tuning_step_multipliers[$tuning_step_multiplier]);
+                     Log "dtmf", $LOG_INFO, "Tuning DOWN (short) to " . $newfreq/1000;
+                  } elsif ($duration >= $dtmf_long_thres) {
+                     $newfreq = rig_get_freq() - ($tuning_step_multipliers[$tuning_step_multiplier] * $tuning_step_long_multiplier);
+                     Log "dtmf", $LOG_INFO, "Tuning DOWN (long) to " . $newfreq/1000;
+                  }
+                  rig_set_freq($newfreq, $chan_id);
+               } elsif ($digit eq 2) {
+                  if ($duration <= $dtmf_long_thres) {
+                     Log "dtmf", $LOG_BUG, "NYI: gain UP (quick)";
+                  } elsif ($duration >= $dtmf_long_thres) {
+                     Log "dtmf", $LOG_BUG, "NYI: RF gain UP (long)";
+                  }
+               } elsif ($digit eq 5) {
+                 if ($duration <= $dtmf_long_thres) {
+                    Log "dtmf", $LOG_BUG, "NYI RF gain DOWN (quick)";
+                 } elsif ($duration >= $dtmf_long_thres) {
+                    Log "dtmf", $LOG_BUG, "NYI RF gain DOWN (long)";
+                 }
+               } elsif ($digit eq 3) {
+                  if ($duration <= $dtmf_long_thres) {
+                     Log "dtmf", $LOG_BUG, "NYI Mic gain UP (quick)";
+                  } elsif ($duration >= $dtmf_long_thres) {
+                     Log "dtmf", $LOG_BUG, "NYI Mic gain UP (long)";
+                  }
+               } elsif ($digit eq 6) {
+                 if ($duration <= $dtmf_long_thres) {
+                    Log "dtmf", $LOG_BUG, "NYI Mic gain DOWN (quick)";
+                 } elsif ($duration >= $dtmf_long_thres) {
+                    Log "dtmf", $LOG_BUG, "NYI Mic gain DOWN (long)";
+                 }
+               } elsif ($digit eq 9) {
+                 my $sz = @tuning_step_multipliers;
+
+                 if (($tuning_step_multiplier) >= ($sz - 1)) {
+                    # wrap around
+                    $tuning_step_multiplier = 0;
+                 } else {
+                    $tuning_step_multiplier++;
+                 }
+                 Log "dtmf", $LOG_INFO, "Set tuning step to " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")";
+               }
+              
+               $digits_local = '';
+            }
+         }
+      } elsif ($digit eq '#') {
+         cancel_dtmf_timeout();
+         if ($rfside) {
+            $rdigits = $digits_rf;
+            $digits_rf = '';
+            Log "dtmf", $LOG_INFO, "Read: $rdigits from RF $chan_name ($chan_id)";
+         } else {
+            $rdigits = $digits_local;
+            $digits_local = '';
+            Log "dtmf", $LOG_INFO, "Read: $rdigits from VoIP $chan_name ($chan_id)";
+
+            if ($rdigits eq '#') {
+               if ($radio0->{'using_vox'}) {
+                  if ($muted) {
+                     $muted = 0;
+                     Log "dtmf", $LOG_INFO, "$active_rig MUTE off";
+                  } else {
+                     $muted = 1;
+                     Log "dtmf", $LOG_INFO, "$active_rig MUTE on";
+                  }
+               } else {	# not VOX, toggle PTT
+                 if ($radio0->{'ptt_active'}) {
+                    $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_OFF);
+                    $radio0->{'ptt_active'} = 0;
+                    Log "dtmf", $LOG_INFO, "$active_rig PTT OFF";
+                 } else {
+                    if (!($radio0->{'ptt_blocked'})) {
+                       $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_ON_DATA);
+                       $radio0->{'ptt_active'} = 1;
+                       Log "dtmf", $LOG_INFO, "$active_rig PTT ON";
+                    } else {
+                       Log "ptt", $LOG_INFO, "PTT for $active_rig is blocked, igoring PTT ON request";
+                       ari_play($chan_id, "sound:beeperr")
+                    }
+                 }
+               }
+            }
+         }
+
+         # Parse the command:
+         if ($rdigits =~ m/^\*0(\d+)/) {
+            my $new_mode;
+            if ($1 == 0) {
+               $new_mode = "phone";
+            } elsif ($1 == 1) {
+               $new_mode = "digi";
+            } elsif ($1 == 2) {
+               $new_mode = "winlink";
+            } else {
+               $new_mode = "INVALID";
+            }
+            $radio0->{'station_mode'} = $new_mode;
+            Log "dtmf", $LOG_INFO, "Set Station Mode: $new_mode ($1)";
+            station_modeset($new_mode);
+         } elsif ($rdigits =~ m/^\*0#/) {
+            Log "dtmf", $LOG_INFO, "Readback mode: " . $radio0->{'station_mode'};
+         } elsif ($rdigits =~ m/^\*1(\d+)#/) {
+            Log "dtmf", $LOG_INFO, "Set VOX: $1";
+            $rig->set_level($radio0->{'active_vfo'}, "VOX", int($1));
+         } elsif ($rdigits =~ m/^\*1#/) {
+            my $vox_level = $rig->get_level_i($radio0->{'active_vfo'}, "VOX");
+            Log "dtmf", $LOG_INFO, "Readback VOX setting: $vox_level";
+         } elsif ($rdigits =~ m/^\*2#/) {
+            my $rf_gain = $rig->get_level_i($Hamlib::RIG_LEVEL_RF);
+            Log "dtmf", $LOG_INFO, "Readback RF gain: $rf_gain";
+         } elsif ($rdigits =~ m/^\*2(\d+)#/) {
+            Log "dtmf", $LOG_INFO, "Set RF gain: $1";
+            $rig->set_level($Hamlib::RIG_LEVEL_RF, int($1));
+         } elsif ($rdigits =~ m/^\*3(\d+)#/) {
+            my $my_freq;
+
+            # is it 6 or less digits? If so, it's khz not hertz
+            if (length($1) <= 6) {
+               $my_freq = int($1) * 1000;
+            } else {
+               $my_freq = $1;
+            }
+            Log "dtmf", $LOG_INFO, "Set Freq: $my_freq";
+            rig_set_freq($my_freq, $chan_id);
+         } elsif ($rdigits =~ m/^\*3#/) {
+            my $vfo_freq = rig_readback_freq($chan_id);
+         } elsif ($rdigits =~ m/\*4(\*)?(\d+)#/) {
+            my $r_sign = $1;
+            my $r_val = $2;
+            my $ifshift;
+
+            if (defined($r_sign)) {
+               $ifshift = -$r_val;
+            } else {
+               $ifshift = $r_val;
+            }
+            Log "dtmf", $LOG_INFO, "NYI Set IF-Shift: $1";
+         } elsif ($rdigits =~ m/^\*4#/) {
+            my $if_shift = $radio0->{'if_shift'};
+            Log "dtmf", $LOG_INFO, "NYI Readback IF shift: $if_shift";
+         } elsif ($rdigits =~ m/^\*5#/) {
+            my $tx_power = $rig->get_level_i($Hamlib::RIG_LEVEL_RFPOWER) * $radio0->{'power_divider'};
+            Log "dtmf", $LOG_INFO, "NYI Readback TX power: $tx_power Watt(s)";
+         } elsif ($rdigits =~ m/^\*5(\d+)#/) {
+            my $hamlib_power = int($1) / $radio0->{'power_divider'};
+            Log "dtmf", $LOG_INFO, "Set TX Power: $1 Watt(s) ($hamlib_power)";
+            $rig->set_level($Hamlib::RIG_LEVEL_RFPOWER, $hamlib_power);
+         } elsif ($rdigits =~ m/^\*6(\d+)#/) {
+            my $modmode = $Hamlib::RIG_MODE_LSB;
+
+            if ($1 eq 0) { 		# LSB
+               $modmode = $Hamlib::RIG_MODE_LSB;
+               Log "dtmf", $LOG_INFO, "Set Modulation Mode: LSB";
+            } elsif ($1 eq 1) { 	# USB
+               $modmode = $Hamlib::RIG_MODE_USB;
+               Log "dtmf", $LOG_INFO, "Set Modulation Mode: USB";
+            } elsif ($1 eq 2) {	# FM
+               $modmode = $Hamlib::RIG_MODE_FM;
+               Log "dtmf", $LOG_INFO, "Set Modulation Mode: FM";
+            } elsif ($1 eq 3) {	# AM
+               $modmode = $Hamlib::RIG_MODE_AM;
+               Log "dtmf", $LOG_INFO, "Set Modulation Mode: AM";
+            } elsif ($1 eq 4) {	# DATA-U
+               Log "dtmf", $LOG_INFO, "Set Modulation Mode: DATA-U unsupported yet";
+               return;
+            } else {
+               Log "dtmf", $LOG_INFO, "Set Modulation Mode: invalid value $1";
+               return;
+            }
+            $rig->set_mode($modmode);
+         } elsif ($rdigits =~ m/^\*6#/) {
+            my ($mode, $width) = $rig->get_mode();
+            Log "dtmf", $LOG_INFO, "Readback mode: ".Hamlib::rig_strrmode($mode)." $width";
+         } elsif ($rdigits =~ m/^\*7(\d+)#/) {
+            Log "dtmf", $LOG_INFO, "NYI Set DSP level: $1";
+         } elsif ($rdigits =~ m/^\*8(\d+)#/) {
+            Log "dtmf", $LOG_INFO, "NYI Set Notch Filter: $1";
+         } elsif ($rdigits =~ m/^\*9(\d+)#/) {
+            my $old_step = $tuning_step_multiplier;
+            my $sz = @tuning_step_multipliers;
+            if (int($1) <= ($sz - 1)) {	# valid selection
+               $tuning_step_multiplier = int($1);
+            } else {
+               # invalid selection, cry at user
+               Log "dtmf", $LOG_INFO, "Invalid tuning step selection $1, ignoring request";
+            }
+            Log "dtmf", $LOG_INFO, "Set Tuning Step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " ($1)";
+         } elsif ($rdigits =~ m/^\*9#/) {
+            Log "dtmf", $LOG_INFO, "Readback tuning step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")";
+         }
+      } elsif ($rfside && $digits_rf =~ m/^8675309$/) {
+         Log "selcall", $LOG_INFO, "*** SELCALL " . int(rig_get_freq()) . "***";
+         # XXX: Call Paging extension and try to bridge into conference
+      }
+      
+      if ($rfside) {
+         $digits_rf_last = time();
+      } else {
+         $digits_local_last = time();
+      }
+   } elsif ($rdata->{'type'} =~ m/^StasisStart$/i) {
+      Log "ari", $LOG_INFO, "New client: [] $chan_name ($chan_id) ($chan_state)";
+
+      if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'state'}) &&
+          $rdata->{'channel'}{'state'} =~ m/^ring/i) {
+          Log "chan", $LOG_INFO, "channel $chan_name ($chan_id) is in ringing state, Answering.";
+          ari_post("/channels/$chan_id/answer");
+      }
+      
+      Log "bridge", $LOG_INFO, "joining client $chan_name ($chan_id) to bridge " . ari_bridge_str($radio0->{'bridge_id'});
+
+      Log "ari", $LOG_DEBUG, "\$chan_id: $chan_id bridge: " . $radio0->{'bridge_id'};
+
+      my $res = ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
+   } elsif ($rdata->{'type'} =~ m/^StasisEnd$/i) {
+      # NoOp
+   } elsif ($rdata->{'type'} =~ m/^ChannelConnectedLine#/i) {
+      Log "chan", $LOG_INFO, "Channel connected: $chan_name ($chan_id) to bridge " . ari_bridgr_str($radio0->{'bridge_id'});
+   } elsif ($rdata->{'type'} =~ m/^ChannelDestroyed$/i) {
+      Log "chan", $LOG_INFO, "Channel Destroyed $chan_name ($chan_id)";
+   } elsif ($rdata->{'type'} =~ m/^ChannelEnteredBridge$/i) {
+      Log "bridge", $LOG_INFO, "Client $chan_name ($chan_id) joined bridge " . ari_bridge_str($radio0->{'bridge_id'});
+   } elsif ($rdata->{'type'} =~ m/^ChannelHangupRequest$/i) {
+      Log "chan", $LOG_INFO, "Disconnect by client: $chan_name ($chan_id)";
+   } elsif ($rdata->{'type'} =~ m/^ChannelLeftBridge$/i) {
+      Log "bridge", $LOG_INFO, "Channel $chan_name ($chan_id) left bridge: " . ari_bridge_str($radio0->{'bridge_id'});
+   } elsif ($rdata->{'type'} =~ m/^ChannelStateChange$/i) {
+      Log "ari", $LOG_INFO, "ChannelStateChange: " . Dumper($rdata);
+   } elsif ($rdata->{'type'} =~ m/^ChannelVarset$/i) {
+      Log "ari", $LOG_DEBUG, "ChannelVarset: " . Dumper($rdata);
+   } elsif ($rdata->{'type'} =~ m/^PlaybackStarted$/i) {
+      Log "sound", $LOG_DEBUG, "PlaybackStarted on " . $rdata->{'playback'}{'target_uri'} . ": " .
+           $rdata->{'playback'}{'media_uri'};
+   } elsif ($rdata->{'type'} =~ m/^PlaybackFinished$/i) {
+      my @spl_chan_id = split(':', $rdata->{'playback'}{'target_uri'});
+      $chan_id = $spl_chan_id[1];
+      
+      Log "sound", $LOG_INFO, "PlaybackFinished on " . $rdata->{'playback'}{'target_uri'} . ": " .
+           $rdata->{'playback'}{'media_uri'};
+      ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
+   } else {
+      Log "ari", $LOG_BUG, "Got unknown Event Type: " . $rdata->{'type'} . ":" . Dumper($rdata);
    }
 }
 
 ##################
 # WebSocket Crud #
 ##################
-print "[ari] Initializing ARI connection\n";
+Log "ari", $LOG_INFO, "Initializing ARI connection";
 
 my $ari_conn = Net::Async::WebSocket::Client->new(
    on_text_frame => sub {
       my ( $self, $frame ) = @_;
-      our $rdata = decode_json($frame) or die("Failed parsing JSON");
-
-      my $digit = $rdata->{'digit'};
-      my $duration = $rdata->{'duration_ms'};
-      my $chan_name = $rdata->{'channel'}{'name'};
-      my $chan_id = $rdata->{'channel'}{'id'};
-      my $chan_state = $rdata->{'channel'}{'state'};
-      my $rfside = 0;
-      my $rdigits;
-
-      if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'dialplan'}) &&
-          defined($rdata->{'channel'}{'dialplan'}{'context'}) && $rdata->{'channel'}{'dialplan'}{'context'} =~ m/^radio(\d+)$/) {
-         $rfside = 1;
-      }
-
-      if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'caller'}) &&
-          defined($rdata->{'channel'}{'caller'}{'number'}) && $rdata->{'channel'}{'caller'}{'number'} =~ m/^radio(\d+)$/) {
-         $rfside = 1;
-      }
-
-      if ($rdata->{'type'} =~ m/^ApplicationReplaced$/i) {
-         # Do things, if necessary (not yet)
-      } elsif ($rdata->{'type'} =~ m/^ChannelDtmfReceived$/i) {
-         dtmf_timeout_update($chan_id, $rfside);
-         if ($rfside) {
-            if ($debug) {
-               print "[dtmf/debug] Got Digit: $digit ($duration) from $chan_name ($chan_id)$\n";
-            }
-            $digits_rf = $digits_rf . $digit;
-         } else {
-            if ($debug) {
-               print "[dtmf/debug] Got Digit: $digit ($duration) from $chan_name ($chan_id)\n";
-            }
-
-            # Parse single digit things
-            if ($digits_local eq "") {
-               $digits_local = $digit;
-            } else {
-               $digits_local = $digits_local . $digit;
-            }
-         }
-
-         if ($digit eq '*') {
-            cancel_dtmf_timeout();
-            if ($rfside) {
-               if ($duration >= 1000) {
-                  $digits_rf = '';
-                  print "[dtmf] Clearing DTMF read from RF\n";
-               }
-            } else {
-               if ($duration >= 1000) {
-                  $digits_local = '';
-                  print "[dtmf] Clearing DTMF read from VoIP\n";
-                  play_beep($chan_id);
-               } elsif ($digits_local eq '***') {
-                  my $curr_blocked = $radio0->{'ptt_blocked'};
-                  my $blocked;
-
-                  if ($curr_blocked) {
-                     $blocked = 0;
-                  } else {
-                     $blocked = 1;
-                  }
-
-                  print "[ptt] Toggling PTT blocked status on $active_rig to: " . ($blocked ? "true" : "false") . "\n";
-                  $radio0->{'ptt_blocked'} = $blocked;
-                  $digits_local = '';
-               }
-            }
-         } elsif ($digit =~ m/^(\d+)$/) {
-            cancel_dtmf_timeout();
-            if (!($rfside)) {
-               if ($digits_local eq $digit) {
-                  rig_get_freq();
-                  # do the things
-                  if ($digit eq 1) {
-                     my $newfreq;
-                     if ($duration < $dtmf_long_thres) {
-                        $newfreq = rig_get_freq() + ($tuning_step_multipliers[$tuning_step_multiplier]);
-                        print "[dtmf] Tuning UP (short) to " . $newfreq/1000 . "\n";
-                     } elsif ($duration >= $dtmf_long_thres) {
-                        $newfreq = rig_get_freq() + ($tuning_step_multipliers[$tuning_step_multiplier] * $tuning_step_long_multiplier);
-                        print "[dtmf] Tuning UP (long) to " . $newfreq/1000 . "\n";
-                     }
-                     rig_set_freq($newfreq, $chan_id);
-                  } elsif ($digit eq 4) {
-                     my $newfreq;
-                     if ($duration < $dtmf_long_thres) {
-                        $newfreq = rig_get_freq() - ($tuning_step_multipliers[$tuning_step_multiplier]);
-                        print "[dtmf] Tuning DOWN (short) to " . $newfreq/1000 . "\n";
-                     } elsif ($duration >= $dtmf_long_thres) {
-                        $newfreq = rig_get_freq() - ($tuning_step_multipliers[$tuning_step_multiplier] * $tuning_step_long_multiplier);
-                        print "[dtmf] Tuning DOWN (long) to " . $newfreq/1000 . "\n";
-                     }
-                     rig_set_freq($newfreq, $chan_id);
-                  } elsif ($digit eq 2) {
-                     if ($duration <= $dtmf_long_thres) {
-                        print "[dtmf] * RF gain UP (quick)\n";
-                     } elsif ($duration >= $dtmf_long_thres) {
-                       print "[dtmf] * RF gain UP (long)\n";
-                     }
-                  } elsif ($digit eq 5) {
-                    if ($duration <= $dtmf_long_thres) {
-                       print "[dtmf] * RF gain DOWN (quick)\n";
-                    } elsif ($duration >= $dtmf_long_thres) {
-                       print "[dtmf] * RF gain DOWN (long)\n";
-                    }
-                  } elsif ($digit eq 3) {
-                     if ($duration <= $dtmf_long_thres) {
-                        print "[dtmf] * Mic gain UP (quick)\n";
-                     } elsif ($duration >= $dtmf_long_thres) {
-                        print "[dtmf] * Mic gain UP (long)\n";
-                     }
-                  } elsif ($digit eq 6) {
-                    if ($duration <= $dtmf_long_thres) {
-                       print "[dtmf] * Mic gain DOWN (quick)\n";
-                    } elsif ($duration >= $dtmf_long_thres) {
-                       print "[dtmf] * Mic gain DOWN (long)\n";
-                    }
-                  } elsif ($digit eq 9) {
-                    my $sz = @tuning_step_multipliers;
-
-                    if (($tuning_step_multiplier) >= ($sz - 1)) {
-                       # wrap around
-                       $tuning_step_multiplier = 0;
-                    } else {
-                       $tuning_step_multiplier++;
-                    }
-                    print "[dtmf] Set tuning step to " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")\n";
-                  }
-                 
-                  $digits_local = '';
-               }
-            }
-         } elsif ($digit eq '#') {
-            cancel_dtmf_timeout();
-            if ($rfside) {
-               $rdigits = $digits_rf;
-               $digits_rf = '';
-               print "[dtmf] Read: $rdigits from RF $chan_name ($chan_id)\n";
-            } else {
-               $rdigits = $digits_local;
-               $digits_local = '';
-               print "[dtmf] Read: $rdigits from VoIP $chan_name ($chan_id)\n";
-
-               if ($rdigits eq '#') {
-                  if ($radio0->{'using_vox'}) {
-                     if ($muted) {
-                        $muted = 0;
-                        print "[dtmf] MUTE off\n";
-                     } else {
-                        $muted = 1;
-                        print "[dtmf] MUTE on\n";
-                     }
-                  } else {	# not VOX, toggle PTT
-                    if ($radio0->{'ptt_active'}) {
-                       $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_OFF);
-                       $radio0->{'ptt_active'} = 0;
-                       print "[dtmf] radio0 PTT OFF\n";
-                    } else {
-                       if (!($radio0->{'ptt_blocked'})) {
-                          $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_ON_DATA);
-                          $radio0->{'ptt_active'} = 1;
-                          print "[dtmf] radio0 PTT ON\n";
-                       } else {
-                          print "[ptt] PTT for $active_rig is blocked, igoring PTT ON request\n";
-                          ari_play($chan_id, "sound:beeperr")
-                       }
-                    }
-                  }
-               }
-            }
-
-            # Parse the command:
-            if ($rdigits =~ m/^\*0(\d+)/) {
-               my $new_mode;
-               if ($1 == 0) {
-                  $new_mode = "phone";
-               } elsif ($1 == 1) {
-                  $new_mode = "digi";
-               } elsif ($1 == 2) {
-                  $new_mode = "winlink";
-               } else {
-                  $new_mode = "INVALID";
-               }
-               $radio0->{'station_mode'} = $new_mode;
-               print "[dtmf] Set Station Mode: $new_mode ($1)\n";
-               station_modeset($new_mode);
-            } elsif ($rdigits =~ m/^\*0#/) {
-               print "[dtmf] Readback mode: " . $radio0->{'station_mode'} . "\n";
-            } elsif ($rdigits =~ m/^\*1(\d+)#/) {
-               print "[dtmf] Set VOX: $1\n";
-               $rig->set_level($radio0->{'active_vfo'}, "VOX", int($1));
-            } elsif ($rdigits =~ m/^\*1#/) {
-               my $vox_level = $rig->get_level_i($radio0->{'active_vfo'}, "VOX");
-               print "[dtmf] * Readback VOX setting: $vox_level\n";
-            } elsif ($rdigits =~ m/^\*2#/) {
-               my $rf_gain = $rig->get_level_i($Hamlib::RIG_LEVEL_RF);
-               print "[dtmf] * Readback RF gain: $rf_gain\n";
-            } elsif ($rdigits =~ m/^\*2(\d+)#/) {
-               print "[dtmf] Set RF gain: $1\n";
-               $rig->set_level($Hamlib::RIG_LEVEL_RF, int($1));
-            } elsif ($rdigits =~ m/^\*3(\d+)#/) {
-               my $my_freq;
-
-               # is it 6 or less digits? If so, it's khz not hertz
-               if (length($1) <= 6) {
-                  $my_freq = int($1) * 1000;
-               } else {
-                  $my_freq = $1;
-               }
-               print "[dtmf] Set Freq: $my_freq\n";
-               rig_set_freq($my_freq, $chan_id);
-            } elsif ($rdigits =~ m/^\*3#/) {
-               my $vfo_freq = rig_readback_freq($chan_id);
-            } elsif ($rdigits =~ m/\*4(\*)?(\d+)#/) {
-               my $r_sign = $1;
-               my $r_val = $2;
-               my $ifshift;
-
-               if (defined($r_sign)) {
-                  $ifshift = -$r_val;
-               } else {
-                  $ifshift = $r_val;
-               }
-               print "[dtmf] * Set IF-Shift: $1\n";
-            } elsif ($rdigits =~ m/^\*4#/) {
-               my $if_shift = $radio0->{'if_shift'};
-               print "[dtmf] * Readback IF shift: $if_shift\n";
-#               system("rigctl"
-            } elsif ($rdigits =~ m/^\*5#/) {
-               my $tx_power = $rig->get_level_i($Hamlib::RIG_LEVEL_RFPOWER) * $radio0->{'power_divider'};
-               print "[dtmf] * Readback TX power: $tx_power Watt(s)\n";
-            } elsif ($rdigits =~ m/^\*5(\d+)#/) {
-               my $hamlib_power = int($1) / $radio0->{'power_divider'};
-               print "[dtmf] Set TX Power: $1 Watt(s) ($hamlib_power)\n";
-               $rig->set_level($Hamlib::RIG_LEVEL_RFPOWER, $hamlib_power);
-            } elsif ($rdigits =~ m/^\*6(\d+)#/) {
-               my $modmode = $Hamlib::RIG_MODE_LSB;
-
-               if ($1 eq 0) { 		# LSB
-                  $modmode = $Hamlib::RIG_MODE_LSB;
-                  print "[dtmf] Set Modulation Mode: LSB\n";
-               } elsif ($1 eq 1) { 	# USB
-                  $modmode = $Hamlib::RIG_MODE_USB;
-                  print "[dtmf] Set Modulation Mode: USB\n";
-               } elsif ($1 eq 2) {	# FM
-                  $modmode = $Hamlib::RIG_MODE_FM;
-                  print "[dtmf] Set Modulation Mode: FM\n";
-               } elsif ($1 eq 3) {	# AM
-                  $modmode = $Hamlib::RIG_MODE_AM;
-                  print "[dtmf] Set Modulation Mode: AM\n";
-               } elsif ($1 eq 4) {	# DATA-U
-                  print "[dtmf] Set Modulation Mode: DATA-U unsupported yet\n";
-                  return;
-               } else {
-                  print "[dtmf] Set Modulation Mode: invalid value $1\n";
-                  return;
-               }
-               $rig->set_mode($modmode);
-            } elsif ($rdigits =~ m/^\*6#/) {
-               my ($mode, $width) = $rig->get_mode();
-               print "[dtmf] Readback mode: ".Hamlib::rig_strrmode($mode)." $width\n";
-            } elsif ($rdigits =~ m/^\*7(\d+)#/) {
-               print "[dtmf] * Set DSP level: $1\n";
-            } elsif ($rdigits =~ m/^\*8(\d+)#/) {
-               print "[dtmf] * Set Notch Filter: $1\n";
-            } elsif ($rdigits =~ m/^\*9(\d+)#/) {
-               my $old_step = $tuning_step_multiplier;
-               my $sz = @tuning_step_multipliers;
-               if (int($1) <= ($sz - 1)) {	# valid selection
-                  $tuning_step_multiplier = int($1);
-               } else {
-                  # invalid selection, cry at user
-                  print "[dtmf] Invalid tuning step selection $1, ignoring request\n"
-               }
-               print "[dtmf] Set Tuning Step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " ($1)\n";
-            } elsif ($rdigits =~ m/^\*9#/) {
-               print "[dtmf] Readback tuning step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")\n";
-            }
-         } elsif ($rfside && $digits_rf =~ m/^8675309$/) {
-            print "*** SELCALL " . int(rig_get_freq()) . "***\n";
-            # XXX: Call Paging extension and try to bridge into conference
-         }
-         
-         if ($rfside) {
-            $digits_rf_last = time();
-         } else {
-            $digits_local_last = time();
-         }
-      } elsif ($rdata->{'type'} =~ m/^StasisStart$/i) {
-         print "[ari] New client: [] $chan_name ($chan_id) ($chan_state)\n";
-
-         if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'state'}) &&
-             $rdata->{'channel'}{'state'} =~ m/^ring/i) {
-             print "[chan] channel $chan_name ($chan_id) is in ringing state, Answering.\n";
-             ari_post("/channels/$chan_id/answer");
-         }
-         
-         print "[bridge] joining client $chan_name ($chan_id) to bridge " . ari_bridge_str($radio0->{'bridge_id'}) . "\n";
-
-         if ($debug) {
-             print "[ari/debug] \$chan_id: $chan_id bridge: " . $radio0->{'bridge_id'} . "\n";
-         }
-
-         my $res = ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
-      } elsif ($rdata->{'type'} =~ m/^StasisEnd$/i) {
-         # NoOp
-      } elsif ($rdata->{'type'} =~ m/^ChannelConnectedLine#/i) {
-         print "[chan] Channel connected: $chan_name ($chan_id) to bridge " . ari_bridgr_str($radio0->{'bridge_id'}) . "\n";
-      } elsif ($rdata->{'type'} =~ m/^ChannelDestroyed$/i) {
-         print "[chan] Channel Destroyed $chan_name ($chan_id)\n";
-      } elsif ($rdata->{'type'} =~ m/^ChannelEnteredBridge$/i) {
-         print "[bridge] Client $chan_name ($chan_id) joined bridge " . ari_bridge_str($radio0->{'bridge_id'}) . "\n";
-      } elsif ($rdata->{'type'} =~ m/^ChannelHangupRequest$/i) {
-         print "[chan] Disconnect by client: $chan_name ($chan_id)\n";
-      } elsif ($rdata->{'type'} =~ m/^ChannelLeftBridge$/i) {
-         print "[bridge] Channel $chan_name ($chan_id) left bridge: " . ari_bridge_str($radio0->{'bridge_id'}) . "\n";
-      } elsif ($rdata->{'type'} =~ m/^ChannelStateChange$/i) {
-         if ($debug) {
-            print "[ari/debug] ChannelStateChange:\n";
-#            print Dumper($rdata) . "\n";
-         }
-      } elsif ($rdata->{'type'} =~ m/^ChannelVarset$/i) {
-         if ($debug) {
-#            print "[ari/debug] ChannelVarset: " . Dumper($rdata) . "\n";
-         }
-         print "[bridge] ChannelVarset event\n";
-      } elsif ($rdata->{'type'} =~ m/^PlaybackStarted$/i) {
-         if ($debug) {
-            print "[sound] PlaybackStarted on " . $rdata->{'playback'}{'target_uri'} . ": " .
-                  $rdata->{'playback'}{'media_uri'} . "\n";
-         }
-      } elsif ($rdata->{'type'} =~ m/^PlaybackFinished$/i) {
-         my @spl_chan_id = split(':', $rdata->{'playback'}{'target_uri'});
-         $chan_id = $spl_chan_id[1];
-         
-         if ($debug) {
-            print "[sound] PlaybackFinished on " . $rdata->{'playback'}{'target_uri'} . ": " .
-                  $rdata->{'playback'}{'media_uri'} . "\n";
-         }
-         ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
-      } else {
-         print "[ari/debug] Got unknown Event Type: " . $rdata->{'type'} . "\n";
-#         print Dumper($rdata) . "\n";
-      }
+   our $rdata = decode_json($frame) or die("Failed parsing JSON");
+   parse_ari($rdata);
    },
 );
 
@@ -867,13 +897,13 @@ $loop->add($ari_conn);
 
 $ari_conn->connect(
    on_connected => sub {
-      print "[ari] Asterisk REST Interface connected!\n";
+      Log "ari", $LOG_INFO, "Asterisk REST Interface connected!";
       my $bridge = ari_bridge_find_or_create($active_rig);
 
       # set default operating mode
       if (defined($station->{'default_mode'}) && !($station->{'default_mode'} eq "")) {
          my $mode = $station->{'default_mode'};
-         print "[station] Switching to default mode ($mode) as configured\n";
+         Log "station", $LOG_INFO, "Switching to default mode ($mode) as configured";
          station_modeset($mode);
       }
 
@@ -891,7 +921,7 @@ $ari_conn->connect(
       if ($alert_bridge eq "") {
          $alert_bridge = ari_bridge_find_or_create("alert");
       }
-      print "[alert] Activated alert bridge: " . $alert_bridge->{'id'} . "\n";
+      Log "alert", $LOG_INFO, "Activated alert bridge: " . $alert_bridge->{'id'};
    },
    url => "ws://" . $ari->{'host'} . ":" . $ari->{'port'} . $ari->{'prefix'} .
           "/events?api_key=" . $ari->{'user'} . ":" . $ari->{'pass'} . "&app=$app_name"
