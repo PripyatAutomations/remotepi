@@ -3,9 +3,9 @@
 . /opt/remotepi/etc/config.sh
 
 echo "* Killing processes..."
-killall -TERM ${EXTRA_DIGI} baresip 2>&1 > /dev/null
+killall -TERM ${EXTRA_DIGI} baresip 2>&1>/dev/null
 sleep 3
-killall -KILL ${EXTRA_DIGI} baresip 2>&1 > /dev/null
+killall -KILL ${EXTRA_DIGI} baresip 2>&1>/dev/null
 
 PTT_STATE=$(rigctl -m 4 get_ptt)
 echo "* Sending PTT off command (currently: ${PTT_STATE})"

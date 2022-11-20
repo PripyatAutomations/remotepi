@@ -21,13 +21,13 @@
  function sip_create_stack() {
     sip_stack = new SIPml.Stack({
        // XXX: Need to move this somewhere configurable
-       realm: 'remote-pi.remotepi.lan',
-       impi: 'ft891-web',
-       impu: 'sip:5002@remotepi.lan',
-       password: 'ccF99VklZklQE#9kZ',
+       realm: '10.11.0.3',
+       impi: 'guest',
+       impu: 'sip:guest@10.11.0.3',
+       password: 'guest',
        display_name: 'FT891 Web User',
-       websocket_proxy_url: 'wss://10.11.0.3:10062',
-       outbound_proxy_url: 'wss://10.11.0.3:5060',
+       websocket_proxy_url: 'ws://10.11.0.3:8088/pbx/ws',
+       outbound_proxy_url: 'udp://10.11.0.3:5060/',
        enable_rfcweb_breaker: false,
        events_listener: {
          events: '*',

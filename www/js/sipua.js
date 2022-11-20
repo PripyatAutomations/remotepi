@@ -15,7 +15,16 @@ var elements = {
 var config = {
   userAgentString: 'SIP.js/0.5.0-devel BB',
   traceSip: true,
-  register: false
+  register: false,
+  // XXX: Need to move this somewhere configurable
+  realm: '10.11.0.3',
+  impi: 'guest',
+  impu: 'sip:guest@10.11.0.3',
+  password: 'guest',
+  display_name: 'FT891 Web User',
+  websocket_proxy_url: 'ws://10.11.0.3:8088/pbx/ws',
+  outbound_proxy_url: 'udp://10.11.0.3:5060/',
+  enable_rfcweb_breaker: false,
 };
 
 var ua;

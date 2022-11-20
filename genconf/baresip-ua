@@ -73,17 +73,17 @@ module			evdev.so
 #module			httpd.so
 
 # Audio codec Modules (in order)
-module			opus.so
+#module			opus.so
 #module			amr.so
 #module			g7221.so
 module			g722.so
 #module			g726.so
-module			g711.so
-module			gsm.so
-module			l16.so
+#module			g711.so
+#module			gsm.so
+#module			l16.so
 
 # Audio filter Modules (in encoding order)
-module			vumeter.so
+#module			vumeter.so
 #module			sndfile.so
 #module			speex_pp.so
 #module			plc.so

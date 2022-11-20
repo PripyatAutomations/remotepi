@@ -14,7 +14,7 @@ DIGI_POWER=0.35
 
 # Phone mode volume presets
 PHONE_MIC=38
-PHONE_SPKR=30
+PHONE_SPKR=38
 PHONE_POWER=1.0
 
 # Packet mode volume presets

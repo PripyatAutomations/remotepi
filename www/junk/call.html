@@ -104,7 +104,7 @@
         }
 
         .div-keypad {
-            z-index: 100;
+            z-index: 10000;
             position: fixed;
             -moz-transition-property: left top;
             -o-transition-property: left top;
@@ -307,7 +307,8 @@
         }
 
         function loadCredentials() {
-            if (window.localStorage) {
+// XXX: Fix me!
+/*            if (window.localStorage) {
                 // IE retuns 'null' if not defined
                 var s_value;
                 if ((s_value = window.localStorage.getItem('org.doubango.identity.display_name'))) txtDisplayName.value = s_value;
@@ -317,13 +318,20 @@
                 if ((s_value = window.localStorage.getItem('org.doubango.identity.realm'))) txtRealm.value = s_value;
             }
             else {
+*/
+                txtDisplayName.value = "Guest";
+                txtPrivateIdentity.value = "guest";
+                txtPublicIdentity.value = "sip:guest@10.11.0.3";
+                txtPassword.value = "guest";
+                txtRealm.value = "10.11.0.3";
+//                txtWebsocketServerUrl.value= "ws://10.11.0.3:8088/pbx/ws";
                 //txtDisplayName.value = "005";
                 //txtPrivateIdentity.value = "005";
                 //txtPublicIdentity.value = "sip:005@sip2sip.info";
                 //txtPassword.value = "005";
                 //txtRealm.value = "sip2sip.info";
                 //txtPhoneNumber.value = "701020";
-            }
+//            }
         };
 
         function saveCredentials() {
@@ -371,9 +379,12 @@
                     impu: txtPublicIdentity.value,
                     password: txtPassword.value,
                     display_name: txtDisplayName.value,
-                    websocket_proxy_url: (window.localStorage ? window.localStorage.getItem('org.doubango.expert.websocket_server_url') : null),
-                    outbound_proxy_url: (window.localStorage ? window.localStorage.getItem('org.doubango.expert.sip_outboundproxy_url') : null),
-                    ice_servers: (window.localStorage ? window.localStorage.getItem('org.doubango.expert.ice_servers') : null),
+                    websocket_proxy_url: "ws://10.11.0.3:8088/pbx/ws",
+                    outbound_proxy_url: "udp://10.11.0.3:5060/",
+//                    websocket_proxy_url: (window.localStorage ? window.localStorage.getItem('org.doubango.expert.websocket_server_url') : null),
+//                    outbound_proxy_url: (window.localStorage ? window.localStorage.getItem('org.doubango.expert.sip_outboundproxy_url') : null),
+                    ice_servers: null,
+//                    ice_servers: (window.localStorage ? window.localStorage.getItem('org.doubango.expert.ice_servers') : null),
                     enable_rtcweb_breaker: (window.localStorage ? window.localStorage.getItem('org.doubango.expert.enable_rtcweb_breaker') == "true" : false),
                     events_listener: { events: '*', listener: onSipEventStack },
                     enable_early_ims: (window.localStorage ? window.localStorage.getItem('org.doubango.expert.disable_early_ims') != "true" : true), // Must be true unless you're using a real IMS network
@@ -412,6 +423,7 @@
                         alert('Screen sharing not supported. Are you using chrome 26+?');
                         return;
                     }
+/*
                     if (!location.protocol.match('https')) {
                         if (confirm("Screen sharing requires https://. Do you want to be redirected?")) {
                             sipUnRegister();
@@ -419,6 +431,7 @@
                         }
                         return;
                     }
+*/
                 }
                 btnCall.disabled = true;
                 btnHangUp.disabled = false;

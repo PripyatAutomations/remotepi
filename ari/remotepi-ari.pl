@@ -834,25 +834,20 @@ sub parse_ari {
          $digits_local_last = time();
       }
    } elsif ($rdata->{'type'} =~ m/^StasisStart$/i) {
-      Log "ari", $LOG_INFO, "New client: [] $chan_name ($chan_id) ($chan_state)";
+      Log "ari", $LOG_INFO, "New client: $chan_name ($chan_id) ($chan_state)";
 
       if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'state'}) &&
           $rdata->{'channel'}{'state'} =~ m/^ring/i) {
           Log "chan", $LOG_INFO, "channel $chan_name ($chan_id) is in ringing state, Answering.";
           ari_post("/channels/$chan_id/answer");
       }
-      
-      Log "bridge", $LOG_INFO, "joining client $chan_name ($chan_id) to bridge " . ari_bridge_str($radio0->{'bridge_id'});
-
-      Log "ari", $LOG_DEBUG, "\$chan_id: $chan_id bridge: " . $radio0->{'bridge_id'};
-
       my $res = ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
    } elsif ($rdata->{'type'} =~ m/^StasisEnd$/i) {
       # NoOp
    } elsif ($rdata->{'type'} =~ m/^ChannelConnectedLine#/i) {
-      Log "chan", $LOG_INFO, "Channel connected: $chan_name ($chan_id) to bridge " . ari_bridgr_str($radio0->{'bridge_id'});
+      Log "chan", $LOG_INFO, "Channel $chan_name ($chan_id) connected to bridge " . ari_bridgr_str($radio0->{'bridge_id'});
    } elsif ($rdata->{'type'} =~ m/^ChannelDestroyed$/i) {
-      Log "chan", $LOG_INFO, "Channel Destroyed $chan_name ($chan_id)";
+      Log "chan", $LOG_INFO, "Channel $chan_name ($chan_id) destroyed";
    } elsif ($rdata->{'type'} =~ m/^ChannelEnteredBridge$/i) {
       Log "bridge", $LOG_INFO, "Client $chan_name ($chan_id) joined bridge " . ari_bridge_str($radio0->{'bridge_id'});
    } elsif ($rdata->{'type'} =~ m/^ChannelHangupRequest$/i) {
