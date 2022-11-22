@@ -10,3 +10,6 @@
 [submodule "www/rmsmap"]
 	path = www/rmsmap
 	url = https://github.com/PripyatAutomations/rmsmap.git
+[submodule "ext/JsSIP"]
+	path = ext/JsSIP
+	url = https://github.com/versatica/JsSIP.git

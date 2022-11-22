@@ -24,6 +24,7 @@ dtls_auto_generate_cert=yes
 webrtc=yes
 context=guest
 disallow=all
+use_avpf=yes
 ;allow=opus,speex,g722,ulaw,gsm
 allow=speex,g722,ulaw,gsm
 
@@ -119,7 +120,7 @@ exten => s,1,Noop()
 exten => s,n,Goto(ham-login,1,1)
 
 ; Read and check password
-exten => 1,1,Authenticate($MENU_PASS)
+exten => 1,1,Authenticate()
  same => n,Goto(ham-menu,s,1)
  same => n,Hangup()
 exten => t,1,Hangup()
@@ -149,6 +150,14 @@ exten => s,1,Answer()
 ; 1 = LISTEN, 2 = MODE, 3 = FREQ, * = MUTE, # = UNMUTE, 9 = HHO
  same => n,Playback(extension)
  same => n,WaitExten(3)
+
+[guest]
+exten => 0,1,NoOp(0
+ same => n,Statis(remotepi,guest)
+
+; Ham-radio stuff
+exten => 5000,1,Goto(ham-menu,s,1)
+include => common
 EOF
 
 sudo mkdir -p /opt/remotepi/etc/ssl/

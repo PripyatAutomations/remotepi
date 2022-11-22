@@ -17,7 +17,16 @@
   <div id="menubar">
    <button id="menu" value="menu">menu</button><br/>
   </div>
-  <div id="menu">Menu loading...</div>
+  <div id="menu">
+   <ul>
+    <li><a href="/guest.html">WebRTC demo</a></li>
+    <li><a href="/webcat.html">WebCAT control</a></li>
+    <li><a href="http://10.11.0.3:8181/">PAT Winlink mail</a></li>
+    <li><a href="sip-setup.html">SIP instructions</a></li>
+    <li><a href="rdp-setup.html">Remote Desktop (RDP) client instructions</a></li>
+    <li><a href="wg-setup.html">Wireguard VPN setup (needed to securely access the remote station</a></li>
+   </ul>
+  </div>
   <div id="loadingsplash">
    <div id="loading">
     Please wait while resources are loaded...<br/>
@@ -38,12 +47,6 @@
    </div>
   </noscript>
   <div id="main">
-   <ul>
-    <li><a href="http://10.11.0.3:8181/">PAT Winlink mail</a></li>
-    <li><a href="sip-setup.html">SIP instructions</a></li>
-    <li><a href="rdp-setup.html">Remote Desktop (RDP) client instructions</a></li>
-    <li><a href="wg-setup.html">Wireguard VPN setup (needed to securely access the remote station</a></li>
-   </ul>
   </div>
   <script>
   $(document).ready(function() {
