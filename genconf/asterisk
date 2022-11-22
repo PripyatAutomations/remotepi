@@ -152,7 +152,7 @@ exten => s,1,Answer()
  same => n,WaitExten(3)
 
 [guest]
-exten => 0,1,NoOp(0
+exten => 0,1,NoOp()
  same => n,Statis(remotepi,guest)
 
 ; Ham-radio stuff
