@@ -97,7 +97,7 @@ my $digits_rf_last = 0;
 my $tuning_step_long_multiplier = 5;	# long press = step * 5
 my $tuning_step_multiplier = 3;	# selected multiplier (defaults to 1khz)
 my @tuning_step_multipliers = ( 10, 100, 500, 1000, 2500 );
-my $dtmf_long_thres = 300;      # ms to consider a DTMF tone "long" instead of "short" press
+my $dtmf_long_thres = 220;      # ms to consider a DTMF tone "long" instead of "short" press
 my $dtmf_timeout = 10;		# timeout for input of a digit (clear the buffer)
 my $dtmf_announce_delay = 10;	# Announce the frequency if no tuning changes for 10 seconds
 my $tts_seqno = 0;
@@ -884,6 +884,15 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
       our $rdata = decode_json($frame) or die("Failed parsing JSON");
       parse_ari($rdata);
    },
+   on_read_eof => sub {
+      Log "ari", $LOG_FATAL, "ARI connection got EOF";
+   },
+   on_read_error => sub {
+      Log "ari", $LOG_FATAL, "Error reading ARI connection";
+   },
+   on_write_error => sub {
+      Log "ari", $LOG_FATAL, "Error writing ARI connection";
+   },
 );
 
 ##############
@@ -892,6 +901,15 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
 $loop->add($ari_conn);
 
 $ari_conn->connect(
+   on_connect_error => sub {
+      Log "ari", $LOG_FATAL, "Error connecting to Asterisk";
+   },
+   on_resolve_error => sub {
+      Log "ari", $LOG_FATAL, "Error resolving";
+   },
+   on_send_error => sub {
+      Log "ari", $LOG_FATAL, "Error sending on ARI connection";
+   },
    on_connected => sub {
       Log "ari", $LOG_INFO, "Asterisk REST Interface connected!";
       my $bridge = ari_bridge_find_or_create($active_rig);
@@ -918,6 +936,8 @@ $ari_conn->connect(
          $alert_bridge = ari_bridge_find_or_create("alert");
       }
       Log "alert", $LOG_INFO, "Activated alert bridge: " . $alert_bridge->{'id'};
+
+      # XXX: Enumerate already existing radio channels and join them into the bridge, if appropriate
    },
    url => "ws://" . $ari->{'host'} . ":" . $ari->{'port'} . $ari->{'prefix'} .
           "/events?api_key=" . $ari->{'user'} . ":" . $ari->{'pass'} . "&app=$app_name"

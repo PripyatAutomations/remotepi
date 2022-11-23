@@ -19,6 +19,9 @@ sudo -u devuan '/opt/remotepi/init/flrig-vnc.start'
 
 echo "* genconf: asterisk"
 /opt/remotepi/genconf/asterisk
+sudo service asterisk restart
+echo "...sleeping 5 seconds..."
+sleep 5
 
 echo "* ARI startup"
 sudo -u devuan '/opt/remotepi/ari/startup.sh'

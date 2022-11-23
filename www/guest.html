@@ -1,0 +1,152 @@
+<!doctype html>
+<!-- This page created by hand using joe text editor ;) -->
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-wdth, initial-scale=1, shrink-to-fit=yes, user-scalable=yes"/>
+  <meta name="author" content="joseph@istabpeople.com"/>
+  <meta name="description" content="Remote access to remotepi radio"/>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jssip.min.js"></script>
+  <script src="js/loader.js"></script>
+  <!-- include basic CSS without loader, so non-js users arent blinded -->
+  <link rel="stylesheet" href="css/dark.css"/>
+  <link rel="icon" href="img/remotepi.png"/>
+  <title>RemotePi</title>
+ </head>
+ <body>
+  <div id="menubar">
+   <button id="menu" value="menu">menu</button><br/>
+  </div>
+  <div id="menu">
+   <ul>
+    <li><a href="/guest.html">WebRTC demo</a></li>
+    <li><a href="/webcat.html">WebCAT control</a></li>
+    <li><a href="http://10.11.0.3:8181/">PAT Winlink mail</a></li>
+    <li><a href="sip-setup.html">SIP instructions</a></li>
+    <li><a href="rdp-setup.html">Remote Desktop (RDP) client instructions</a></li>
+    <li><a href="wg-setup.html">Wireguard VPN setup (needed to securely access the remote station</a></li>
+   </ul>
+  </div>
+  <div id="loadingsplash">
+   <div id="loading">
+    Please wait while resources are loaded...<br/>
+    <progress id="loading" max="100" value="0"></progress>
+   </div>
+  </div>
+  <noscript>
+   <div id="noscript">
+    <h1>Please enable javascript and reload the page</h1>
+    <p>
+    This site requires javascript to provide a live, interactive radio
+    connection. Please either disable script blocking for scripts from
+    our domain or upgrade to a browser supporting current HTML5.<br/>
+    </p>
+    <p>
+    This will be necessary for WebRTC support for remote audio anyways...
+    </p>
+   </div>
+  </noscript>
+  <div id="main">
+  </div>
+  <script>
+  $(document).ready(function() {
+     // Create our JsSIP instance and run it:
+     var socket = new JsSIP.WebSocketInterface('ws://localhost:8088/pbx/ws');
+     var configuration = {
+       sockets  : [ socket ],
+       uri      : 'sip:guest@10.11.0.3',
+       password : 'guest'
+     };
+
+     var ua = new JsSIP.UA(configuration);
+     ua.start();
+
+     debugger;
+     // Register callbacks to desired call events
+     var eventHandlers = {
+       'progress': function(e) {
+         console.log('call is in progress');
+       },
+       'failed': function(e) {
+         console.log('call failed with cause: '+ e.data.cause);
+       },
+       'ended': function(e) {
+         console.log('call ended with cause: '+ e.data.cause);
+       },
+       'confirmed': function(e) {
+         console.log('call confirmed');
+       }
+     };
+
+     var options = {
+       'eventHandlers'    : eventHandlers,
+       'mediaConstraints' : { 'audio': true, 'video': true }
+     };
+
+     var session = ua.call('sip:0@127.0.0.1', options);
+     // menu
+     var $menu = {
+         visible: false,
+         timeout: 3000,
+         timer: null,
+         contents: null
+     };
+     // Preload the assets we'll need initially...
+     var $loader_js = [
+         'handlebars',
+         'jquery-ui',
+         'jquery.window',
+         'menubar',
+         'windowing'
+     ];
+
+     // Preload and attach stylesheets
+     var $loader_css = [ 'rig-dark', 'jquery.window' ];
+
+     // Views to pre-load
+     var $loader_templates = [
+         'audio_call',
+         'home',
+         'login',
+         'menubar',
+         'rig',
+         'tabstrip'
+     ];
+
+     // if no view requested in URL, present them with 'home'
+     var $default_view = 'home';
+
+     loader($loader_js, $loader_css, $loader_templates, function() {
+        // Is the user logged in?
+        var $logged_in = localStorage.getItem('logged_in');
+
+        // If not, show them only a login dialog
+        if ($logged_in == null || $logged_in == false) {
+           hide_window("*");
+           new_window("login", null, "modal");
+        } else { // yes- so show a desktop
+           // 'main' is special window in that it cannot be closed
+           new_window("main", null, "main");
+           show_window($default_view, "main");
+           // XXX: Reload stored window list from localStorage
+        }
+
+        // redraw the menu...
+        menu_redraw($menu.visible);
+
+        // handle zee menu clickens!
+        $('button#menu').click(function() {
+           if ($menu.visible == false) {
+              $menu.visible = true;
+           } else {
+              $menu.visible = false;
+           }
+           menu_redraw($menu.visible);
+        });
+     });
+
+  });
+  </script>
+ </body>
+</html>

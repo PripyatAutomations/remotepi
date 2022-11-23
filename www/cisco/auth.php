@@ -6,5 +6,5 @@
  2) The phone POSTs ‘UserID’, ‘Password’ and ‘devicename’
  3) The server answers ‘ERROR’, ‘UN-AUTHORIZED’ or ‘AUTHORIZED’ (ensure no headers sent and no extra characters. The phone will respond with a ‘CiscoIPPhoneError Number=”4″‘ if it receives anything extra.)
 */
- echo “AUTHORIZED”;
+ echo "AUTHORIZED";
 ?>

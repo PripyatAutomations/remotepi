@@ -153,7 +153,7 @@ exten => s,1,Answer()
 
 [guest]
 exten => 0,1,NoOp()
- same => n,Statis(remotepi,guest)
+ same => n,Stasis(remotepi,guest)
 
 ; Ham-radio stuff
 exten => 5000,1,Goto(ham-menu,s,1)

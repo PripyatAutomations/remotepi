@@ -1,0 +1,183 @@
+<!doctype html>
+<!-- This page created by hand using joe text editor ;) -->
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-wdth, initial-scale=1, shrink-to-fit=yes, user-scalable=yes"/>
+  <meta name="author" content="joseph@istabpeople.com"/>
+  <meta name="description" content="Remote access to remotepi radio"/>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jssip.min.js"></script>
+  <!-- include basic CSS without loader, so non-js users arent blinded -->
+  <link rel="stylesheet" href="css/dark.css"/>
+  <link rel="icon" href="img/remotepi.png"/>
+  <title>RemotePi</title>
+ </head>
+ <body>
+  <div id="menubar">
+   <button id="menu" value="menu">menu</button><br/>
+  </div>
+  <div id="menu">
+   <ul>
+    <li><a href="/guest.html">WebRTC demo</a></li>
+    <li><a href="/webcat.html">WebCAT control</a></li>
+    <li><a href="http://10.11.0.3:8181/">PAT Winlink mail</a></li>
+    <li><a href="sip-setup.html">SIP instructions</a></li>
+    <li><a href="rdp-setup.html">Remote Desktop (RDP) client instructions</a></li>
+    <li><a href="wg-setup.html">Wireguard VPN setup (needed to securely access the remote station</a></li>
+   </ul>
+  </div>
+  <!--
+  <div id="loadingsplash">
+   <div id="loading">
+    Please wait while resources are loaded...<br/>
+    <progress id="loading" max="100" value="0"></progress>
+   </div>
+  </div>
+  -->
+  <noscript>
+   <div id="noscript">
+    <h1>Please enable javascript and reload the page</h1>
+    <p>
+    This site requires javascript to provide a live, interactive radio
+    connection. Please either disable script blocking for scripts from
+    our domain or upgrade to a browser supporting current HTML5.<br/>
+    </p>
+    <p>
+    This will be necessary for WebRTC support for remote audio anyways...
+    </p>
+   </div>
+  </noscript>
+  <div id="main">
+   <audio id="remoteAudio"/>
+  </div>
+  <script>
+  $(document).ready(function() {
+     JsSIP.debug.enable('JsSIP:*');
+
+     /* Create our JsSIP instance and run it: */
+     var socket = new JsSIP.WebSocketInterface('wss://10.11.0.3:8089/pbx/ws');
+     socket.via_transport = 'auto';
+     var call;
+     var configuration = {
+       sockets  : [ socket ],
+       uri      : 'sip:guest@127.0.0.1',
+       password : 'guest',
+       'ws_servers': 'ws://10.11.0.3:8088/pbx/ws',
+       register : true
+     };
+
+     var ua = new JsSIP.UA(configuration);
+
+     // Register callbacks to desired call events
+     var eventHandlers = {
+       'confirmed': function(e) {
+         console.log("Call confirmed: ", e.data);
+         console.log("Peer: ", session.remote_identity.uri.user, " DN: ", session.remote_identity.display_name);
+         console.log('call Id',session.request.getHeader('From'));
+       },
+       'failed': function(e) {
+         console.log("Call failed: ", e.data);
+       },
+       'progress': function(e) {
+         console.log('Call is in progress');
+       },
+       'ended': function(e) {
+         console.log('Call ended with cause: '+ e.data.cause);
+         alert("Call ended with reason: " + e.data.cause);
+       }
+     };
+
+     var options = {
+       'eventHandlers'    : eventHandlers,
+       'mediaConstraints' : { 'audio': true, 'video': false }
+     };
+
+     ua.on('confirmed', function(e) {
+        console.log("Confirmed connection", e);
+     });
+
+     ua.on('connecting', function(e) {
+        console.log("Connecting, try " + e.attempts +  "...");
+     });
+
+     ua.on('connected', function(e) {
+        console.log("Connected!", e.socket);
+     });
+     
+     ua.on('disconnected', function(e) {
+        console.log("Disconnected: error? ", e.error, " code: ", e.code,
+        "reason: ", e.reason);
+     });
+
+     ua.on('failed', function(e) {
+        console.log("Failed!", e);
+        alert("Failed");
+     });
+
+     ua.on('registered', function(e) {
+        console.log("Registered!: ", e.response);
+        // Attempt connecting to the bridge
+        ua.call('0', options);
+     });
+
+     ua.on('registrationFailed', function(e) {
+       console.log("registrationFailed: ", e.cause);
+     });
+
+     ua.on('newRTCSession', function(e) {
+       var originator = e.originator;
+       var session = e.session;
+       var request = e.request;
+       var dataChan;
+       var dtmfSender;
+
+       console.log("New RTC session", session);
+
+       if (session.direction === "incoming") {
+          console.log("AutoAnswer incoming call");
+          session.answer(callOptions);
+       }
+
+       session.on('confirmed', function(d) {
+          var localStream = session.connection.getLocalStreams()[0];
+          dtmfSender = session.connection.createDTMFSender(localStream.getAudioTracks()[0])
+          console.log("RTC session confirmed", d);
+       });
+       session.on('peerconnection', function(d) {
+          dataChan = e.peerconnection.createDataChannel('chat');
+          sesion.dial('sip:0');
+       });
+       session.on('addstream', function(e){
+          var remoteAudio = $('audio#remoteAudio');
+          remoteAudio.src = window.URL.createObjectURL(e.stream);
+          remoteAudio.play();
+       });
+     });
+
+     ua.on('newMessage', function(e) {
+       console.log("New Message", e);
+     });
+     
+     ua.on('unregistered', function(e) {
+       console.log("Unregistered: cause=", e.cause);
+     });
+
+     ua.on('newOptions', function(e) {
+       console.log('newOptions', e);
+     });
+
+     ua.on('sipEvent', function(e) {
+        console.log('sipEvent: ', e);
+     });
+
+     ua.start();
+/*
+     var target = "+200";
+     ua.sendMessage(target, body, options=null);
+*/
+/*     debugger; */
+  });
+  </script>
+ </body>
+</html>

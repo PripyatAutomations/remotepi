@@ -26,21 +26,23 @@
  <loadInformation1 model="IP Phone 7945">SCCP45.9-4-2SR4-3S</loadInformation1>
  <loadInformation2 model="IP Phone 7965">SCCP45.9-4-2SR4-3S</loadInformation1>
  <vendorConfig>
-  <logServer>10.8.0.1</logServer>
-  <syslogServer>10.8.0.1</syslogServer>
-  <debugServer>10.8.0.1</debugServer>
+  <logServer>10.11.0.13/logServer>
+  <syslogServer>10.11.0.3</syslogServer>
+<!--
+  <debugServer>10.11.0.3</debugServer>
   <debugLevel>3</debugLevel>
+-->
   <disableSpeaker>false</disableSpeaker>
   <disableSpeakerAndHeadset>false</disableSpeakerAndHeadset>
   <forwardingDelay>1</forwardingDelay>
   <pcPort>1</pcPort>
   <settingsAccess>1</settingsAccess>
   <garp>0</garp>
-  <voiceVlanAccess>0</voiceVlanAccess>
+  <voiceVlanAccess>1</voiceVlanAccess>
   <spanToPCPort>1</spanToPCPort>
   <videoCapability>0</videoCapability>
   <autoSelectLineEnable>0</autoSelectLineEnable>
-  <webAccess>0</webAccess>
+  <webAccess>1</webAccess>
   <daysDisplayNotActive>1,7</daysDisplayNotActive>
   <displayOnTime>06:30</displayOnTime>
   <displayOnDuration>14:00</displayOnDuration>
@@ -60,15 +62,15 @@
   <enableLldpPcPort>1</enableLldpPcPort>
   <lldpAssetId>Cisco Phone</lldpAssetId>
   <powerPriority>1</powerPriority>
-  <sshAccess>0</sshAccess>
+  <sshAccess>1</sshAccess>
   <sshPort>22</sshPort>
   <detectCMConnectionFailure>0</detectCMConnectionFailure>
   <useEnblocDialing>1</useEnblocDialing>
  </vendorConfig>
- <authenticationURL></authenticationURL>
+ <authenticationURL>http://10.11.0.3/cisco/auth.php</authenticationURL>
  <directoryURL>http://10.11.0.3/cisco/directory.php</directoryURL>
  <idleURL>http://10.11.0.3/cisco/idle.php</idleURL>
- <informationURL>http://10.11.0.3/cisco/help.png</informationURL>
+ <informationURL>http://10.11.0.3/cisco/help.php</informationURL>
  <messagesURL></messagesURL>
  <servicesURL>http://10.11.0.3/cisco/services.php</servicesURL>
 </Default>
