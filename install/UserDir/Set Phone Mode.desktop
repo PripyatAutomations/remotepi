@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Set Phone Mode
+Comment=
+Exec=/opt/remotepi/bin/modeset-phone
+Icon=media-record
+Path=
+Terminal=true
+StartupNotify=false

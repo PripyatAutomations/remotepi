@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Set Winlink Mode
+Comment=
+Exec=/opt/remotepi/bin/modeset-winlink
+Icon=xfce-newmail
+Path=
+Terminal=true
+StartupNotify=false

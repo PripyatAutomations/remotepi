@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Set DigiMode
+Comment=
+Exec=/opt/remotepi/bin/modeset-digi
+Icon=network-idle
+Path=
+Terminal=true
+StartupNotify=false

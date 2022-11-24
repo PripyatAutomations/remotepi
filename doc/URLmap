@@ -1,0 +1,6 @@
+/pbx/ => 127.0.0.1:8088
+	/pbx/httpstatus       Asterisk HTTP General Status
+	/pbx/phoneprov/...    Asterisk HTTP Phone Provisioning Tool
+	/pbx/metrics/...      Prometheus Metrics URI
+	/pbx/ari/...          Asterisk RESTful API
+	/pbx/ws               Asterisk HTTP WebSocket

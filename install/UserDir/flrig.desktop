@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Flrig
+GenericName=Amateur Radio Rig Control
+Comment=Amateur Radio Communications
+Exec=/opt/remotepi/bin/flrig-local
+Icon=flrig
+Terminal=false
+Type=Application
+Categories=Network;HamRadio;

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Restart flrig-wrap
+Comment=
+Exec=/opt/remotepi/init/flrig-vnc.start
+Icon=
+Path=
+Terminal=true
+StartupNotify=false

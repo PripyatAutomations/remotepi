@@ -26,7 +26,7 @@
  <loadInformation1 model="IP Phone 7945">SCCP45.9-4-2SR4-3S</loadInformation1>
  <loadInformation2 model="IP Phone 7965">SCCP45.9-4-2SR4-3S</loadInformation1>
  <vendorConfig>
-  <logServer>10.11.0.13/logServer>
+  <logServer>10.11.0.3</logServer>
   <syslogServer>10.11.0.3</syslogServer>
 <!--
   <debugServer>10.11.0.3</debugServer>

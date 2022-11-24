@@ -120,7 +120,7 @@ exten => s,1,Noop()
 exten => s,n,Goto(ham-login,1,1)
 
 ; Read and check password
-exten => 1,1,Authenticate()
+exten => 1,1,Authenticate($HAM_PASS)
  same => n,Goto(ham-menu,s,1)
  same => n,Hangup()
 exten => t,1,Hangup()
