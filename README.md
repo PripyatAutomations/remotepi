@@ -6,7 +6,7 @@ required... Feel free to submit patches to deal with this in a friendly way!
 Install:
 	cd /opt
 	git clone https://github.com/PripyatAutomations/remotepi.git
-	sudo /opt/remotepi/bin/install.sh
+	sudo /opt/remotepi/install/install.sh
 
 Move /etc/asterisk out of the way and make a symlink to /opt/remotepi/etc/asterisk
 	sudo mv /etc/asterisk{.,old}
