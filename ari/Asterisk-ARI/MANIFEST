@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Asterisk-ARI.t
+lib/Asterisk/ARI.pm

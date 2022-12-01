@@ -1,4 +1,11 @@
 #!/bin/bash
+[ ! -f /opt/remotepi/etc/config.sh ] && {
+   echo "* Please put this stuff at /opt/remotepi/ and make sure etc/config.sh exists"
+   exit 1
+}
+
+. /opt/remotepi/etc/config.sh
+
 echo "* updating submodules..."
 git submodule init
 git submodule pull
@@ -29,6 +36,10 @@ echo "=> ardop modems..."
    touch /opt/remotepi/ext/.novnc_patched
    cd -
 }
+
+echo "* Fixing permissions..."
+sudo chown -R ${REMOTEPI_HOST_USER}:${REMOTEPI_HOST_GROUP} /opt/remotepi
+sudo chown -R asterisk:${REMOTEPI_HOST_GROUP} /opt/remotepi/etc/asterisk
 
 echo "* Adding to PATH (profile.d)"
 echo "export PATH=\$PATH:/opt/remotepi/bin" >> /etc/profile.d/remotepi.sh

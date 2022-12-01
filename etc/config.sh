@@ -62,3 +62,9 @@ ADMIN_PASS=1234567890
 
 # ham radio menu password, for "untrusted" phones
 HAM_PASS=4321
+
+# Used to change ownership of various files
+ASTERISK_HOST_USER=asteris
+REMOTEPI_HOST_USER=remotepi
+REMOTEPI_HOST_GROUP=remotepi
+LETS_ENCRYPT_DOMAIN=your.domain

@@ -2,7 +2,7 @@
 . /opt/remotepi/etc/config.sh
 
 # Generate teh asterisk bits
-sudo chown asterisk:devuan /opt/remotepi/etc/asterisk
+sudo chown ${ASTERISK_HOST_USER}:${REMOTEPI_HOST_USER} /opt/remotepi/etc/asterisk
 sudo chmod g+wx /opt/remotepi/etc/asterisk
 cat > /opt/remotepi/etc/asterisk/pjsip.remotepi.conf<<EOF
 [guest]
@@ -73,7 +73,6 @@ disallow=all
 ;allow=opus,speex,g722,ulaw,gsm
 ;allow=g722
 allow=g722
-
 EOF
 
 cat > /opt/remotepi/etc/asterisk/iax.remotepi.conf <<EOF
@@ -160,8 +159,11 @@ exten => 5000,1,Goto(ham-menu,s,1)
 include => common
 EOF
 
-sudo mkdir -p /opt/remotepi/etc/ssl/
-sudo cp /etc/letsencrypt/live/istabpeople.com/*.pem /opt/remotepi/etc/ssl/
-sudo chown -R asterisk:asterisk /opt/remotepi/etc/ssl/
-sudo chmod o-rwx /opt/remotepi/etc/ssl
+[ -d "/etc/letsencrypt/live/${LETSENCRYPT_DOMAIN}/" ] && {
+   echo "==> Mirroring letsencrypt certificates for: asterisk"
+   sudo mkdir -p /opt/remotepi/etc/ssl/
+   sudo cp /etc/letsencrypt/live/${LETSENCRYPT_DOMAIN}/*.pem /opt/remotepi/etc/ssl/
+   sudo chown -R ${ASTERISK_HOST_USER}:${REMOTEPI_HOST_USER} /opt/remotepi/etc/ssl/
+   sudo chmod o-rwx /opt/remotepi/etc/ssl
+}
 sudo service asterisk restart
