@@ -558,6 +558,15 @@ sub station_modeset {
    }
 }
 
+# Call this when the playback is finished, so that it can be sent back to main bridge
+sub playback_done {
+   my $rdata = $_[0];
+   my $chan_name = $rdata->{'channel'}{'name'};
+   my $chan_id = $rdata->{'channel'}{'id'};
+   my $chan_state = $rdata->{'channel'}{'state'};
+   ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
+}
+
 ########
 # DTMF #
 ########
