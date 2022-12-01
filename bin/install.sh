@@ -43,4 +43,10 @@ sudo chown -R asterisk:${REMOTEPI_HOST_GROUP} /opt/remotepi/etc/asterisk
 
 echo "* Adding to PATH (profile.d)"
 echo "export PATH=\$PATH:/opt/remotepi/bin" >> /etc/profile.d/remotepi.sh
+
+echo "* Fetching dark theme..."
+/opt/remotepi/install/fetch-dark-gtk-theme
+echo "* Installing userdir files"
+/opt/remotepi/install/userdir
+
 echo "**** Install Done ****"

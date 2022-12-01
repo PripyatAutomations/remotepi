@@ -44,7 +44,7 @@ rm -f /tmp/kisstnc
 #tmux send-keys "sudo ${RUN}/kiss-setup.sh" C-m
 
 ardopc &
-pat http &
+pat-winlink http &
 
 echo "* Winlink mode enabled in tmux session 'winlink'!"
 echo "To connect, please run:"

@@ -30,5 +30,5 @@ echo "* Starting radio0 baresip"
 sudo -u devuan '/opt/remotepi/run/baresip-launch.sh'
 
 echo "* Starting PAT winlink client"
-sudo -u devuan pat http &
+sudo -u devuan pat-winlink http &
 
