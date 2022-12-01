@@ -2,9 +2,7 @@
 . /opt/remotepi/etc/config.sh
 
 # Generate teh asterisk bits
-sudo chown ${ASTERISK_HOST_USER}:${REMOTEPI_HOST_USER} /opt/remotepi/etc/asterisk
-sudo chmod g+wx /opt/remotepi/etc/asterisk
-cat > /opt/remotepi/etc/asterisk/pjsip.remotepi.conf<<EOF
+cat > /tmp/install.out <<EOF
 [guest]
 type=aor
 max_contacts=5
@@ -74,8 +72,8 @@ disallow=all
 ;allow=g722
 allow=g722
 EOF
-
-cat > /opt/remotepi/etc/asterisk/iax.remotepi.conf <<EOF
+sudo mv /tmp/install.out /opt/remotepi/etc/asterisk/pjsip.remotepi.conf
+cat > /tmp/install.out <<EOF
 [mobile]
 type=friend
 host=dynamic
@@ -84,15 +82,17 @@ secret=1234567890
 context=mobile
 permit=10.0.0.0/255.0.0.0
 EOF
+sudo mv /tmp/install.out /opt/remotepi/etc/asterisk/iax.remotepi.conf
 
-cat > /opt/remotepi/etc/asterisk/ari.remotepi.conf <<EOF
+cat > /tmp/install.out  <<EOF
 [remotepi]
 type = user
 read_only = no
 password = remotepi
 EOF
+sudo mv /tmp/install.out /opt/remotepi/etc/asterisk/ari.remotepi.conf
 
-cat > /opt/remotepi/etc/asterisk/extensions.remotepi.conf <<EOF
+cat > /tmp/install.out  <<EOF
 ;;;;;;;;;;;;;;;
 ; ft891 radio ;
 ;;;;;;;;;;;;;;;
@@ -158,12 +158,14 @@ exten => 0,1,NoOp()
 exten => 5000,1,Goto(ham-menu,s,1)
 include => common
 EOF
+sudo mv /tmp/install.out /opt/remotepi/etc/asterisk/extensions.remotepi.conf
 
 [ -d "/etc/letsencrypt/live/${LETSENCRYPT_DOMAIN}/" ] && {
    echo "==> Mirroring letsencrypt certificates for: asterisk"
    sudo mkdir -p /opt/remotepi/etc/ssl/
    sudo cp /etc/letsencrypt/live/${LETSENCRYPT_DOMAIN}/*.pem /opt/remotepi/etc/ssl/
-   sudo chown -R ${ASTERISK_HOST_USER}:${REMOTEPI_HOST_USER} /opt/remotepi/etc/ssl/
-   sudo chmod o-rwx /opt/remotepi/etc/ssl
+   sudo chown -R ${ASTERISK_HOST_USER}:$root /opt/remotepi/etc/ssl/
+   sudo chmod go-rwx /opt/remotepi/etc/ssl
 }
+sudo chown -R ${ASTERISK_HOST_USER}:root /opt/remotepi/etc/asterisk
 sudo service asterisk restart
