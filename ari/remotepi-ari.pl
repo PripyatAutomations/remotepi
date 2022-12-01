@@ -25,7 +25,7 @@ STDOUT->autoflush(1);
 
 ####XXX: Move to config file####
 my $app_name = "remotepi";
-my $VERSION = "20221125";
+my $VERSION = "20221201.01";
 
 # Log levels for messages
 my $LOG_NOISE = 6;
@@ -36,7 +36,6 @@ my $LOG_BUG = 2;
 my $LOG_FATAL = 1;
 
 my $debug_level = $LOG_INFO;
-our $history = $ENV{'HOME'} . "/.remotepi-ari.history";
 
 my $ari = {
    "host" => "127.0.0.1",
@@ -121,6 +120,7 @@ my $tts_seqno = 0;
 my $loop = IO::Async::Loop->new;
 my $auto_readback_timer;
 my $dtmf_digit_timer;
+our $history = $ENV{'HOME'} . "/.remotepi-ari.$active_rig.history";
 
 # bridge name to ID mappings
 my $bridge_names;
@@ -875,24 +875,24 @@ sub parse_ari {
       my $res = ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
    } elsif ($rdata->{'type'} =~ m/^StasisEnd$/i) {
       # NoOp
-   } elsif ($rdata->{'type'} =~ m/^ChannelConnectedLine#/i) {
+   } elsif ($rdata->{'type'} =~ m/^ChannelConnectedLine$/) {
       Log "chan", $LOG_INFO, "Channel $chan_name ($chan_id) connected to bridge " . ari_bridgr_str($radio0->{'bridge_id'});
-   } elsif ($rdata->{'type'} =~ m/^ChannelDestroyed$/i) {
+   } elsif ($rdata->{'type'} =~ m/^ChannelDestroyed$/) {
       Log "chan", $LOG_INFO, "Channel $chan_name ($chan_id) destroyed";
-   } elsif ($rdata->{'type'} =~ m/^ChannelEnteredBridge$/i) {
+   } elsif ($rdata->{'type'} =~ m/^ChannelEnteredBridge$/) {
       Log "bridge", $LOG_INFO, "Client $chan_name ($chan_id) joined bridge " . ari_bridge_str($radio0->{'bridge_id'});
-   } elsif ($rdata->{'type'} =~ m/^ChannelHangupRequest$/i) {
+   } elsif ($rdata->{'type'} =~ m/^ChannelHangupRequest$/) {
       Log "chan", $LOG_INFO, "Disconnect by client: $chan_name ($chan_id)";
-   } elsif ($rdata->{'type'} =~ m/^ChannelLeftBridge$/i) {
+   } elsif ($rdata->{'type'} =~ m/^ChannelLeftBridge$/) {
       Log "bridge", $LOG_INFO, "Channel $chan_name ($chan_id) left bridge: " . ari_bridge_str($radio0->{'bridge_id'});
-   } elsif ($rdata->{'type'} =~ m/^ChannelStateChange$/i) {
+   } elsif ($rdata->{'type'} =~ m/^ChannelStateChange$/) {
       Log "ari", $LOG_DEBUG, "ChannelStateChange: " . Dumper($rdata);
-   } elsif ($rdata->{'type'} =~ m/^ChannelVarset$/i) {
+   } elsif ($rdata->{'type'} =~ m/^ChannelVarset$/) {
       Log "ari", $LOG_DEBUG, "ChannelVarset: " . Dumper($rdata);
-   } elsif ($rdata->{'type'} =~ m/^PlaybackStarted$/i) {
+   } elsif ($rdata->{'type'} =~ m/^PlaybackStarted$/) {
       Log "sound", $LOG_DEBUG, "PlaybackStarted on " . $rdata->{'playback'}{'target_uri'} . ": " .
            $rdata->{'playback'}{'media_uri'};
-   } elsif ($rdata->{'type'} =~ m/^PlaybackFinished$/i) {
+   } elsif ($rdata->{'type'} =~ m/^PlaybackFinished$/) {
       my @spl_chan_id = split(':', $rdata->{'playback'}{'target_uri'});
       $chan_id = $spl_chan_id[1];
       

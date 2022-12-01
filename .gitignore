@@ -6,7 +6,7 @@ bin/ardopofdm
 
 # site private data
 etc/config.ini
-#etc/config.sh
+etc/config.sh
 
 # baresip UA autoconfs
 etc/baresip-*
