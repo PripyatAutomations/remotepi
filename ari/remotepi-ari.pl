@@ -1,26 +1,31 @@
 #!/usr/bin/perl
 ######
-# XXX: Add timeout for the dtmf decoders
-# XXX: Add timeouts for the $dtmf_announce_*_delay's
 use strict;
 use warnings;
 use HTTP::Request::Common;
 use IO::Async::Loop;
 use IO::Async::Timer::Countdown;
 use IO::Async::Stream;
+use IO::Handle;
 use Net::Async::WebSocket::Client;
 use JSON;
 use Data::Dumper;
 use Hamlib;
 use POSIX qw(strftime);
-
+use RPC::XML qw(:types);
+use RPC::XML::Client;
+use LWP;
 require LWP::UserAgent;
+#use Term::Readline;
+use Time::HiRes qw(gettimeofday tv_interval usleep);
+use Asterisk::ARI;
 
 # disable linebuffering on output, so we can log easier
-$| = 1;
+STDOUT->autoflush(1);
 
 ####XXX: Move to config file####
 my $app_name = "remotepi";
+my $VERSION = "20221125";
 
 # Log levels for messages
 my $LOG_NOISE = 6;
@@ -31,6 +36,7 @@ my $LOG_BUG = 2;
 my $LOG_FATAL = 1;
 
 my $debug_level = $LOG_INFO;
+our $history = $ENV{'HOME'} . "/.remotepi-ari.history";
 
 my $ari = {
    "host" => "127.0.0.1",
@@ -40,6 +46,10 @@ my $ari = {
    "pass" => "remotepi"
 };
 
+my $flrig = {
+   "url" => "http://localhost:12345/RPC2"
+};
+
 my $station = {
    "callsign" => "N0CALL",
    "default_mode" => "",
@@ -47,6 +57,12 @@ my $station = {
    "gridsquare" => "FN19",
    "selcall_dtmf" => "987654321",
    "shutdown_dtmf" => "##90210352##"
+};
+
+my $new_user = {
+   "name" => "",		# name of the user
+   "chan_regex" => "",		# regex to match the channel
+   "pin" => "",			# 4-6 digit pin # for ham menu
 };
 
 my $client = {
@@ -109,7 +125,7 @@ my $dtmf_digit_timer;
 my $bridge_names;
 
 ###############################################
-print "remotepi-ari.pl version <unknown>\n";
+print "remotepi-ari.pl version <$VERSION>\n";
 print "The standard Dangerous Devices warranty applies.\n";
 print "-- If it breaks, you get to keep both pieces. If there are more than two pieces, please return them for product improvement!\n";
 print "http://github.com/PripyatAutomations/remotepi\n\n";
@@ -128,13 +144,6 @@ sub Log {
 
    my $datestamp = strftime("%Y/%m/%d %M:%H:%S", localtime);
    my $lvl;
-
-my $LOG_NOISE = 6;
-my $LOG_DEBUG = 5;
-my $LOG_INFO = 4;
-my $LOG_WARN = 3;
-my $LOG_BUG = 2;
-my $LOG_FATAL = 1;
 
    if ($log_level == $LOG_NOISE) {
       $lvl = "noise";
@@ -159,6 +168,9 @@ my $LOG_FATAL = 1;
    print "\n";
 }
 
+sub shutdown() {
+   $rig->close();
+}
 
 #################
 # Call Handling #
@@ -886,14 +898,39 @@ my $ari_conn = Net::Async::WebSocket::Client->new(
    },
    on_read_eof => sub {
       Log "ari", $LOG_FATAL, "ARI connection got EOF";
+      exit(1);
    },
    on_read_error => sub {
       Log "ari", $LOG_FATAL, "Error reading ARI connection";
+      exit(2);
    },
    on_write_error => sub {
       Log "ari", $LOG_FATAL, "Error writing ARI connection";
+      exit(3);
    },
 );
+
+#################
+# Local Console #
+#################
+sub cons_parse_cmd {
+   my $user = shift;
+   my $verb = shift;
+
+   ###########
+   # Bridges #
+   ###########
+   if ($verb =~ m/^bridge/i) {
+   ############
+   # Channels #
+   ############
+   } elsif ($verb =~ m/^chan/i) {
+   #########
+   # Users #
+   #########
+   } elsif ($verb =~ m/^user/i) {
+   }
+}
 
 ##############
 # Event Loop #
@@ -946,5 +983,3 @@ $ari_conn->connect(
 })->get;
 
 $loop->run;
-
-#$rig->close();

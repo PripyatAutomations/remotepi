@@ -1,11 +1,13 @@
 #!/bin/bash
 . /opt/remotepi/etc/config.sh
 
-tmux detach
-unset TMUX
-unset TMUX_PANE
+#tmux detach
+#unset TMUX
+#unset TMUX_PANE
 
 /opt/remotepi/bin/modeset-off
+
+cd /opt/remotepi/logs
 
 # Configure mixer
 amixer -c$CARD set 'Speaker',0 ${PKT_SPKR}
@@ -30,11 +32,6 @@ echo "kissparms -p \${MYCALL} -t 200 -l 20 -s 100 -r 63 -f n" >> ${CF}
 chmod 0755 ${CF}
 
 rm -f /tmp/kisstnc
-
-echo "* Setting rig to DATA-U"
-rigctl -m 4 M PKTUSB 0
-echo "* Setting power to 35W"
-rigctl -m 4 L RFPOWER 0.35
 
 #tmux new-session -s winlink -d
 #tmux send-keys "pat http" C-m

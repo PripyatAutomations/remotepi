@@ -15,7 +15,7 @@ PTT=manual		# or vox
 [MODESET]	*0,<MODE>#	Change operating mode (will stop VoIP service!)
 			0=Phone, 1=Digi, 2=Winlink
 [VOX]		*1,[OPTION]#	Set VOX
-			0=OFF, 1=ON, absent=toggle
+			0=OFF, 1=ON
 [RFGAIN]	*2,<GAIN>#	Set RF gain
 [FREQ]		*3,<FREQINHZ>#	Tune to freq in hz. (7 or more digits)
 [FREQKHZ]	*3<FREQINKHZ>#	Tune to a freq in hz (6 or less digits)

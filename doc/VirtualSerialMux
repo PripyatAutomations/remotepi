@@ -1,0 +1,23 @@
+boot args (maybe needed for ptys)
+	pty.legacy_count=32
+
+server:
+	socat tcp-l:54321,reuseaddr,fork file:/dev/ttyUSB0,nonblock,waitlock=/var/run/ttyUSB0.lock
+
+	-or-
+
+	socat -d -d pty,link=/dev/ttyS0,raw,echo=0 tcp-listen:54321
+
+client:
+	
+
+connect program to serial port:
+	socat -d -d -v pty,rawer,link=<PORT_NAME> EXEC:<COMMAND>,pty,rawer
+
+redirect serial port to another:
+	socat -d -d pty,link=/dev/ttyS0,raw,echo=0 pty,link=/dev/ttyS1,raw,echo=0
+
+
+
+Connect RAW remote port (not telnet) to local tty
+	socat -d TCP:server:port PTY,link=$HOME/dev/vmodem0,rawer,b115200,sane
