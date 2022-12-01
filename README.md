@@ -3,30 +3,32 @@ Excuse the mess while i clean this up for publication....
 This 'must' live at /opt/remotepi otherwise a lot of editing will be
 required... Feel free to submit patches to deal with this in a friendly way!
 
-Install:
-	cd /opt
-	git clone https://github.com/PripyatAutomations/remotepi.git
-	sudo /opt/remotepi/install/install.sh
+See INSTALL.d first
+
+Install
+-------
+*	cd /opt
+*	git clone https://github.com/PripyatAutomations/remotepi.git
+*	sudo /opt/remotepi/install/install.sh
 
 Move /etc/asterisk out of the way and make a symlink to /opt/remotepi/etc/asterisk
-	sudo mv /etc/asterisk{.,old}
-	sudo ln -s /opt/remotepi/etc/asterisk /etc/
+*	sudo mv /etc/asterisk{.,old}
+*	sudo ln -s /opt/remotepi/etc/asterisk /etc/
 
 Edit asterisk configurations.
 
 You'll need to make extension or at least call Statis(remotepi,${CONTEXT}) to make this work:
-	[remotepi]
-	exten => 5000,1,NoOp()
-	 same => n,Stasis(remotepi,${CONTEXT})
+*	[remotepi]
+*	exten => 5000,1,NoOp()
+*	 same => n,Stasis(remotepi,${CONTEXT})
 
 You'll need to modify the supplied configurations.
 
 Start up using /opt/remotepi/init/system-startup.sh then connect to asterisk.
 
-
 CONFIGURING
 -----------
-edit /opt/remotepi/etc/remotepi.ini
+edit /opt/remotepi/etc/remotepi.sh
 
 SECURITY
 --------

@@ -49,8 +49,9 @@ echo "* Adding to PATH (profile.d)"
 echo "export PATH=\$PATH:/opt/remotepi/bin" >> /etc/profile.d/remotepi.sh
 
 echo "* Fetching dark theme..."
-/opt/remotepi/install/fetch-dark-gtk-theme
-echo "* Installing userdir files"
-/opt/remotepi/install/userdir
+/opt/remotepi/install/tasks/fetch-dark-gtk-theme
+
+echo "* Installing homedir files to ${REMOTEPI_HOST_USER}"
+/opt/remotepi/install/tasks/install-homedir
 
 echo "**** Install Done ****"

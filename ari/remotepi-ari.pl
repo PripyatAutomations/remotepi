@@ -70,7 +70,8 @@ my $client = {
    "chan_name" => "",
    "current_bridge" => "",
    "permissions" => "*",		# * for all, admin,listen,speak
-   "username" => "guest"
+   "username" => "guest",
+   "tts_voice" => "en_in_Kajal"
 };
 
 my $radio0 = {
@@ -604,6 +605,7 @@ sub parse_ari {
             if ($duration >= 1000) {
                $digits_rf = '';
                Log "dtmf", $LOG_INFO, "Clearing DTMF buffer (RF)";
+               play_beep($chan_id);
             }
          } else {
             if ($duration >= 1000) {
@@ -798,20 +800,26 @@ sub parse_ari {
             if ($1 eq 0) { 		# LSB
                $modmode = $Hamlib::RIG_MODE_LSB;
                Log "dtmf", $LOG_INFO, "Set Modulation Mode: LSB";
+               ari_play($chan_id, "sound:remotepi/" . $client->{'tts_voice'} . "/lsb");
             } elsif ($1 eq 1) { 	# USB
                $modmode = $Hamlib::RIG_MODE_USB;
                Log "dtmf", $LOG_INFO, "Set Modulation Mode: USB";
+               ari_play($chan_id, "sound:remotepi/" . $client->{'tts_voice'} . "/usb");
             } elsif ($1 eq 2) {	# FM
                $modmode = $Hamlib::RIG_MODE_FM;
                Log "dtmf", $LOG_INFO, "Set Modulation Mode: FM";
+               ari_play($chan_id, "sound:remotepi/" . $client->{'tts_voice'} . "/fm");
             } elsif ($1 eq 3) {	# AM
                $modmode = $Hamlib::RIG_MODE_AM;
                Log "dtmf", $LOG_INFO, "Set Modulation Mode: AM";
+               ari_play($chan_id, "sound:remotepi/" . $client->{'tts_voice'} . "/am");
             } elsif ($1 eq 4) {	# DATA-U
                Log "dtmf", $LOG_INFO, "Set Modulation Mode: DATA-U unsupported yet";
+               ari_play($chan_id, "sound:remotepi/" . $client->{'tts_voice'} . "/data");
                return;
             } else {
                Log "dtmf", $LOG_INFO, "Set Modulation Mode: invalid value $1";
+               ari_play($chan_id, "sound:beeperr");
                return;
             }
             $rig->set_mode($modmode);
@@ -832,7 +840,9 @@ sub parse_ari {
                Log "dtmf", $LOG_INFO, "Invalid tuning step selection $1, ignoring request";
             }
             Log "dtmf", $LOG_INFO, "Set Tuning Step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " ($1)";
+            ari_play($chan_id, "sound:remotepi/" . $client->{'tts_voice'} . "/data");
          } elsif ($rdigits =~ m/^\*9#/) {
+            ari_play($chan_id, "sound:remotepi/" . $client->{'tts_voice'} . "/data");
             Log "dtmf", $LOG_INFO, "Readback tuning step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")";
          }
       } elsif ($rfside && $digits_rf =~ m/^8675309$/) {
@@ -879,7 +889,8 @@ sub parse_ari {
       
       Log "sound", $LOG_INFO, "PlaybackFinished on " . $rdata->{'playback'}{'target_uri'} . ": " .
            $rdata->{'playback'}{'media_uri'};
-      ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
+# This needs to be manually called after the whole playback is done...
+#      ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
    } else {
       Log "ari", $LOG_BUG, "Got unknown Event Type: " . $rdata->{'type'} . ":" . Dumper($rdata);
    }

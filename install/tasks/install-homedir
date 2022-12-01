@@ -1,0 +1,4 @@
+#!/bin/bash
+. /opt/remotepi/config.sh
+
+cp -avrx /opt/remotepi/install/UserDir ~${REMOTEPI_HOST_USER}/
