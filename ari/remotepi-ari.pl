@@ -39,8 +39,8 @@ my $LOG_BUG = 2;		# bugs
 my $LOG_FATAL = 1;		# fatal errors
 
 # default debug level
-#my $debug_level = $LOG_INFO;
-my $debug_level = $LOG_WARN;
+my $debug_level = $LOG_INFO;
+#my $debug_level = $LOG_DEBUG;
 
 my $ari = {
    "host" => "127.0.0.1",
@@ -159,6 +159,8 @@ sub Log {
       $lvl = "info";
    } elsif ($log_level == $LOG_WARN) {
       $lvl = "warn";
+   } elsif ($log_level == $LOG_AUDIT) {
+      $lvl = "AUDIT";
    } elsif ($log_level == $LOG_BUG) {
       $lvl = "BUG";
    } elsif ($log_level == $LOG_FATAL) {
@@ -269,9 +271,16 @@ sub rig_readback_freq {
    ari_speech($ab, "frequency");
    ari_play($ab, "digits:" . int(($vfo_freq/1000)));
    ari_speech($ab, "kilohertz");
-   ari_playback_done($ab);
 
    return $vfo_freq;
+}
+
+sub rig_readback_output_power {
+   my $chan_id = $_[0];
+
+   ari_speech($chan_id, "output_power");
+   ari_play($chan_id, "digits:" . int($1));
+   ari_speech($chan_id, "watts");
 }
 
 sub rig_readback_mode {
@@ -287,7 +296,6 @@ sub rig_readback_mode {
 
    ari_speech($chan_id, lc($new_mode));
    ari_play("number:$width");
-   ari_playback_done($chan_id);
 }
 
 sub rig_refresh() {
@@ -600,9 +608,9 @@ sub station_modeset {
 # Call this when the playback is finished, so that it can be sent back to main bridge
 sub ari_playback_done {
    my $rdata = $_[0];
-   my $chan_name = $rdata->{'channel'}{'name'};
-   my $chan_id = $rdata->{'channel'}{'id'};
-   my $chan_state = $rdata->{'channel'}{'state'};
+#   my $chan_name = $rdata->{'channel'}{'name'};
+#   my $chan_id = $rdata->{'channel'}{'id'};
+#   my $chan_state = $rdata->{'channel'}{'state'};
 #   ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
 }
 
@@ -911,16 +919,13 @@ sub parse_ari {
          } elsif ($rdigits =~ m/^\*5#/) {
             my $tx_power = $rig->get_level_i($Hamlib::RIG_LEVEL_RFPOWER) * $radio0->{'power_divider'};
             Log "dtmf", $LOG_BUG, "NYI Readback TX power: $tx_power Watt(s)";
-#            rig_readback_output_power($chan_id);
+            rig_readback_output_power($chan_id);
             ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*5(\d+)#/) {
             my $hamlib_power = int($1) / $radio0->{'power_divider'};
             Log "dtmf", $LOG_AUDIT, "Set TX Power: $1 Watt(s) ($hamlib_power)";
             $rig->set_level($Hamlib::RIG_LEVEL_RFPOWER, $hamlib_power);
-#            rig_readback_output_power($chan_id);
-            ari_speech($chan_id, "output_power");
-            ari_play($chan_id, "digits:" . int($1));
-            ari_speech($chan_id, "watts");
+            rig_readback_output_power($chan_id);
             ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*6(\d+)#/) {
             my $modmode = $Hamlib::RIG_MODE_LSB;
@@ -959,6 +964,7 @@ sub parse_ari {
             ari_playback_done($rdata);
             $rig->set_mode($modmode);
             rig_readback_mode($chan_id);
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*6#/) {
             rig_readback_mode($chan_id);
             ari_playback_done($rdata);
@@ -1002,6 +1008,7 @@ sub parse_ari {
          $digits_local_last = time();
       }
    } elsif ($rdata->{'type'} =~ m/^StasisStart$/i) {
+      Log "client", $LOG_AUDIT, "New Client $chan_id registered";
       Log "ari", $LOG_INFO, "New client: $chan_name ($chan_id) ($chan_state)";
 
       if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'state'}) &&

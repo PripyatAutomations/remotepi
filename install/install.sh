@@ -54,4 +54,7 @@ echo "* Fetching dark theme..."
 echo "* Installing homedir files to ${REMOTEPI_HOST_USER}"
 /opt/remotepi/install/tasks/install-homedir
 
+echo "* Building voices (if needed)"
+/opt/remotepi/voices/build-all-voices.sh
+
 echo "**** Install Done ****"
