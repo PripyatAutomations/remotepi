@@ -13,3 +13,6 @@
 [submodule "ext/JsSIP"]
 	path = ext/JsSIP
 	url = https://github.com/versatica/JsSIP.git
+[submodule "www/callbook/usa-fcc-uls"]
+	path = www/callbook/usa-fcc-uls
+	url = https://github.com/PripyatAutomations/ulsweb.git

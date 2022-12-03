@@ -14,7 +14,7 @@ echo "* Installing host packages (apt)"
 # remove this temporarily XXX: Fix pipewire stuff ASAP
 sudo apt purge pipewire pipewire-alsa pipewire-bin pipewire-audio-client-libraries pipewire-jack pipewire-pulse pipewire-v4l2  pipewire-doc wireplumber
 # install stuff
-sudo apt install espeak-ng libespeak-ng-dev libsamplerate-dev libsamplerate0
+sudo apt install espeak-ng libespeak-ng-dev libsamplerate-dev libsamplerate0 sox ffmpeg
 sudo apt install libhttp-request-params-perl libio-async-loop-epoll-perl libnet-async-http-perl libjson-perl libdata-dumper-simple-perl libhamlib-perl librpc-xml-perl
 sudo apt install asterisk asterisk-core-sounds-en asterisk-flite asterisk-dev asterisk-modules baresip baresip-ffmpeg 
 
@@ -37,8 +37,8 @@ echo "=> ardop modems..."
    cd -
 }
 
-[ ! -s /var/lib/asterisk/sounds/remotepi ] && {
-   ln -s /opt/remotepi/voices /var/lib/asterisk/sounds/remotepi
+[ ! -s /usr/share/asterisk/sounds/remotepi ] && {
+   ln -s /opt/remotepi/voices /usr/share/asterisk/sounds/remotepi
 }
 
 echo "* Fixing permissions..."

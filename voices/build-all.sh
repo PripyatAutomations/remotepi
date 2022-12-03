@@ -1,16 +1,20 @@
 #!/bin/bash
-TARGETS="en_uk"
-#TARGETS=en_uk
+#TARGETS="en_uk"
 #TARGETS=en_in
 #TARGETS=en_nz
-#TARGETS=en_us
-OFORMAT=mp3
+TARGETS=en_us
+TARGETS=en_au
+#OFORMAT=mp3
+OFORMAT=pcm
 #voice=Amy
-voice=Brian
+#voice=Brian
 #voice=Kajal
 #voice=Olivia
 #voice=Aria
-#voice=Joanna
+voice=Joanna
+
+#for i in en_au_Olivia en_in_Kajal en_nz_Aria en_uk_Amy en_uk_Brian en_us_Joanna; do
+#done
 
 engine=neural
 # [Lotte, Maxim, Ayanda, Salli, Arthur, Geraint, Miguel,
@@ -51,3 +55,9 @@ for target in ${TARGETS}; do
       fi
    done
 done
+
+cd ${target}_${voice}
+for i in *.pcm; do
+   echo mv $i $(echo $i|sed s%pcm%wav%)
+done
+cd -
