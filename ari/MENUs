@@ -1,0 +1,117 @@
+MAIN MENU
+---------
+    1				Settings Menu
+    0				Go to Quick Menu
+    1				User Settings Menu
+    2
+    3
+    4				
+    5
+    6
+    7
+    8
+    9
+
+SETTINGS MENU
+-------------
+    *				Go back to Main Menu
+    #				Play the menu prompt
+    1				User Settings
+    2				Radio Settings
+    3				Recordings Menu
+    4				
+    5
+    6
+    7
+    8
+    9
+    0				Quick Menu
+
+USER_SETTINGS MENU
+------------------
+    *				Go back to Settings Menu
+    #				Play the menu prompt
+    1				Preferred language & Voice [USERLANG]
+    2
+    3				
+    4
+    5
+    6
+    7
+    8
+    9
+    0
+
+USERLANG MENU
+-------------
+    *				Go back to User Settings menu
+    #				Play teh menu prompt
+
+RADIO SETTINGS MENU
+-------------------
+    *				Go back to Main Menu
+    #				Play the menu prompt
+    1				Radio status
+    2				Edit Settings
+    3				
+    4
+    5
+    6
+    7
+    8
+    9
+    0
+
+STATION_MODE_PHONE MENU
+-----------------------
+    #				Readback / cancel entry
+    0				Phone
+    1				Digital mode (wsjtx, js8call, etc)
+    2				Winlink (port 8181 http)
+
+QUICK MENU
+----------
+    [MENU]		***		play a brief menu detailing the key sequences
+    [SELCALL-IN]	${MY_SELCALL}	(From RF) - Pages ${SELCALL_EXT}
+    [MODESET]		*0,<MODE>#	Change operating mode (will stop VoIP service!)
+                            0=Phone, 1=Digi, 2=Winlink
+    [VOX]		*1,[OPTION]#	Set VOX
+                            0=OFF, 1=ON
+    [RFGAIN]		*2,<GAIN>#	Set RF gain
+    [FREQ]		*3,<FREQINHZ>#	Tune to freq in hz. (7 or more digits)
+    [FREQKHZ]		*3<FREQINKHZ>#	Tune to a freq in hz (6 or less digits)
+    [FREQ-RB]		*3#		Readback frequency
+    [IF-SHIFT]		*4,<SHIFT>#	IF shift in hz
+    [POWER]		*5,<POWER>#	Power in Watts
+    [MODE]		*6,<MODE>#	Select mode
+                            0=LSB, 1=USB, 2=FM, 3=AM, 4=DATA-U
+    [DSP]		*7,<LEVEL>#	Control DSP Noise Reduction level (0=OFF)
+    [NOTCH]		*8,<LEVEL>#	Set DSP notch filter level (0=OFF)
+    [TUNE-STEP]		*9,<OPTION>#	Tuning step
+                            0=10hz, 1=100hz, 2=500hz, 3=1khz, 4=2.5khz
+    [TUNE-STEP-RB]	*9#		Readback tuning step
+    [TUNE-UP]		1		tunes up 1 ${TUNE_STEP} hz
+    [TUNE-DOWN]		4		tunes down 1 ${TUNE_STEP} hz
+    [RFGAIN-UP]		2		rf-gain up
+    [RFGAIN-DOWN]	5		rf-gain down
+    [MICGAIN-UP]	3		mic-gain up
+    [MICGAIN-DOWN]	6		mic-gain down
+    [TOGGLE-STEP]	9		cycle through tuning step settings
+    [READBACK]		0		read back freq and mode
+    [READBACK-GAIN]	01#		read back gain settings
+    [READBACK-SHIFT] 02#		read back IF shift
+
+    [TOGGLE_TX_BLOCK] ***		Toggles TX blocked status
+
+    Dial **# to go back to Main Menu
+
+    Hold * for >= 1 second to clear input buffer and start over.
+    Press # to finish a command.
+
+STATION_MODE_WINLINK MENU
+-------------------------
+	*		Go back to main menu
+	1		Sync mail
+	2		Record a voice to text email
+	3		Listen to emails
+	0		End winlink mode (revert to digital or phone last used)

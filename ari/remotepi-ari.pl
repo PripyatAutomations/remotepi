@@ -27,17 +27,20 @@ STDOUT->autoflush(1);
 
 ####XXX: Move to config file####
 my $app_name = "remotepi";
-my $VERSION = "20221201.01";
+my $VERSION = "20221203.01";
 
 # Log levels for messages
-my $LOG_NOISE = 6;
-my $LOG_DEBUG = 5;
-my $LOG_INFO = 4;
-my $LOG_WARN = 3;
-my $LOG_BUG = 2;
-my $LOG_FATAL = 1;
+my $LOG_NOISE = 7;		# extra noisy debugging
+my $LOG_DEBUG = 6;		# normal debugging
+my $LOG_INFO = 5;		# informational messages (noisy)
+my $LOG_WARN = 4;		# warnings
+my $LOG_AUDIT = 3;		# auditing events
+my $LOG_BUG = 2;		# bugs
+my $LOG_FATAL = 1;		# fatal errors
 
-my $debug_level = $LOG_INFO;
+# default debug level
+#my $debug_level = $LOG_INFO;
+my $debug_level = $LOG_WARN;
 
 my $ari = {
    "host" => "127.0.0.1",
@@ -161,7 +164,7 @@ sub Log {
    } elsif ($log_level == $LOG_FATAL) {
       $lvl = "FATAL";
    } else {
-      $lvl = "UNNOWN";
+      $lvl = "UNKNOWN";
    }
    print $datestamp . " [$log_type/$lvl]";
 
@@ -215,13 +218,12 @@ sub rig_get_freq {
    }
 }
 
-
 sub cancel_autoreadback {
    if (defined($auto_readback_timer)) {
       $loop->remove($auto_readback_timer);
       undef($auto_readback_timer);
    } else {
-     Log "dtmf", $LOG_INFO, "no arb timer";
+     Log "dtmf", $LOG_DEBUG, "no arb timer - skipping";
    }
 }
 
@@ -264,21 +266,28 @@ sub rig_readback_freq {
 
    $vfo_freq = rig_get_freq();
    Log "dtmf", $LOG_DEBUG, "Readback [VFO" . $radio0->{'active_vfo'} . "] freq: " . $vfo_freq/1000;
-#   ari_bridge_add_chan($alert_bridge->{'id'}, $chan_id);
-#   my $body_args = { "SAY_DATA" => "Frequency " . $vfo_freq/1000 };
-#   my $tmpchan = ari_originate_tts("readbackfreq", $body_args);
-#   my $res = ari_bridge_add_chan($alert_bridge->{'id'}, $tmpchan);
    ari_speech($ab, "frequency");
-   my $tgt = $vfo_freq/1000;
-#   ari_digits($ab, $vfo_freq/1000);
-   ari_play($ab, "digits:" . int($tgt * 100) / 100);
+   ari_play($ab, "digits:" . int(($vfo_freq/1000)));
    ari_speech($ab, "kilohertz");
+   ari_playback_done($ab);
 
    return $vfo_freq;
 }
 
 sub rig_readback_mode {
-   #
+   my $chan_id = $_[0];
+
+   my ($mode, $width) = $rig->get_mode();
+   my $new_mode = Hamlib::rig_strrmode($mode);
+   Log "dtmf", $LOG_INFO, "Readback mode: $new_mode $width";
+
+   if ($new_mode =~ m/^pkt/i) {
+      $new_mode = 'data';
+   }
+
+   ari_speech($chan_id, lc($new_mode));
+   ari_play("number:$width");
+   ari_playback_done($chan_id);
 }
 
 sub rig_refresh() {
@@ -538,6 +547,14 @@ sub ari_speech {
    ari_play($chan_id, "sound:remotepi/" . $client->{'tts_voice'} . "/" . $prompt);
 }
 
+sub ari_speak_number {
+   # Figure out unit
+   # Figure out scale
+   # Make it human-presentable
+   # Read off the number, digit by digit
+   # Read off the suffix (scale+unit, ie: kilohertz)
+}
+
 sub play_beep {
    my $chan_id = $_[0];
 
@@ -567,26 +584,30 @@ sub station_modeset {
    $radio0->{'station_mode'} = $new_mode;
 
    if ($new_mode eq "phone") {
-      Log "station", $LOG_INFO, "Switching to PHONE mode";
+      Log "station", $LOG_AUDIT, "Switching to PHONE mode";
       system("/opt/remotepi/bin/modeset-off");
       system("/opt/remotepi/genconf/baresip-ua");
       start_baresip_channel($active_rig);
    } elsif ($new_mode eq "digi") {
-      Log "station", $LOG_INFO, "Switching to DIGI mode";
+      Log "station", $LOG_AUDIT, "Switching to DIGI mode";
       system("/opt/remotepi/bin/modeset-digi");
    } elsif ($new_mode eq "winlink") {
-      Log "station", $LOG_INFO, "Switching to WINLINK mode";
+      Log "station", $LOG_AUDIT, "Switching to WINLINK mode";
       system("/opt/remotepi/bin/modeset-winlink");
    }
 }
 
 # Call this when the playback is finished, so that it can be sent back to main bridge
-sub playback_done {
+sub ari_playback_done {
    my $rdata = $_[0];
    my $chan_name = $rdata->{'channel'}{'name'};
    my $chan_id = $rdata->{'channel'}{'id'};
    my $chan_state = $rdata->{'channel'}{'state'};
-   ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
+#   ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
+}
+
+sub stop_all_sounds {
+   my $chan_id = $_[0];
 }
 
 ########
@@ -615,6 +636,9 @@ sub parse_ari {
    if ($rdata->{'type'} =~ m/^ApplicationReplaced$/i) {
       # Do things, if necessary (not yet)
    } elsif ($rdata->{'type'} =~ m/^ChannelDtmfReceived$/i) {
+      # Halt all playing sounds (to be less annoying)
+      stop_all_sounds($chan_id);
+
       dtmf_timeout_update($chan_id, $rfside);
       if ($rfside) {
          Log "dtmf", $LOG_DEBUG, "Got Digit: $digit ($duration) from $chan_name ($chan_id)";
@@ -635,13 +659,13 @@ sub parse_ari {
          if ($rfside) {
             if ($duration >= 1000) {
                $digits_rf = '';
-               Log "dtmf", $LOG_INFO, "Clearing DTMF buffer (RF)";
+               Log "dtmf", $LOG_DEBUG, "Clearing DTMF buffer (RF)";
                play_beep($chan_id);
             }
          } else {
             if ($duration >= 1000) {
                $digits_local = '';
-               Log "dtmf", $LOG_INFO, "Clearing DTMF buffer (VoIP)";
+               Log "dtmf", $LOG_DEBUG, "Clearing DTMF buffer (VoIP)";
                play_beep($chan_id);
             } elsif ($digits_local eq '***') {
                my $curr_blocked = $radio0->{'ptt_blocked'};
@@ -653,13 +677,14 @@ sub parse_ari {
                   $blocked = 1;
                }
 
-               Log "ptt", $LOG_INFO, "Toggling PTT blocked status on $active_rig to: " . ($blocked ? "true" : "false");
+               Log "ptt", $LOG_AUDIT, "Toggling PTT blocked status on $active_rig to: " . ($blocked ? "true" : "false");
 
                if ($blocked) {
                   ari_speech($chan_id, "ptt_blocked");
                } else {
                   ari_speech($chan_id, "ptt_unblocked");
                }
+               ari_playback_done($rdata);
 
                $radio0->{'ptt_blocked'} = $blocked;
                $digits_local = '';
@@ -675,25 +700,25 @@ sub parse_ari {
                   my $newfreq;
                   if ($duration < $dtmf_long_thres) {
                      $newfreq = rig_get_freq() + ($tuning_step_multipliers[$tuning_step_multiplier]);
-                     Log "dtmf", $LOG_INFO, "Tuning UP (short) to " . $newfreq/1000;
-#                     ari_play($chan_id, "number:" . $newfreq/1000);
-#                     ari_speech($chan_id, "kilohertz");
+                     Log "dtmf", $LOG_AUDIT, "Tuning UP (short) to " . $newfreq/1000;
                   } elsif ($duration >= $dtmf_long_thres) {
                      $newfreq = rig_get_freq() + ($tuning_step_multipliers[$tuning_step_multiplier] * $tuning_step_long_multiplier);
-                     Log "dtmf", $LOG_INFO, "Tuning UP (long) to " . $newfreq/1000;
-#                     ari_play($chan_id, "number:" . $newfreq/1000);
-#                     ari_speech($chan_id, "kilohertz");
+                     Log "dtmf", $LOG_AUDIT, "Tuning UP (long) to " . $newfreq/1000;
                   }
+
+                  # This will set a timeout to readback frequency
                   rig_set_freq($newfreq, $chan_id);
                } elsif ($digit eq 4) {
                   my $newfreq;
                   if ($duration < $dtmf_long_thres) {
                      $newfreq = rig_get_freq() - ($tuning_step_multipliers[$tuning_step_multiplier]);
-                     Log "dtmf", $LOG_INFO, "Tuning DOWN (short) to " . $newfreq/1000;
+                     Log "dtmf", $LOG_AUDIT, "Tuning DOWN (short) to " . $newfreq/1000;
                   } elsif ($duration >= $dtmf_long_thres) {
                      $newfreq = rig_get_freq() - ($tuning_step_multipliers[$tuning_step_multiplier] * $tuning_step_long_multiplier);
-                     Log "dtmf", $LOG_INFO, "Tuning DOWN (long) to " . $newfreq/1000;
+                     Log "dtmf", $LOG_AUDIT, "Tuning DOWN (long) to " . $newfreq/1000;
                   }
+
+                  # This will set a timeout to readback frequency
                   rig_set_freq($newfreq, $chan_id);
                } elsif ($digit eq 2) {
                   if ($duration <= $dtmf_long_thres) {
@@ -728,10 +753,28 @@ sub parse_ari {
                  } else {
                     $tuning_step_multiplier++;
                  }
-                 Log "dtmf", $LOG_INFO, "Set tuning step to " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")";
+                 Log "dtmf", $LOG_AUDIT, "Set tuning step to " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")";
+                 ari_speech($chan_id, "tuning_step");
+                 ari_play($chan_id, "number:" . $tuning_step_multipliers[$tuning_step_multiplier]);
+                 ari_speech($chan_id, "hertz");
+                 ari_playback_done($rdata);
                }
               
                $digits_local = '';
+            } else {
+               if ($rfside) {
+                  $rdigits = $digits_rf;
+               } else {
+                  $rdigits = $digits_local;
+               }
+
+               Log "test", $LOG_BUG, "rdigits: $rdigits";
+               if ($rdigits =~ m/^\*6$/) {
+                  Log "test", $LOG_BUG, "helpmenu";
+                  ari_speech($chan_id, "help_mode");
+                  ari_playback_done($rdata);
+                  Log "test", $LOG_BUG, "helpmenu done";
+               }
             }
          }
       } elsif ($digit eq '#') {
@@ -739,37 +782,42 @@ sub parse_ari {
          if ($rfside) {
             $rdigits = $digits_rf;
             $digits_rf = '';
-            Log "dtmf", $LOG_INFO, "Read: $rdigits from RF $chan_name ($chan_id)";
+            Log "dtmf", $LOG_BUG, "Read: $rdigits from RF $chan_name ($chan_id)";
          } else {
             $rdigits = $digits_local;
             $digits_local = '';
-            Log "dtmf", $LOG_INFO, "Read: $rdigits from VoIP $chan_name ($chan_id)";
+            Log "dtmf", $LOG_DEBUG, "Read: $rdigits from VoIP $chan_name ($chan_id)";
 
             if ($rdigits eq '#') {
                if ($radio0->{'using_vox'}) {
                   if ($muted) {
                      $muted = 0;
-                     Log "dtmf", $LOG_INFO, "$active_rig MUTE off";
+                     Log "dtmf", $LOG_AUDIT, "$active_rig MUTE off";
+                     ari_speech($chan_id, "mute_off");
                   } else {
                      $muted = 1;
-                     Log "dtmf", $LOG_INFO, "$active_rig MUTE on";
+                     Log "dtmf", $LOG_AUDIT, "$active_rig MUTE on";
+                     ari_speech($chan_id, "mute_on");
                   }
                } else {	# not VOX, toggle PTT
                  if ($radio0->{'ptt_active'}) {
                     $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_OFF);
                     $radio0->{'ptt_active'} = 0;
-                    Log "dtmf", $LOG_INFO, "$active_rig PTT OFF";
+                    Log "dtmf", $LOG_AUDIT, "$active_rig PTT OFF";
+                    ari_play($chan_id, "beep");
                  } else {
                     if (!($radio0->{'ptt_blocked'})) {
                        $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_ON_DATA);
                        $radio0->{'ptt_active'} = 1;
-                       Log "dtmf", $LOG_INFO, "$active_rig PTT ON";
+                       Log "dtmf", $LOG_AUDIT, "$active_rig PTT ON";
+                       ari_play($chan_id, "beep");
                     } else {
-                       Log "ptt", $LOG_INFO, "PTT for $active_rig is blocked, igoring PTT ON request";
+                       Log "ptt", $LOG_AUDIT, "PTT for $active_rig is blocked, igoring PTT ON request";
                        ari_speech($chan_id, "ptt_is_blocked")
                     }
                  }
                }
+               ari_playback_done($rdata);
             }
          }
 
@@ -787,7 +835,7 @@ sub parse_ari {
                $new_mode = "INVALID";
             }
             $radio0->{'station_mode'} = $new_mode;
-            Log "dtmf", $LOG_INFO, "Set Station Mode: $new_mode ($1)";
+            Log "dtmf", $LOG_AUDIT, "Set Station Mode: $new_mode ($1)";
             station_modeset($new_mode);
 
             if ($radio0->{'station_mode'} =~ m/^phone$/i) {
@@ -797,6 +845,7 @@ sub parse_ari {
             } elsif ($radio0->{'station_mode'} =~ m/^winlink$/i) {
                ari_speech($chan_id, "sta_mode_winlink");
             }
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*0#/) {
             Log "dtmf", $LOG_INFO, "Readback mode: " . $radio0->{'station_mode'};
 
@@ -807,23 +856,27 @@ sub parse_ari {
             } elsif ($radio0->{'station_mode'} =~ m/^winlink$/i) {
                ari_speech($chan_id, "sta_mode_winlink");
             }
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*1(\d+)#/) {
-            Log "dtmf", $LOG_INFO, "NYI Set VOX: $1";
+            Log "dtmf", $LOG_BUG, "NYI Set VOX: $1";
 #            $rig->set_level($radio0->{'active_vfo'}, "VOX", int($1));
             ari_play($chan_id, "sound:beeperr");
          } elsif ($rdigits =~ m/^\*1#/) {
             my $vox_level = 0;
 #            $vox_level = $rig->get_level_i($radio0->{'active_vfo'}, "VOX");
-            Log "dtmf", $LOG_INFO, "NYI: Readback VOX setting: $vox_level";
+            Log "dtmf", $LOG_BUG, "NYI: Readback VOX setting: $vox_level";
             ari_play($chan_id, "sound:beeperr");
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*2#/) {
             my $rf_gain = $rig->get_level_i($Hamlib::RIG_LEVEL_RF);
-            Log "dtmf", $LOG_INFO, "Readback RF gain: $rf_gain";
+            Log "dtmf", $LOG_BUG, "Readback RF gain: $rf_gain";
             ari_play($chan_id, "sound:beeperr");
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*2(\d+)#/) {
-            Log "dtmf", $LOG_INFO, "Set RF gain: $1";
+            Log "dtmf", $LOG_BUG, "Set RF gain: $1";
             $rig->set_level($Hamlib::RIG_LEVEL_RF, int($1));
             ari_play($chan_id, "sound:beeperr");
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*3(\d+)#/) {
             my $my_freq;
 
@@ -836,7 +889,7 @@ sub parse_ari {
             Log "dtmf", $LOG_INFO, "Set Freq: $my_freq";
             rig_set_freq($my_freq, $chan_id);
          } elsif ($rdigits =~ m/^\*3#/) {
-            my $vfo_freq = rig_readback_freq($chan_id);
+            rig_readback_freq($chan_id);
          } elsif ($rdigits =~ m/\*4(\*)?(\d+)#/) {
             my $r_sign = $1;
             my $r_val = $2;
@@ -847,55 +900,76 @@ sub parse_ari {
             } else {
                $ifshift = $r_val;
             }
-            Log "dtmf", $LOG_INFO, "NYI Set IF-Shift: $1";
+            Log "dtmf", $LOG_BUG, "NYI Set IF-Shift: $1";
+            ari_play($chan_id, "sound:beeperr");
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*4#/) {
             my $if_shift = $radio0->{'if_shift'};
-            Log "dtmf", $LOG_INFO, "NYI Readback IF shift: $if_shift";
+            Log "dtmf", $LOG_BUG, "NYI Readback IF shift: $if_shift";
+            ari_play($chan_id, "sound:beeperr");
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*5#/) {
             my $tx_power = $rig->get_level_i($Hamlib::RIG_LEVEL_RFPOWER) * $radio0->{'power_divider'};
-            Log "dtmf", $LOG_INFO, "NYI Readback TX power: $tx_power Watt(s)";
+            Log "dtmf", $LOG_BUG, "NYI Readback TX power: $tx_power Watt(s)";
+#            rig_readback_output_power($chan_id);
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*5(\d+)#/) {
             my $hamlib_power = int($1) / $radio0->{'power_divider'};
-            Log "dtmf", $LOG_INFO, "Set TX Power: $1 Watt(s) ($hamlib_power)";
+            Log "dtmf", $LOG_AUDIT, "Set TX Power: $1 Watt(s) ($hamlib_power)";
             $rig->set_level($Hamlib::RIG_LEVEL_RFPOWER, $hamlib_power);
+#            rig_readback_output_power($chan_id);
+            ari_speech($chan_id, "output_power");
+            ari_play($chan_id, "digits:" . int($1));
+            ari_speech($chan_id, "watts");
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*6(\d+)#/) {
             my $modmode = $Hamlib::RIG_MODE_LSB;
 
             if ($1 eq 0) { 		# LSB
                $modmode = $Hamlib::RIG_MODE_LSB;
-               Log "dtmf", $LOG_INFO, "Set Modulation Mode: LSB";
+               Log "dtmf", $LOG_AUDIT, "Set Modulation Mode: LSB";
+               ari_speech($chan_id, "modulation_mode");
                ari_speech($chan_id, "lsb");
             } elsif ($1 eq 1) { 	# USB
                $modmode = $Hamlib::RIG_MODE_USB;
-               Log "dtmf", $LOG_INFO, "Set Modulation Mode: USB";
+               Log "dtmf", $LOG_AUDIT, "Set Modulation Mode: USB";
+               ari_speech($chan_id, "modulation_mode");
                ari_speech($chan_id, "usb");
             } elsif ($1 eq 2) {	# FM
                $modmode = $Hamlib::RIG_MODE_FM;
-               Log "dtmf", $LOG_INFO, "Set Modulation Mode: FM";
+               Log "dtmf", $LOG_AUDIT, "Set Modulation Mode: FM";
+               ari_speech($chan_id, "modulation_mode");
                ari_speech($chan_id, "fm");
             } elsif ($1 eq 3) {	# AM
                $modmode = $Hamlib::RIG_MODE_AM;
-               Log "dtmf", $LOG_INFO, "Set Modulation Mode: AM";
+               Log "dtmf", $LOG_AUDIT, "Set Modulation Mode: AM";
+               ari_speech($chan_id, "modulation_mode");
                ari_speech($chan_id, "am");
             } elsif ($1 eq 4) {	# DATA-U
-               Log "dtmf", $LOG_INFO, "Set Modulation Mode: DATA-U unsupported yet";
+               Log "dtmf", $LOG_AUDIT, "Set Modulation Mode: DATA-U unsupported yet";
+               ari_speech($chan_id, "modulation_mode");
                ari_speech($chan_id, "data");
                return;
             } else {
-               Log "dtmf", $LOG_INFO, "Set Modulation Mode: invalid value $1";
+               Log "dtmf", $LOG_AUDIT, "Set Modulation Mode: invalid value $1";
                ari_play($chan_id, "sound:beeperr");
+               ari_speech($chan_id, "help_mode");
                return;
             }
+            ari_playback_done($rdata);
             $rig->set_mode($modmode);
+            rig_readback_mode($chan_id);
          } elsif ($rdigits =~ m/^\*6#/) {
-            my ($mode, $width) = $rig->get_mode();
-            my $new_mode = Hamlib::rig_strrmode($mode);
-            Log "dtmf", $LOG_INFO, "Readback mode: $new_mode $width";
-            ari_speech($chan_id, lc($new_mode));
+            rig_readback_mode($chan_id);
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*7(\d+)#/) {
-            Log "dtmf", $LOG_INFO, "NYI Set DSP level: $1";
+            Log "dtmf", $LOG_BUG, "NYI Set DSP level: $1";
+            ari_play($chan_id, "sound:beeperr");
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*8(\d+)#/) {
-            Log "dtmf", $LOG_INFO, "NYI Set Notch Filter: $1";
+            Log "dtmf", $LOG_BUG, "NYI Set Notch Filter: $1";
+            ari_play($chan_id, "sound:beeperr");
+            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*9(\d+)#/) {
             my $old_step = $tuning_step_multiplier;
             my $sz = @tuning_step_multipliers;
@@ -906,16 +980,19 @@ sub parse_ari {
                Log "dtmf", $LOG_INFO, "Invalid tuning step selection $1, ignoring request";
                ari_play($chan_id, "sound:beeperr");
             }
-            Log "dtmf", $LOG_INFO, "Set Tuning Step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " ($1)";
+            Log "dtmf", $LOG_AUDIT, "Set Tuning Step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " ($1)";
             ari_speech($chan_id, "tuning_step");
             ari_play($chan_id, "number:" . $tuning_step_multipliers[$tuning_step_multiplier]);
+            ari_speech($chan_id, "hertz");
          } elsif ($rdigits =~ m/^\*9#/) {
             Log "dtmf", $LOG_INFO, "Readback tuning step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")";
             ari_speech($chan_id, "tuning_step");
             ari_play($chan_id, "number:" . $tuning_step_multipliers[$tuning_step_multiplier]);
+            ari_speech($chan_id, "hertz");
          }
+         ari_playback_done($rdata);
       } elsif ($rfside && $digits_rf =~ m/^8675309$/) {
-         Log "selcall", $LOG_INFO, "*** SELCALL " . int(rig_get_freq()) . "***";
+         Log "selcall", $LOG_AUDIT, "*** SELCALL " . int(rig_get_freq()) . "***";
          # XXX: Call Paging extension and try to bridge into conference
       }
       
@@ -933,7 +1010,8 @@ sub parse_ari {
           ari_post("/channels/$chan_id/answer");
       }
       my $res = ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
-      ari_speech($chan_id, "main_menu")
+      ari_speech($chan_id, "main_menu");
+      ari_playback_done($rdata);
    } elsif ($rdata->{'type'} =~ m/^StasisEnd$/i) {
       # NoOp
    } elsif ($rdata->{'type'} =~ m/^ChannelConnectedLine$/) {
@@ -957,9 +1035,9 @@ sub parse_ari {
       my @spl_chan_id = split(':', $rdata->{'playback'}{'target_uri'});
       $chan_id = $spl_chan_id[1];
       
-      Log "sound", $LOG_INFO, "PlaybackFinished on " . $rdata->{'playback'}{'target_uri'} . ": " .
+      Log "sound", $LOG_DEBUG, "PlaybackFinished on " . $rdata->{'playback'}{'target_uri'} . ": " .
            $rdata->{'playback'}{'media_uri'};
-      playback_done($rdata);
+#      ari_playback_done($rdata);
    } else {
       Log "ari", $LOG_BUG, "Got unknown Event Type: " . $rdata->{'type'} . ":" . Dumper($rdata);
    }
