@@ -1,44 +1,52 @@
 #!/bin/bash
 # Call me as build-polly-voice.sh <engine> <speaker> <locale>
 #
+if [ -z $3 -o -z $2 -o -z $1 ]; then
+   echo "Invalid usage. see build-all-voices.sh"
+   exit 100
+fi
+
 ENGINE=$1
 SPEAKER=$2
 LOCALE=$3
 
 DEST="${LOCALE}_${SPEAKER}"
 mkdir -p "${DEST}"
-
-TEMPLATE_LOCALE=$(echo ${LOCALE} | cut -f 1 -d '_')
 OWD=$(pwd)
 
+TEMPLATE_LOCALE=$(echo ${LOCALE} | cut -f 1 -d '_')
+
 for template in langs/${TEMPLATE_LOCALE}/*.xml; do
-   cd ${DEST}
    IFILE="${template}"
    OFILE="$(basename $(echo ${IFILE}|sed s/\.xml//g).mp3)"
-   # Check if OFILE is older than the XML and remove it, if so
-   [ "${IFILE}" -nt "${OFILE}" ] && rm -f "${OFILE}"
+
+   # Check if OFILE is older than the XML and remove it, if so 
+   if [ "${IFILE}" -nt "${DEST}/${OFILE}" ]; then
+      echo "* rm stale ${DEST}/${OFILE}"
+      rm -f ${DEST}/${OFILE}
+   fi
 
    # XXX: Check for a locale/voice specific override in langs/${LOCALE} or langs/${LOCALE}/${SPEAKER}/
 
    # if file doesnt exist (anymore), request it from amazon
-   if [ ! -f "${OFILE}" ]; then
-      echo "* Requesting ${LOCALE}_${SPEAKER}/${OFILE} from aws: "
+   if [ ! -f "${DEST}/${OFILE}" ]; then
+      echo "* Requesting ${DEST}/${OFILE} from aws: "
       aws polly synthesize-speech \
       --engine ${ENGINE} \
       --text-type ssml \
       --text "file:///opt/remotepi/voices/${IFILE}" \
       --output-format "mp3" \
       --voice-id ${SPEAKER} \
-      ${OFILE} 2>&1 >/dev/null || exit 1
+      ${DEST}/${OFILE} 2>&1 >/dev/null || exit 1
       echo "* Converting media..."
       bname=$(echo ${OFILE}|sed -e s%.mp3%%)
-      echo "=> converting ${LOCALE}_${SPEAKER}/${bname} to ulaw, alaw, gsm, and g722"
-      sox -V ${OFILE} -r 8000 -c 1 -t ul ${bname}.ulaw 2>&1 >/dev/null || exit 2
-      sox -V ${OFILE} -r 8000 -c 1 -t al ${bname}.alaw 2>&1 >/dev/null || exit 3
-      sox -V ${OFILE} -r 8000 -c 1 -t gsm ${bname}.gsm 2>&1 >/dev/null || exit 4
-      ffmpeg -i ${OFILE} -ar 16000 -acodec g722 ${bname}.g722 2>&1 >/dev/null || exit 5
+      echo "=> converting ${DEST}/${bname} to ulaw, alaw, gsm, and g722, as needed"
+      [ -f "${DEST}/${OFILE}" -nt "${DEST}/${bname}.ulaw" ] && (sox -V ${DEST}/${OFILE} -r 8000 -c 1 -t ul ${DEST}/${bname}.ulaw 2>&1 >/dev/null || exit 2)
+      [ -f "${DEST}/${OFILE}" -nt "${DEST}/${bname}.alaw" ] && ( sox -V ${DEST}/${OFILE} -r 8000 -c 1 -t al ${DEST}/${bname}.alaw 2>&1 >/dev/null || exit 3)
+      [ -f "${DEST}/${OFILE}" -nt "${DEST}/${bname}.gsm" ] && (sox -V ${DEST}/${OFILE} -r 8000 -c 1 -t gsm ${DEST}/${bname}.gsm 2>&1 >/dev/null || exit 4)
+      [ -f "${DEST}/${OFILE}" -nt "${DEST}/${bname}.g722" ] && (ffmpeg -i ${DEST}/${OFILE} -ar 16000 -acodec g722 ${DEST}/${bname}.g722 2>&1 >/dev/null || exit 5)
    else
-     echo "* Skipping existing output ${LOCALE}_${SPEAKER}/${OFILE}"
+     echo "* Skipping existing media ${LOCALE}_${SPEAKER}/${OFILE}"
    fi
-   cd ${OWD}
 done
+cd ${OWD}

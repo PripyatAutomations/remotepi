@@ -1,11 +1,12 @@
 #!/bin/bash
-TARGETS="polly/en_au_Olivia:neural \
-	 polly/en_in_Kajal:neural \
-	 polly/en_nz_Aria:neural \
-	 polly/en_gb_Amy:neural \
-	 polly/en_gb_Brian:neural \
-	 polly/en_us_Joanna:neural"
-
+#TARGETS="polly/en_au_Olivia:neural \
+#	 polly/en_gb_Amy:neural \
+#	 polly/en_gb_Brian:neural \
+#	 polly/en_in_Kajal:neural \
+#	 polly/en_nz_Aria:neural \
+#	 polly/en_us_Joanna:neural \
+#	 polly/en_us_Matthew:neural"
+TARGETS="polly/en_us_Matthew:neural"
 for i in ${TARGETS}; do
    SERVICE=$(echo $i | cut -f 1 -d '/')
    VOICEID=$(echo $i | cut -f 2 -d '/')
@@ -15,4 +16,3 @@ for i in ${TARGETS}; do
    SPEAKER=$(echo ${FULLVOICE} | cut -f 3 -d '_')
    /opt/remotepi/voices/build-polly-voice.sh ${ENGINE} ${SPEAKER} ${LOCALE}
 done
-
