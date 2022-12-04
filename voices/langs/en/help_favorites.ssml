@@ -1,0 +1,9 @@
+<speak>
+Favorites
+<break time="300ms"/>
+Press STAR to add a favorite
+<break time="200ms"/>
+Dial favorite number followed by pound.
+<break time="200ms"/>
+Press POUND to go back.
+</speak>

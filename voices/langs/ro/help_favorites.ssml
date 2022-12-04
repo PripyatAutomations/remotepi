@@ -1,0 +1,9 @@
+<speak>
+Favorite
+<break time="300ms"/>
+Apăsați STAR pentru a adăuga o favorită
+<break time="200ms"/>
+Formați numărul favorit urmat de lira.
+<break time="200ms"/>
+Apăsați Pound pentru a reveni.
+</speak>

@@ -1,0 +1,25 @@
+<speak>
+Aseta modulaatiotila
+<break time="200ms"/>
+Dial Star Six, jota seuraa haluttu modulaatiotila ja paina sitten puntaa.
+<break time="250ms"/>
+Nolla
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Yksi
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Kaksi
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Kolme
+<break time="150ms"/>
+OLEN
+<break time="300ms"/>
+Neljä
+<break time="150ms"/>
+Data
+</speak>

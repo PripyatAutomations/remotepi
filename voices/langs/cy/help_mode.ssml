@@ -1,0 +1,25 @@
+<speak>
+Modd Modiwleiddio Set
+<break time="200ms"/>
+Dial Star Six, ac yna'r modd modiwleiddio a ddymunir yna pwyswch bunt.
+<break time="250ms"/>
+Zero
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Un
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Dau
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Tri
+<break time="150ms"/>
+AM
+<break time="300ms"/>
+Pedwar
+<break time="150ms"/>
+Data
+</speak>

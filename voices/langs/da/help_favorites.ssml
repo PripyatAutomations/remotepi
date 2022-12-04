@@ -1,0 +1,9 @@
+<speak>
+favoritter
+<break time="300ms"/>
+Tryk på STAR for at tilføje en favorit
+<break time="200ms"/>
+Ring til favoritnummer efterfulgt af pund.
+<break time="200ms"/>
+Tryk PUND for at gå tilbage.
+</speak>

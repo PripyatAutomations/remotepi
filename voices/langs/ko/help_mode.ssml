@@ -1,0 +1,25 @@
+<speak>
+변조 모드 설정
+<break time="200ms"/>
+Star Six를 누른 다음 원하는 변조 모드를 누른 다음 파운드 키를 누릅니다.
+<break time="250ms"/>
+제로
+<break time="150ms"/>
+LB
+<break time="300ms"/>
+하나
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+두 개
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+셋
+<break time="150ms"/>
+오전
+<break time="300ms"/>
+넷
+<break time="150ms"/>
+데이터
+</speak>

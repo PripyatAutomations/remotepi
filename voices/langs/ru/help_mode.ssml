@@ -1,0 +1,25 @@
+<speak>
+Установить режим модуляции
+<break time="200ms"/>
+Наберите Star Six, затем выберите нужный режим модуляции, затем нажмите фунт.
+<break time="250ms"/>
+Ноль
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Один
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Два
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Три
+<break time="150ms"/>
+УТРА
+<break time="300ms"/>
+Четыре
+<break time="150ms"/>
+Данные
+</speak>

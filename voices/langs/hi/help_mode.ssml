@@ -1,0 +1,25 @@
+<speak>
+मॉड्यूलेशन मोड सेट करें
+<break time="200ms"/>
+स्टार सिक्स डायल करें, उसके बाद वांछित मॉड्यूलेशन मोड के बाद पाउंड दबाएं।
+<break time="250ms"/>
+ज़ीरो
+<break time="150ms"/>
+एलएसबी
+<break time="300ms"/>
+एक
+<break time="150ms"/>
+यूएसबी
+<break time="300ms"/>
+दो
+<break time="150ms"/>
+एफएम
+<break time="300ms"/>
+तीन
+<break time="150ms"/>
+हूँ
+<break time="300ms"/>
+चार
+<break time="150ms"/>
+डेटा
+</speak>

@@ -1,0 +1,25 @@
+<speak>
+DSP lovi suodatin
+<break time="300ms"/>
+Dial Star Nine, jota seuraa haluttu viritysvaihe, paina sitten punta.
+<break time="300ms"/>
+Nolla
+<break time="150ms"/>
+10 Hertsiä
+<break time="300ms"/>
+Yksi
+<break time="150ms"/>
+100 hertsiä.
+<break time="300ms"/>
+Kaksi
+<break time="150ms"/>
+500 hertsiä.
+<break time="300ms"/>
+Kolme
+<break time="150ms"/>
+1 Kilohertsiä.
+<break time="300ms"/>
+Neljä
+<break time="150ms"/>
+2.5 Kilohertsiä.
+</speak>

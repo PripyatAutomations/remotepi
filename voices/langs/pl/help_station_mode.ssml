@@ -1,0 +1,17 @@
+<speak>
+Tryb stacji
+<break time="300ms"/>
+Wybierz Star Zero, a następnie żądany tryb stacji, a następnie naciśnij funt.
+<break time="300ms"/>
+Zero
+<break time="150ms"/>
+Telefon.
+<break time="300ms"/>
+Jeden
+<break time="150ms"/>
+Cyfrowy.
+<break time="300ms"/>
+Dwa
+<break time="150ms"/>
+Winlink
+</speak>

@@ -1,0 +1,17 @@
+<speak>
+Station Mode
+<break time="300ms"/>
+Dial Star Zero fylgt eftir með viðkomandi stöð ham ýttu síðan pund.
+<break time="300ms"/>
+Núll
+<break time="150ms"/>
+Sími.
+<break time="300ms"/>
+Einn
+<break time="150ms"/>
+Stafrænt.
+<break time="300ms"/>
+Tveir
+<break time="150ms"/>
+Winlink
+</speak>

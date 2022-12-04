@@ -1,0 +1,25 @@
+<speak>
+モジュレーションモードを設定
+<break time="200ms"/>
+Star Sixをダイヤルしてから、目的のモジュレーションモードを選択し、パウンドを押します。
+<break time="250ms"/>
+ゼロ
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+一
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+二
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+三
+<break time="150ms"/>
+午前
+<break time="300ms"/>
+四
+<break time="150ms"/>
+データ
+</speak>

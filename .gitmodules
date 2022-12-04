@@ -16,3 +16,6 @@
 [submodule "www/callbook/usa-fcc-uls"]
 	path = www/callbook/usa-fcc-uls
 	url = https://github.com/PripyatAutomations/ulsweb.git
+[submodule "ext/google-translate-cli"]
+	path = ext/google-translate-cli
+	url = https://github.com/fpetras/google-translate-cli.git

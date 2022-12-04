@@ -1,0 +1,25 @@
+<speak>
+DSP hakk Filter
+<break time="300ms"/>
+Dial Star Nine, etterfulgt av ønsket innstillingstrinn, trykk deretter pund.
+<break time="300ms"/>
+Null
+<break time="150ms"/>
+10 Hertz
+<break time="300ms"/>
+En
+<break time="150ms"/>
+100 Hertz.
+<break time="300ms"/>
+To
+<break time="150ms"/>
+500 Hertz.
+<break time="300ms"/>
+Tre
+<break time="150ms"/>
+1 Kilohertz.
+<break time="300ms"/>
+Fire
+<break time="150ms"/>
+2,5 Kilohertz.
+</speak>

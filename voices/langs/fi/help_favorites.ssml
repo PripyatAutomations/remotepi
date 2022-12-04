@@ -1,0 +1,9 @@
+<speak>
+suosikit
+<break time="300ms"/>
+Lisää suosikki painamalla STAR
+<break time="200ms"/>
+Valitse suosikkinumero, jota seuraa punta.
+<break time="200ms"/>
+Paina POUND palataksesi takaisin.
+</speak>

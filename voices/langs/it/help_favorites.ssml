@@ -1,0 +1,9 @@
+<speak>
+Preferiti
+<break time="300ms"/>
+Premi STAR per aggiungere un preferito
+<break time="200ms"/>
+Componi il numero preferito seguito da una sterlina.
+<break time="200ms"/>
+Premi POUND per tornare indietro.
+</speak>

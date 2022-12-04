@@ -1,0 +1,25 @@
+<speak>
+DSP Çentik Filtresi
+<break time="300ms"/>
+Yıldız Dokuzunu Dial, ardından istenen ayar adımını takip edin, ardından pound tuşuna basın.
+<break time="300ms"/>
+Sıfır
+<break time="150ms"/>
+10 Hertz
+<break time="300ms"/>
+Bir
+<break time="150ms"/>
+100 Hertz.
+<break time="300ms"/>
+İki
+<break time="150ms"/>
+500 Hertz.
+<break time="300ms"/>
+Üç
+<break time="150ms"/>
+1 Kilohertz.
+<break time="300ms"/>
+Dört
+<break time="150ms"/>
+2.5 Kilohertz.
+</speak>

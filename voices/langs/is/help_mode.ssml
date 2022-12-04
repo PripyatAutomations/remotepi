@@ -1,0 +1,25 @@
+<speak>
+Setja Modulation Mode
+<break time="200ms"/>
+Dial Star Six, fylgt eftir með viðkomandi mótum ham ýttu síðan pund.
+<break time="250ms"/>
+Núll
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Einn
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Tveir
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Þrjú
+<break time="150ms"/>
+AM
+<break time="300ms"/>
+Fjórir
+<break time="150ms"/>
+Gögn
+</speak>

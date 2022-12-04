@@ -1,0 +1,9 @@
+<speak>
+お気に入り
+<break time="300ms"/>
+STAR を押してお気に入りを追加
+<break time="200ms"/>
+お気に入りの番号に続けてポンドをダイヤルします。
+<break time="200ms"/>
+戻るにはPOUNDを押してください。
+</speak>

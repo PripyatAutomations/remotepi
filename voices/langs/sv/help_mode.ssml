@@ -1,0 +1,25 @@
+<speak>
+Ställ in moduleringsläge
+<break time="200ms"/>
+Slå Star Six, följt av önskat moduleringsläge och tryck sedan på pund.
+<break time="250ms"/>
+Noll
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Ett
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Två
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Tre
+<break time="150ms"/>
+ÄR
+<break time="300ms"/>
+Fyra
+<break time="150ms"/>
+Data
+</speak>

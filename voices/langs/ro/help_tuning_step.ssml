@@ -1,0 +1,25 @@
+<speak>
+DSP Notch Filtru
+<break time="300ms"/>
+Dial Star Nine, urmat de pasul de reglare dorit, apoi apăsați lira.
+<break time="300ms"/>
+Zero
+<break time="150ms"/>
+10 Hertz
+<break time="300ms"/>
+Unu
+<break time="150ms"/>
+100 Hertz.
+<break time="300ms"/>
+Doi
+<break time="150ms"/>
+500 Hertz.
+<break time="300ms"/>
+Trei
+<break time="150ms"/>
+1 Kilohertzi.
+<break time="300ms"/>
+Patru
+<break time="150ms"/>
+2,5 Kilohertzi.
+</speak>

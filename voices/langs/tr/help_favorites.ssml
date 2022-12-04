@@ -1,0 +1,9 @@
+<speak>
+Favoriler
+<break time="300ms"/>
+Favori eklemek için STAR tuşuna basın
+<break time="200ms"/>
+Favori numarayı ve ardından pound çevirin.
+<break time="200ms"/>
+Geri dönmek için POUND tuşuna basın.
+</speak>

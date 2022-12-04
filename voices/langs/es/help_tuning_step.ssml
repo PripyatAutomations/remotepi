@@ -1,0 +1,25 @@
+<speak>
+Filtro DSP Notch
+<break time="300ms"/>
+Marque Star Nine, seguido del paso de afinación deseado y, a continuación, pulse pulsar pulsar.
+<break time="300ms"/>
+Cero
+<break time="150ms"/>
+10 Hertz
+<break time="300ms"/>
+Uno
+<break time="150ms"/>
+100 Hertz.
+<break time="300ms"/>
+Dos
+<break time="150ms"/>
+500 hercios.
+<break time="300ms"/>
+Tres
+<break time="150ms"/>
+1 kilohercio.
+<break time="300ms"/>
+Cuatro
+<break time="150ms"/>
+2,5 kilohercios.
+</speak>

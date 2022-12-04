@@ -1,0 +1,25 @@
+<speak>
+Режекторный фильтр DSP
+<break time="300ms"/>
+Наберите Star Nine, затем выполните желаемый шаг настройки, затем нажмите фунт.
+<break time="300ms"/>
+Ноль
+<break time="150ms"/>
+10 герц
+<break time="300ms"/>
+Один
+<break time="150ms"/>
+100 герц.
+<break time="300ms"/>
+Два
+<break time="150ms"/>
+500 герц.
+<break time="300ms"/>
+Три
+<break time="150ms"/>
+1 килогерц.
+<break time="300ms"/>
+Четыре
+<break time="150ms"/>
+2,5 килогерца.
+</speak>

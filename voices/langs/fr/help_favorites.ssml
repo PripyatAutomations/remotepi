@@ -1,0 +1,9 @@
+<speak>
+Favoris
+<break time="300ms"/>
+Appuyez sur l'étoile pour ajouter un favori
+<break time="200ms"/>
+Composez le numéro préféré suivi de la livre.
+<break time="200ms"/>
+Appuyez sur POUND pour revenir en arrière.
+</speak>

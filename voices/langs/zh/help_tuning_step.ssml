@@ -1,0 +1,25 @@
+<speak>
+DSP 陷波滤波器
+<break time="300ms"/>
+拨打 Star Nine，然后按所需的调谐步骤，然后按下 pound。
+<break time="300ms"/>
+零
+<break time="150ms"/>
+10 赫兹
+<break time="300ms"/>
+一个
+<break time="150ms"/>
+100 赫兹。
+<break time="300ms"/>
+两个
+<break time="150ms"/>
+500 赫兹。
+<break time="300ms"/>
+三个
+<break time="150ms"/>
+1 千赫兹。
+<break time="300ms"/>
+四
+<break time="150ms"/>
+2.5 千赫兹。
+</speak>

@@ -1,0 +1,17 @@
+<speak>
+Modo de estación
+<break time="300ms"/>
+Marque Star Zero seguido del modo de emisora deseado y, a continuación, pulse la tecla Pob.
+<break time="300ms"/>
+Cero
+<break time="150ms"/>
+teléfono
+<break time="300ms"/>
+Uno
+<break time="150ms"/>
+Digital.
+<break time="300ms"/>
+Dos
+<break time="150ms"/>
+Winlink
+</speak>

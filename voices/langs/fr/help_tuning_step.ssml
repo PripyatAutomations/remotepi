@@ -1,0 +1,25 @@
+<speak>
+Filtre DSP Notch
+<break time="300ms"/>
+Composez Star Nine, puis passez à l'étape de réglage souhaitée, puis appuyez sur la touche Pound.
+<break time="300ms"/>
+Zéro
+<break time="150ms"/>
+10 Hertz
+<break time="300ms"/>
+Un
+<break time="150ms"/>
+100 Hertz
+<break time="300ms"/>
+Deux
+<break time="150ms"/>
+500 Hertz.
+<break time="300ms"/>
+Trois
+<break time="150ms"/>
+1 kilohertz.
+<break time="300ms"/>
+Quatre
+<break time="150ms"/>
+2,5 kilohertz.
+</speak>

@@ -1,0 +1,25 @@
+<speak>
+DSP Notch Filter
+<break time="300ms"/>
+Dial Star Nine, followed by the desired tuning step, then press pound.
+<break time="300ms"/>
+Zero
+<break time="150ms"/>
+10 Hertz
+<break time="300ms"/>
+One
+<break time="150ms"/>
+100 Hertz.
+<break time="300ms"/>
+Two
+<break time="150ms"/>
+500 Hertz.
+<break time="300ms"/>
+Three
+<break time="150ms"/>
+1 Kilohertz.
+<break time="300ms"/>
+Four
+<break time="150ms"/>
+2.5 Kilohertz.
+</speak>

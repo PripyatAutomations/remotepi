@@ -1,0 +1,17 @@
+<speak>
+Режим станции
+<break time="300ms"/>
+Наберите Star Zero, затем выберите нужный режим станции, затем нажмите фунт.
+<break time="300ms"/>
+Ноль
+<break time="150ms"/>
+Телефон.
+<break time="300ms"/>
+Один
+<break time="150ms"/>
+Цифровой.
+<break time="300ms"/>
+Два
+<break time="150ms"/>
+Winlink
+</speak>

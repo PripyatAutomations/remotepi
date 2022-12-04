@@ -1,0 +1,25 @@
+<speak>
+Set Modulation Mode
+<break time="200ms"/>
+Dial Star Six, followed by the desired modulation mode then press pound.
+<break time="250ms"/>
+Zero
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+One
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Two
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Three
+<break time="150ms"/>
+AM
+<break time="300ms"/>
+Four
+<break time="150ms"/>
+Data
+</speak>

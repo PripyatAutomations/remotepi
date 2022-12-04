@@ -1,0 +1,25 @@
+<speak>
+设置调制模式
+<break time="200ms"/>
+拨打 Star Six，然后按所需的调制模式，然后按下 pound。
+<break time="250ms"/>
+零
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+一个
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+两个
+<break time="150ms"/>
+调频
+<break time="300ms"/>
+三个
+<break time="150ms"/>
+上午
+<break time="300ms"/>
+四
+<break time="150ms"/>
+数据
+</speak>

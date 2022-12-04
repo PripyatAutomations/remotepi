@@ -1,0 +1,25 @@
+<speak>
+Establecer modo de modulación
+<break time="200ms"/>
+Marque Star Six, seguido del modo de modulación deseado y, a continuación, pulse la tecla Pund.
+<break time="250ms"/>
+Cero
+<break time="150ms"/>
+LB
+<break time="300ms"/>
+Uno
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Dos
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Tres
+<break time="150ms"/>
+AM
+<break time="300ms"/>
+Cuatro
+<break time="150ms"/>
+Dato
+</speak>

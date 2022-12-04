@@ -1,0 +1,9 @@
+<speak>
+Uppáhaldið
+<break time="300ms"/>
+Ýttu á STAR til að bæta við uppáhalds
+<break time="200ms"/>
+Hringja uppáhalds númer fylgt eftir pund.
+<break time="200ms"/>
+Ýttu á PUND að fara aftur.
+</speak>

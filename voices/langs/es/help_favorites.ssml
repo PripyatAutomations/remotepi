@@ -1,0 +1,9 @@
+<speak>
+Favoritos
+<break time="300ms"/>
+Pulse STAR para añadir un favorito
+<break time="200ms"/>
+Marque el número favorito seguido de la libra.
+<break time="200ms"/>
+Pulse POUND para volver.
+</speak>

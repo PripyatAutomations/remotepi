@@ -1,0 +1,17 @@
+<speak>
+Aseman tila
+<break time="300ms"/>
+Valitse Star Zero, jota seuraa haluttu asematila ja paina sitten puntaa.
+<break time="300ms"/>
+Nolla
+<break time="150ms"/>
+Puhelin.
+<break time="300ms"/>
+Yksi
+<break time="150ms"/>
+Digitaalinen.
+<break time="300ms"/>
+Kaksi
+<break time="150ms"/>
+Winlink
+</speak>

@@ -1,0 +1,25 @@
+<speak>
+Filtr DSP Notch
+<break time="300ms"/>
+Wybierz Star Nine, a następnie żądany krok strojenia, a następnie naciśnij funt.
+<break time="300ms"/>
+Zero
+<break time="150ms"/>
+10 Herców
+<break time="300ms"/>
+Jeden
+<break time="150ms"/>
+100 herców.
+<break time="300ms"/>
+Dwa
+<break time="150ms"/>
+500 herców.
+<break time="300ms"/>
+Trzy
+<break time="150ms"/>
+1 kiloherc.
+<break time="300ms"/>
+Cztery
+<break time="150ms"/>
+2,5 kiloherców.
+</speak>

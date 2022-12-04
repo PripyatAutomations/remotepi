@@ -1,0 +1,17 @@
+<speak>
+Station Mode
+<break time="300ms"/>
+Dial Star Zero followed by the desired station mode then press pound.
+<break time="300ms"/>
+Zero
+<break time="150ms"/>
+Phone.
+<break time="300ms"/>
+One
+<break time="150ms"/>
+Digital.
+<break time="300ms"/>
+Two
+<break time="150ms"/>
+Winlink
+</speak>

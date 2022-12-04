@@ -1,0 +1,25 @@
+<speak>
+Imposta la modalità di modulazione
+<break time="200ms"/>
+Componi Star Six, seguita dalla modalità di modulazione desiderata, quindi premi pound.
+<break time="250ms"/>
+Zero
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Uno
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Due
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Tre
+<break time="150ms"/>
+SONO
+<break time="300ms"/>
+Quattro
+<break time="150ms"/>
+Dati
+</speak>

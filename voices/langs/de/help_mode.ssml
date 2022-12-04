@@ -1,0 +1,25 @@
+<speak>
+Modulationsmodus einstellen
+<break time="200ms"/>
+Wählen Sie Star Six, gefolgt vom gewünschten Modulationsmodus und drücken Sie dann Pound.
+<break time="250ms"/>
+Null
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Eins
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Zwei
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Drei
+<break time="150ms"/>
+BIN
+<break time="300ms"/>
+Vier
+<break time="150ms"/>
+Daten
+</speak>

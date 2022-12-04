@@ -16,9 +16,9 @@ OWD=$(pwd)
 
 TEMPLATE_LOCALE=$(echo ${LOCALE} | cut -f 1 -d '_')
 
-for template in langs/${TEMPLATE_LOCALE}/*.xml; do
+for template in langs/${TEMPLATE_LOCALE}/*.ssml; do
    IFILE="${template}"
-   BASEFILE="$(basename $echo ${IFILE}|sed s\/.xml//g)"
+   BASEFILE="$(basename $echo ${IFILE}|sed s\/.ssml//g)"
    OFILE="${BASEFILE}.mp3"
 
    # Check if OFILE is older than the XML and remove it, if so 

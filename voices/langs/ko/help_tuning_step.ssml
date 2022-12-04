@@ -1,0 +1,25 @@
+<speak>
+DSP 노치 필터
+<break time="300ms"/>
+Star Nine을 누른 다음 원하는 튜닝 단계를 누른 다음 파운드 키를 누릅니다.
+<break time="300ms"/>
+제로
+<break time="150ms"/>
+10 헤르츠
+<break time="300ms"/>
+하나
+<break time="150ms"/>
+100 헤르츠.
+<break time="300ms"/>
+두 개
+<break time="150ms"/>
+500 헤르츠.
+<break time="300ms"/>
+셋
+<break time="150ms"/>
+1 킬로헤르츠.
+<break time="300ms"/>
+넷
+<break time="150ms"/>
+2.5 킬로헤르츠.
+</speak>

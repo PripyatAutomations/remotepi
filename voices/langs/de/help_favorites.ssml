@@ -1,0 +1,9 @@
+<speak>
+Favoriten
+<break time="300ms"/>
+Drücken Sie STAR, um einen Favoriten hinzuzufügen
+<break time="200ms"/>
+Wählen Sie die Lieblingsnummer gefolgt von Pfund.
+<break time="200ms"/>
+Drücken Sie POUND, um zurückzukehren.
+</speak>

@@ -1,0 +1,25 @@
+<speak>
+Ustaw tryb modulacji
+<break time="200ms"/>
+Wybierz Star Six, a następnie żądany tryb modulacji, a następnie naciśnij funt.
+<break time="250ms"/>
+Zero
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Jeden
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+Dwa
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Trzy
+<break time="150ms"/>
+JESTEM
+<break time="300ms"/>
+Cztery
+<break time="150ms"/>
+Dane
+</speak>

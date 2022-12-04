@@ -26,8 +26,10 @@ run/*
 logs/*
 
 # amazon aws client cached data
-langs/aws_*.json
+voices/langs/aws_*.json
 
 # google cloud client cached data
-langs/google*.json
+voices/langs/google*.json
 
+# i dont know if we can redistribute these...
+voices/*_*_*/*

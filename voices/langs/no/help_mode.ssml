@@ -1,0 +1,25 @@
+<speak>
+Set Modulation Mode
+<break time="200ms"/>
+Ring Star Six, etterfulgt av ønsket modulasjonsmodus og trykk deretter på pund.
+<break time="250ms"/>
+Null
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+En
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+To
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Tre
+<break time="150ms"/>
+AM
+<break time="300ms"/>
+Fire
+<break time="150ms"/>
+Data
+</speak>

@@ -1,0 +1,17 @@
+<speak>
+Station-tilstand
+<break time="300ms"/>
+Dial Star Zero efterfulgt af den ønskede stationstilstand, tryk derefter på pund.
+<break time="300ms"/>
+Nul
+<break time="150ms"/>
+Telefon.
+<break time="300ms"/>
+Én
+<break time="150ms"/>
+Digital.
+<break time="300ms"/>
+To
+<break time="150ms"/>
+Winlink
+</speak>

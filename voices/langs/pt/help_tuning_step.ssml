@@ -1,0 +1,25 @@
+<speak>
+Filtro DSP Notch
+<break time="300ms"/>
+Tecle Star Nine, seguido pela etapa de afinação desejada e pressione libra.
+<break time="300ms"/>
+Zero
+<break time="150ms"/>
+10 Hertz
+<break time="300ms"/>
+Um
+<break time="150ms"/>
+100 Hertz.
+<break time="300ms"/>
+Dois
+<break time="150ms"/>
+500 Hertz.
+<break time="300ms"/>
+Três
+<break time="150ms"/>
+1 quilohertz.
+<break time="300ms"/>
+Quatro
+<break time="150ms"/>
+2,5 quilohertz.
+</speak>

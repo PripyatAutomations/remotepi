@@ -1,0 +1,25 @@
+<speak>
+DSP ノッチフィルター
+<break time="300ms"/>
+Star Nineをダイヤルし、次に目的のチューニングステップを実行し、パウンドを押します。
+<break time="300ms"/>
+ゼロ
+<break time="150ms"/>
+10 ヘルツ
+<break time="300ms"/>
+一
+<break time="150ms"/>
+100 ヘルツ。
+<break time="300ms"/>
+二
+<break time="150ms"/>
+500 ヘルツ。
+<break time="300ms"/>
+三
+<break time="150ms"/>
+1 キロヘルツ。
+<break time="300ms"/>
+四
+<break time="150ms"/>
+2.5 キロヘルツ。
+</speak>

@@ -1,0 +1,25 @@
+<speak>
+Indstil moduleringstilstand
+<break time="200ms"/>
+Dial Star Six, efterfulgt af den ønskede modulationstilstand, tryk derefter på pund.
+<break time="250ms"/>
+Nul
+<break time="150ms"/>
+LSB
+<break time="300ms"/>
+Én
+<break time="150ms"/>
+USB
+<break time="300ms"/>
+To
+<break time="150ms"/>
+FM
+<break time="300ms"/>
+Tre
+<break time="150ms"/>
+AM
+<break time="300ms"/>
+Fire
+<break time="150ms"/>
+Data
+</speak>
