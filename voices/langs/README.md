@@ -1,3 +1,5 @@
+Please submit any corrections so we can re-render the voices correctly!
+
 The following translations are shipped:
 * ar		Arabic (AWS)
 * cy		Welsh (AWS)
