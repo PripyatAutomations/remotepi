@@ -1008,7 +1008,6 @@ sub parse_ari {
          $digits_local_last = time();
       }
    } elsif ($rdata->{'type'} =~ m/^StasisStart$/i) {
-      Log "client", $LOG_AUDIT, "New Client $chan_id registered";
       Log "ari", $LOG_INFO, "New client: $chan_name ($chan_id) ($chan_state)";
 
       if (defined($rdata->{'channel'}) && defined($rdata->{'channel'}{'state'}) &&
@@ -1017,12 +1016,18 @@ sub parse_ari {
           ari_post("/channels/$chan_id/answer");
       }
       my $res = ari_bridge_add_chan($radio0->{'bridge_id'}, $chan_id);
-      ari_speech($chan_id, "main_menu");
+      Log "client", $LOG_AUDIT, "New Client $chan_id registered";
+      ari_speech($chan_id, "connected_to");
+      ari_speech($chan_id, "radio0");
       ari_playback_done($rdata);
    } elsif ($rdata->{'type'} =~ m/^StasisEnd$/i) {
       # NoOp
    } elsif ($rdata->{'type'} =~ m/^ChannelConnectedLine$/) {
       Log "chan", $LOG_INFO, "Channel $chan_name ($chan_id) connected to bridge " . ari_bridge_str($radio0->{'bridge_id'});
+      Log "client", $LOG_AUDIT, "New Client $chan_id registered";
+      ari_speech($chan_id, "connected_to");
+      ari_speech($chan_id, "radio0");
+      ari_playback_done($rdata);
    } elsif ($rdata->{'type'} =~ m/^ChannelDestroyed$/) {
       Log "chan", $LOG_INFO, "Channel $chan_name ($chan_id) destroyed";
    } elsif ($rdata->{'type'} =~ m/^ChannelEnteredBridge$/) {

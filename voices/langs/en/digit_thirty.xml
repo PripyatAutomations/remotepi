@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
        xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis11/synthesis.xsd" xml:lang="en-US">
-Set I.F. Shift
-<break time="300ms"/>
-Dial Star Four, followed by the frequency in hert, then press pound.
-<break time="200ms"/>
-Use star to proceed a negative shift.
+Thirty
 </speak>

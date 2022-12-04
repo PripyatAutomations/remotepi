@@ -24,3 +24,10 @@ ext/.novnc_patched
 # these directories are empty in distribution and may contain site-specific data
 run/*
 logs/*
+
+# amazon aws client cached data
+langs/aws_*.json
+
+# google cloud client cached data
+langs/google*.json
+

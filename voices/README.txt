@@ -4,6 +4,10 @@ Please let me know on IRC or by email which voice you prefer and why.
 
 Translations of langs/ are welcome and will result in Native spoken prompts
 in your language!
+- Automatic translations can be made using ./translate-phrases.sh
+	./translate-phrases.sh <input> <output>
+		Where source is 2 letter input language (ie: en)
+		Were target is 2 letter output language (ie: cn
 
 See voices.json for the supported voices.
 
