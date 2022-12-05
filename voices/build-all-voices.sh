@@ -31,6 +31,7 @@ TARGETS="polly/en_au_Olivia:neural \
 	 polly/sv_se_Elin:neural \
 	 polly_tr_tr_Filiz:standard \
 	 polly/de_de_Daniel:neural"
+#	 gcloud/"
 #TARGETS="polly/en_us_Matthew:neural"
 for i in ${TARGETS}; do
    SERVICE=$(echo $i | cut -f 1 -d '/')
@@ -40,6 +41,9 @@ for i in ${TARGETS}; do
    LOCALE=$(echo ${FULLVOICE} | cut -f 1-2 -d '_')
    SPEAKER=$(echo ${FULLVOICE} | cut -f 3 -d '_')
    if [ ${SERVICE} == polly ]; then
-      /opt/remotepi/voices/build-polly-voice.sh ${ENGINE} ${SPEAKER} ${LOCALE}
+      /opt/remotepi/voices/build-polly-voice.sh ${ENGINE} ${SPEAKER} ${LOCALE} || exit 1
+   fi
+   if [ ${SERVICE} == gcloud ]; then
+      /opt/remotepi/voices/build-gcloud-voice.sh ${ENGINE} ${SPEAKER} ${LOCALE} || exit 2
    fi
 done

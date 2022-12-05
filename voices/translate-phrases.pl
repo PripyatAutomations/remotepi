@@ -6,13 +6,19 @@ use Data::Dumper;
 use JSON;
 my $prefix = "/opt/remotepi/voices/langs";
 
-if (!defined($ARGV[0]) || !defined($ARGV[1])) {
-   print "Usage: translate-phrases.pl <inputlang> <outputlang> where both are 2 letter codes\n";
+if (!defined($ARGV[0]) || !defined($ARGV[1]) || !defined($ARGV[2])) {
+   print "Usage: translate-phrases.pl <service> <inlang> <outlang>\n";
+   print "\t<service>\taws or gcloud\n";
+   print "\t<inlang>\tInput Language\n";
+   print "\t<outlang>\tOutput Language\n";
    exit(1);
 }
 
-my $inlang = lc($ARGV[0]);
-my $outlang = lc($ARGV[1]);
+my $service = lc($ARGV[0]);
+my $inlang = lc($ARGV[1]);
+my $outlang = lc($ARGV[2]);
+
+print "* Translating via $service\n";
 
 if (-f "$prefix/$outlang/on.ssml") {
    print "***************************\n";
@@ -73,9 +79,28 @@ foreach my $template (@templates) {
 #      $in_text =~ s/"/\\"/g;
    }
 
-   my $translate_args = "--output json --source-language-code=$inlang --target-language-code=$outlang --text='$in_text'";
-   my $translate_cmd = "aws translate translate-text $translate_args";
-   my $translated = qx($translate_cmd);
+   my $translate_args;
+   my $translate_cmd;
+   my $translated;
+   my $translate_json;
+
+   if ($service =~ m/aws/) {
+      # amazon Polly
+      $translate_args = "--output json --source-language-code=$inlang --target-language-code=$outlang --text='$in_text'";
+      $translate_cmd = "aws translate translate-text $translate_args";
+      $translated = qx($translate_cmd);
+   } elsif ($service =~ m/gcloud/) {
+      #
+      $translate_json = "{
+         \"sourceLanguageCode\": \"$inlang\",
+         \"targetLanguageCode\": \"$outlang\",
+         \"contents\": [\"$in_text\"]
+      }";
+   }
+
+   system("curl -X POST -H \"Authorization: Bearer $(gcloud auth application-default print-access-token)\" -H \"Content-Type: application/json; charset=utf-8\" -d @/tmp/request.json \"https://translation.googleapis.com/v3/projects/PROJECT_NUMBER_OR_ID:translateText\"");
+   print "translate.json: $translate_json\n";
+   exit 1;
 
    # unquote quotes
 #   $translated =~ s/\\"/"/g;

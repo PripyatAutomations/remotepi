@@ -251,7 +251,7 @@ sub rig_set_freq {
       on_expire => sub {
          Log "dtmf", $LOG_INFO, "Readback timeout ($dtmf_announce_delay)";
          rig_readback_freq($chan_id);
-         rig_readback_mode($chan_id);
+#         rig_readback_mode($chan_id);
       }
    );
    $loop->add(($auto_readback_timer)->start);
@@ -295,7 +295,7 @@ sub rig_readback_mode {
    }
 
    ari_speech($chan_id, lc($new_mode));
-   ari_play("number:$width");
+   ari_play($chan_id, "number:$width");
 }
 
 sub rig_refresh() {
@@ -556,11 +556,34 @@ sub ari_speech {
 }
 
 sub ari_speak_number {
-   # Figure out unit
-   # Figure out scale
+   my $chan_id = $_[0];
+   my $val = $_[1];
+   my $unit;
+
+   # Is this a frequency?
+   if ($val =~ m/hz$/i) {
+      $unit = "hz";
+
+      # Figure out scale
+      if ($val =~ m/khz$/i) {
+         $unit = "khz";
+      } elsif ($val =~ m/mhz$/i) {
+         $unit = "mhz";
+      }
+   }
+
    # Make it human-presentable
+
    # Read off the number, digit by digit
-   # Read off the suffix (scale+unit, ie: kilohertz)
+
+   # Read off the suffix (if present)
+   if ($unit =~ m/mhz/) {
+      ari_speech($chan_id, "megahertz");
+   } elsif ($unit =~ m/khz/) {
+      ari_speech($chan_id, "kilohertz");
+   } elsif ($unit =~ m/hz/) {
+      ari_speech($chan_id, "hertz");
+   }
 }
 
 sub play_beep {
@@ -775,14 +798,6 @@ sub parse_ari {
                } else {
                   $rdigits = $digits_local;
                }
-
-               Log "test", $LOG_BUG, "rdigits: $rdigits";
-               if ($rdigits =~ m/^\*6$/) {
-                  Log "test", $LOG_BUG, "helpmenu";
-                  ari_speech($chan_id, "help_mode");
-                  ari_playback_done($rdata);
-                  Log "test", $LOG_BUG, "helpmenu done";
-               }
             }
          }
       } elsif ($digit eq '#') {
@@ -963,8 +978,8 @@ sub parse_ari {
             }
             ari_playback_done($rdata);
             $rig->set_mode($modmode);
-            rig_readback_mode($chan_id);
-            ari_playback_done($rdata);
+#            rig_readback_mode($chan_id);
+#            ari_playback_done($rdata);
          } elsif ($rdigits =~ m/^\*6#/) {
             rig_readback_mode($chan_id);
             ari_playback_done($rdata);

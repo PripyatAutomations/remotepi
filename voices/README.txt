@@ -7,10 +7,10 @@ in your language!
 - Automatic translations can be made using ./translate-phrases.sh
 	./translate-phrases.sh <input> <output>
 		Where source is 2 letter input language (ie: en)
-		Were target is 2 letter output language (ie: cn
+		Where target is 2 letter output language (ie: cn
 
-See voices.json for the supported voices.
-
+See aws_voices.json and gcloud_voices.json for the supported voices.
+See aws_languages.json and gcloud_languages.json for the supported translations.
 I'm unsure if i can redistribute these, so for now I'm just including the
 script I used to generate them..
 
