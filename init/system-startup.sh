@@ -32,4 +32,3 @@ sudo -u ${REMOTEPI_HOST_USER} '/opt/remotepi/run/baresip-launch.sh'
 
 echo "* Starting PAT winlink client"
 sudo -u ${REMOTEPI_HOST_USER} pat-winlink http &
-

@@ -98,6 +98,7 @@ my $radio0 = {
    "ptt_start" => 0,			# Time TOT started
    "ptt_blocked" => 1,
    "ptt_active" => 0,
+   "power" => 50,
    "power_divider" => 100,
    "station_mode" => "phone",		# station mode
    "tuning_limit_low" => 3000,
@@ -256,7 +257,7 @@ sub rig_set_freq {
       $auto_readback_timer = IO::Async::Timer::Countdown->new(
          delay => $dtmf_announce_delay,
          on_expire => sub {
-            Log "dtmf", $LOG_INFO, "Readback timeout ($dtmf_announce_delay)";
+            Log "dtmf", $LOG_DEBUG, "Readback timeout ($dtmf_announce_delay)";
             rig_readback_freq($chan_id);
    #         rig_readback_mode($chan_id);
          }
@@ -276,7 +277,7 @@ sub rig_readback_freq {
 
    $vfo_freq = rig_get_freq();
    Log "dtmf", $LOG_DEBUG, "Readback [VFO" . $radio0->{'active_vfo'} . "] freq: " . $vfo_freq/1000;
-   ari_speech($ab, "frequency");
+#   ari_speech($ab, "frequency");
    ari_speak_number($ab, ($vfo_freq/1000) . "khz");
 
    return $vfo_freq;
@@ -286,8 +287,7 @@ sub rig_readback_output_power {
    my $chan_id = $_[0];
 
    ari_speech($chan_id, "output_power");
-   ari_speak_number($chan_id, int($1));
-   ari_speech($chan_id, "watts");
+   ari_speak_number($chan_id, int($radio0->{'power'}) . "w");
 }
 
 sub rig_readback_mode {
@@ -596,15 +596,21 @@ sub ari_speak_number {
 
    # Is this a frequency?
    if ($val =~ m/hz$/i) {
-      $unit = uc($0);
-
       # Figure out scale
       if ($val =~ m/khz$/i) {
-         $val =~ s/khz//;
-         $unit = "khz";
+         $unit = "kilohertz";
       } elsif ($val =~ m/mhz$/i) {
-         $val =~ s/mhz//;
-         $unit = "mhz";
+         $unit = "megahertz";
+      } else {
+         $unit = "hertz";
+      }
+   } elsif ($val =~ m/w$/i) {
+      if ($val =~ m/mw$/) {
+         $unit = "milliwatt";
+      } elsif ($val =~ m/kw$/) {
+         $unit = "kilowatt";
+      } else {
+         $unit = "watts";
       }
    }
 
@@ -612,6 +618,7 @@ sub ari_speak_number {
    # Make it human-presentable
    my $i = 0;
    my $len = length($val);
+
    foreach my $char (split //, "$val") {
       if ($char =~ m/^\d+$/) {
          ari_speech($chan_id, "digit_" . num_to_str($char));
@@ -622,20 +629,11 @@ sub ari_speak_number {
       }
       $i++;
    }
-#   # Read off the number, digit by digit
-#   if ($digits == 3) {
-#      # play first digit
-#      # play last two digits
-#   }
 
    # Read off the suffix (if present)
-#   if ($unit =~ m/mhz/) {
-#      ari_speech($chan_id, "megahertz");
-#   } elsif ($unit =~ m/khz/) {
-#      ari_speech($chan_id, "kilohertz");
-#   } elsif ($unit =~ m/hz/) {
-#      ari_speech($chan_id, "hertz");
-#   }
+   if (defined($unit)) {
+      ari_speech($chan_id, "$unit");
+   }
 }
 
 sub play_beep {
@@ -838,7 +836,7 @@ sub parse_ari {
                  }
                  Log "dtmf", $LOG_AUDIT, "Set tuning step to " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")";
                  ari_speech($chan_id, "tuning_step");
-                 ari_speak_number($chan_id, $tuning_step_multipliers[$tuning_step_multiplier] . "hz");
+                 ari_speak_number($chan_id, ($tuning_step_multipliers[$tuning_step_multiplier]/1000) . "khz");
                  ari_playback_done($rdata);
                }
               
@@ -982,6 +980,7 @@ sub parse_ari {
             Log "dtmf", $LOG_BUG, "NYI Readback TX power: $tx_power Watt(s)";
             rig_readback_output_power($chan_id);
          } elsif ($rdigits =~ m/^\*5(\d+)#/) {
+            $radio0->{'power'} = int($1);
             my $hamlib_power = int($1) / $radio0->{'power_divider'};
             Log "dtmf", $LOG_AUDIT, "Set TX Power: $1 Watt(s) ($hamlib_power)";
             $rig->set_level($Hamlib::RIG_LEVEL_RFPOWER, $hamlib_power);
@@ -1042,11 +1041,11 @@ sub parse_ari {
             }
             Log "dtmf", $LOG_AUDIT, "Set Tuning Step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " ($1)";
             ari_speech($chan_id, "tuning_step");
-            ari_speak_number($chan_id, $tuning_step_multipliers[$tuning_step_multiplier] . "hz");
+            ari_speak_number($chan_id, ($tuning_step_multipliers[$tuning_step_multiplier]/1000) . "khz");
          } elsif ($rdigits =~ m/^\*9#/) {
             Log "dtmf", $LOG_INFO, "Readback tuning step: " . $tuning_step_multipliers[$tuning_step_multiplier] . " (" . $tuning_step_multiplier . ")";
             ari_speech($chan_id, "tuning_step");
-            ari_speak_number($chan_id, $tuning_step_multipliers[$tuning_step_multiplier] . "hz");
+            ari_speak_number($chan_id, ($tuning_step_multipliers[$tuning_step_multiplier]/1000) . "khz");
          }
          ari_playback_done($rdata);
       } elsif ($rfside && $digits_rf =~ m/^8675309$/) {

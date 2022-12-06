@@ -18,6 +18,9 @@ sudo apt install espeak-ng libespeak-ng-dev libsamplerate-dev libsamplerate0 sox
 sudo apt install libhttp-request-params-perl libio-async-loop-epoll-perl libnet-async-http-perl libjson-perl libdata-dumper-simple-perl libhamlib-perl librpc-xml-perl
 sudo apt install asterisk asterisk-core-sounds-en asterisk-flite asterisk-dev asterisk-modules baresip baresip-ffmpeg 
 
+echo "* Installing cpan bits"
+sudo cpan -i Number::Spell
+
 echo "* building needed components..."
 # Build chan_sccp-b to support cisco devices better
 
