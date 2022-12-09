@@ -1,0 +1,684 @@
+{
+  "languages": [
+    {
+      "languageCode": "af",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ak",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "am",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ar",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "as",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ay",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "az",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "be",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "bg",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "bho",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "bm",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "bn",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "bs",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ca",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ceb",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ckb",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "co",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "cs",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "cy",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "da",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "de",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "doi",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "dv",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ee",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "el",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "en",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "eo",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "es",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "et",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "eu",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "fa",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "fi",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "fr",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "fy",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ga",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "gd",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "gl",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "gn",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "gom",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "gu",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ha",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "haw",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "he",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "hi",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "hmn",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "hr",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ht",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "hu",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "hy",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "id",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ig",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ilo",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "is",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "it",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "iw",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ja",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "jv",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "jw",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ka",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "kk",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "km",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "kn",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ko",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "kri",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ku",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ky",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "la",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "lb",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "lg",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ln",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "lo",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "lt",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "lus",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "lv",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "mai",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "mg",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "mi",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "mk",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ml",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "mn",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "mni-Mtei",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "mr",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ms",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "mt",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "my",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ne",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "nl",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "no",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "nso",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ny",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "om",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "or",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "pa",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "pl",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ps",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "pt",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "qu",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ro",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ru",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "rw",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sa",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sd",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "si",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sk",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sl",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sm",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sn",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "so",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sq",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sr",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "st",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "su",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sv",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "sw",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ta",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "te",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "tg",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "th",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ti",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "tk",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "tl",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "tr",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ts",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "tt",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ug",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "uk",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "ur",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "uz",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "vi",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "xh",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "yi",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "yo",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "zh",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "zh-CN",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "zh-TW",
+      "supportSource": true,
+      "supportTarget": true
+    },
+    {
+      "languageCode": "zu",
+      "supportSource": true,
+      "supportTarget": true
+    }
+  ]
+}

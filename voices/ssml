@@ -1,0 +1,12 @@
+      'input':{
+         'ssml':'$in_text'
+       },
+       'voice':{
+         'languageCode':'en-us',
+         'name':'en-US-Standard-B',
+         'ssmlGender':'MALE'
+       },
+       'audioConfig':{
+         'audioEncoding':'MP3'
+       }
+    }";
