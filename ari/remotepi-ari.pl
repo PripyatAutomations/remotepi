@@ -30,6 +30,9 @@ STDOUT->autoflush(1);
 my $app_name = "remotepi";
 my $VERSION = "20221203.01";
 
+# cli interface
+my $socket = '/opt/remotepi/run/ari.sock';
+
 # Log levels for messages
 my $LOG_NOISE = 7;		# extra noisy debugging
 my $LOG_DEBUG = 6;		# normal debugging
@@ -953,7 +956,7 @@ sub parse_ari {
             } else {
                $my_freq = $1;
             }
-            Log "dtmf", $LOG_INFO, "Set Freq: $my_freq";
+            Log "dtmf", $LOG_AUDIT, "Set Freq: $my_freq";
             # instead of delaying, play back announcement now
             rig_set_freq($my_freq, $chan_id, 0);
             rig_readback_freq($chan_id);

@@ -18,6 +18,7 @@ etc/ssl/*
 etc/flrig-vnc.pass
 etc/asterisk/*.remotepi.conf
 etc/asterisk/*.hhux.conf
+etc/asterisk/users.conf
 
 # this file is used to flag if the submodule has been patched or not
 ext/.novnc_patched
