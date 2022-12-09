@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "* Updating PAT winlink..."
+pat-winlink updateforms
+pat-winlink rmslist --force-download
