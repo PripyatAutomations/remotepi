@@ -1,4 +1,5 @@
 <?php
+  include('config.inc.php');
 /*
  * This is an example of CiscoIPPhoneExecute as seen in the SDK
  * Usage: Simply include in your php program and call the funtion

@@ -1,6 +1,7 @@
 <?php
 
-$my_phone = 10.10.10.8;
+  include('config.inc.php');
+$my_phone = 10.11.0.100;
 
 $screenshot = "/CGI/Screenshot";
 $user_phone1 = 'c79451';

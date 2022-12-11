@@ -1,7 +1,7 @@
 <device xsi:type="axl:XIPPhone" ctiid="1234567890">
 <phonePersonalization>1</phonePersonalization>
 <deviceProtocol>SCCP</deviceProtocol>
-<sshUserId>voice-admin</sshUserId>
+<sshUserId>admin</sshUserId>
 <sshPassword>FDJKfdnMRW4Ehj45FHSR7</sshPassword>
 <devicePool>
  <dateTimeSetting>
@@ -100,8 +100,8 @@
  <autoAnswerEnabled>2</autoAnswerEnabled>
  </autoAnswer>
  <callWaiting>3</callWaiting>
- <authName>c79451</authName>
- <authPassword>FSDjkCNW*242nr248SJKD</authPassword>
+ <authName>admin</authName>
+ <authPassword>FDJKfdnMRW4Ehj45FHSR7</authPassword>
  <sharedLine>false</sharedLine>
  <messageWaitingLampPolicy>3</messageWaitingLampPolicy>
  <messagesNumber>501</messagesNumber>
@@ -137,21 +137,21 @@
 <vendorConfig>
  <disableSpeaker>false</disableSpeaker>
  <disableSpeakerAndHeadset>false</disableSpeakerAndHeadset>
- <pcPort>1</pcPort>
+ <pcPort>0</pcPort>
  <settingsAccess>1</settingsAccess>
  <garp>0</garp>
- <voiceVlanAccess>1</voiceVlanAccess>
+ <voiceVlanAccess>0</voiceVlanAccess>
  <videoCapability>0</videoCapability>
  <autoSelectLineEnable>0</autoSelectLineEnable>
- <webAccess>1</webAccess>
- <sshAccess>1</sshAccess>
+ <webAccess>0</webAccess>
+ <sshAccess>0</sshAccess>
  <sshPort>22</sshPort>
  <daysDisplayNotActive></daysDisplayNotActive>
  <displayOnTime>00:00</displayOnTime>
  <displayOnDuration>00:00</displayOnDuration>
  <displayIdleTimeout>00:00</displayIdleTimeout>
- <spanToPCPort>1</spanToPCPort>
- <loggingDisplay>1</loggingDisplay>
+ <spanToPCPort>0</spanToPCPort>
+ <loggingDisplay>0</loggingDisplay>
  <loadServer></loadServer>
  <g722CodecSupport>2</g722CodecSupport>
 </vendorConfig>
@@ -174,8 +174,8 @@
 <authenticationURL>http://10.11.0.3/cisco/auth.php</authenticationURL>
 <directoryURL>http://10.11.0.3/cisco/directory.php</directoryURL>
 <idleURL>http://10.11.0.3/cisco/idle.php</idleURL>
-<informationURL>http://10.11.0.3/cisco/help.png</informationURL>
-<messagesURL></messagesURL>
+<informationURL>http://10.11.0.3/cisco/infong</informationURL>
+<messagesURL>http://10.11.0.3/cisco/messages.php</messagesURL>
 <servicesURL>http://10.11.0.3/cisco/services.php</servicesURL>
 <dscpForSCCPPhoneConfig>96</dscpForSCCPPhoneConfig>
 <dscpForSCCPPhoneServices>0</dscpForSCCPPhoneServices>

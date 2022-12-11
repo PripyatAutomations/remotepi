@@ -43,6 +43,7 @@ export DISPLAY=:${RFB_DISPLAY}
 flrig </dev/null 2>&1 &
 sleep 5
 rigctld  -m 4 -P RIG -t 4532 </dev/null 2>&1 &
+xdotool search 'flrig' windowmove 0 0
 
 ####### sorta optional - move flrig window to 0,0 ####
 [ ! -z "$WM" ] && $WM &

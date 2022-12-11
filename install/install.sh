@@ -44,6 +44,10 @@ echo "=> ardop modems..."
    ln -s /opt/remotepi/voices /usr/share/asterisk/sounds/remotepi
 }
 
+[ ! -L /usr/share/asterisk/agi-bin/remotepi ] && {
+   ln -s /opt/remotepi/agi-bin /usr/share/asterisk/agi-bin/remotepi
+}
+
 echo "* Fixing permissions..."
 sudo chown -R ${REMOTEPI_HOST_USER}:${REMOTEPI_HOST_GROUP} /opt/remotepi
 sudo chown -R asterisk:${REMOTEPI_HOST_GROUP} /opt/remotepi/etc/asterisk
