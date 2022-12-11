@@ -11,8 +11,8 @@ in your language!
 
 See aws_voices.json and gcloud_voices.json for the supported voices.
 See aws_languages.json and gcloud_languages.json for the supported translations.
-I'm unsure if i can redistribute these, so for now I'm just including the
-script I used to generate them..
+
+Per the AWS Polly user terms, redistribution of these files is allowed.
 
 You'll need the AWS cli from:
 	https://aws.amazon.com/cli/
