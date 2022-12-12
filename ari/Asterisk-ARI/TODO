@@ -1,0 +1,23 @@
+$ARI
+
+SPEECH/Sounds
+	ari_playback_done
+	ari_speech chan words
+	ari_speak_number chan number
+	ari_originate_tts
+	ari_play
+	num_to_str
+	play_beep
+
+BRIDGES
+	ari_bridge_enumerate
+	ari_bridge_destroy_all
+	ari_bridge_find_or_create
+	ari_bridge_add_chan
+	ari_bridge_str
+
+LWP wrappers
+	ari_post
+	ari_get
+	ari_delete
+
