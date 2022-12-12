@@ -20,6 +20,8 @@ use LWP;
 use LWP::UserAgent;
 use URI::Escape;
 use Time::HiRes qw(gettimeofday tv_interval usleep);
+use DBI;
+#use DBI::SQLite;
 #use Term::Readline;
 
 # ARI crud needs moved out to here...
@@ -282,7 +284,6 @@ sub rig_readback_freq {
 
    $vfo_freq = rig_get_freq();
    Log "dtmf", $LOG_DEBUG, "Readback [VFO" . $radio0->{'active_vfo'} . "] freq: " . $vfo_freq/1000;
-#   ari_speech($ab, "frequency");
    ari_speak_number($ab, ($vfo_freq/1000) . "khz");
 
    return $vfo_freq;
