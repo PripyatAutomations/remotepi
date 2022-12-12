@@ -12,13 +12,15 @@ use Net::Async::WebSocket::Client;
 use JSON;
 use Data::Dumper;
 use Hamlib;
+use MIME::Base64;
 use POSIX qw(strftime);
 use RPC::XML qw(:types);
 use RPC::XML::Client;
 use LWP;
-require LWP::UserAgent;
-#use Term::Readline;
+use LWP::UserAgent;
+use URI::Escape;
 use Time::HiRes qw(gettimeofday tv_interval usleep);
+#use Term::Readline;
 
 # ARI crud needs moved out to here...
 #use Asterisk::ARI;
@@ -879,13 +881,13 @@ sub parse_ari {
                     $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_OFF);
                     $radio0->{'ptt_active'} = 0;
                     Log "dtmf", $LOG_AUDIT, "$active_rig PTT OFF";
-                    ari_play($chan_id, "beep");
+                    ari_play($chan_id, "sound:beep");
                  } else {
                     if (!($radio0->{'ptt_blocked'})) {
                        $rig->set_ptt($radio0->{'active_vfo'}, $Hamlib::RIG_PTT_ON_DATA);
                        $radio0->{'ptt_active'} = 1;
                        Log "dtmf", $LOG_AUDIT, "$active_rig PTT ON";
-                       ari_play($chan_id, "beep");
+                       ari_play($chan_id, "sound:beep");
                     } else {
                        Log "ptt", $LOG_AUDIT, "PTT for $active_rig is blocked, igoring PTT ON request";
                        ari_speech($chan_id, "ptt_is_blocked")
@@ -1108,6 +1110,52 @@ sub parse_ari {
       Log "ari", $LOG_BUG, "Got unknown Event Type: " . $rdata->{'type'} . ":" . Dumper($rdata);
    }
 }
+
+
+########################
+# Deal with Cisco crud #
+########################
+sub urlencode {
+   my ($rv) = @_;
+   $rv =~ s/([^A-Za-z0-9])/sprintf("%%%2.2X", ord($1))/ge;
+   return $rv;
+}
+
+sub urldecode {
+   my ($rv) = @_;
+   $rv =~ s/\+/ /g;
+   $rv =~ s/%(..)/pack("c",hex($1))/ge;
+   return $rv;
+}
+
+sub ciscoxml_execute_url {
+   my $ph_host = $_[0];
+   my $ph_user = $_[1];
+   my $ph_pass = $_[2];
+   my $ph_url = $_[3];
+
+
+   Log "ciscoxml", $LOG_DEBUG, "ExecuteUrl $ph_url";
+
+   #
+   my $url = "http://$ph_host/CGI/Execute";
+   my $data = "XML=<CiscoIPPhoneExecute><ExecuteItem Priority=\”0\” URL=\”$ph_url\”/></CiscoIPPhoneExecute>";
+   my $ua = LWP::UserAgent->new();
+   $ua->timeout(20);
+   my $request;
+
+   $request = HTTP::Request->new('POST', $url);
+   $request->header('Content-Type' => 'application/x-www-form-urlencoded');
+   $request->authorization_basic($ph_user, $ph_pass);
+
+   print "Data: " . Dumper($data) . "\n";
+   my $res = $ua->request($request, $data);
+   print "Res: " . Dumper($res) . "\n";
+   return $res->content;
+}
+
+my $data = "http://10.11.0.3/cisco/fortune.php";
+ciscoxml_execute_url("10.11.0.100", "admin", "FDJKfdnMRW4Ehj45FHSR7", $data);
 
 ##################
 # WebSocket Crud #
