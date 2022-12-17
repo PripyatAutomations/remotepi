@@ -1,57 +1,15 @@
 <?php
   include('config.inc.php');
-header('Content-Type: text/xml');
-header('Connection: close');
+  require_once('CiscoIPPhone/Framework.php');
 
-if (isset($_REQUEST['rig'])) {
-   $rig = $_REQUEST['rig'];
-} else {
-   $rig = "rig0";
-}
-
-$menu_level = "Main";
+  header('Content-type: text/xml');
+  $obj = new CiscoIPPhoneMenu;
+  $obj->setTitle($rig . " Main Menu");
+  $obj->setPrompt('Choose an option...');
+  $obj->addItem('Frequency: ' . rig_get_freq($rig), $urlbase . '/rig-set.php?name=' . $cisco_name . '&rig=' . $rig . '&ctrl=freq');
+  $obj->addItem('TX Power: ' . rig_get_power($rig), $urlbase . '/rig-set.php?name=' . $cisco_name . '&rig=' . $rig . '&ctrl=power');
+  $obj->addItem('Mod Mode: ' . rig_get_modulation_mode($rig), $urlbase . '/rig-set.php?name=' . $cisco_name . '&rig=' . $rig . '&ctrl=modmode');
+  $obj->addItem('Tuning Step: ' . rig_get_tuning_step($rig), $urlbase . '/rig-set.php?name=' . $cisco_name . '&rig=' . $rig . '&ctrl=tunestep');
+  $obj->addItem('Station Mode: ' . rig_get_station_mode($rig), $urlbase . '/rig-set.php?name=' . $cisco_name . '&rig=' . $rig . '&ctrl=stamode');
+  echo $obj->toXML();
 ?>
-<CiscoIPPhoneMenu>
- <Title><?= $rig . " " . $menu_level; ?> Menu</Title>
- <Prompt>Chose an option above...</Prompt>
- <MenuItem>
-  <Name>VOX mode</Name>
-  <URL>http://10.11.0.3/cisco/rig-vox-menu.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>RF Gain</Name>
-  <URL>http://10.11.0.3/cisco/rig-gain-menu.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>Frequency</Name>
-  <URL>http://10.11.0.3/cisco/rig-freq-menu.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>IF Shift</Name>
-  <URL>http://10.11.0.3/cisco/rig-ifshift-menu.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>Power Output</Name>
-  <URL>http://10.11.0.3/cisco/rig-rfpower-menu.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>Modulation Mode</Name>
-  <URL>http://10.11.0.3/cisco/rig-modmode.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>DSP Noise Reduction</Name>
-  <URL>http://10.11.0.3/cisco/rig-dnr.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>Notch Filter</Name>
-  <URL>http://10.11.0.3/cisco/rig-notch.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>Tuning Step</Name>
-  <URL>http://10.11.0.3/cisco/rig-tuningstep-menu.php</URL>
- </MenuItem>
- <MenuItem>
-  <Name>Station Mode</Name>
-  <URL>http://10.11.0.3/cisco/rig-stationmode.php</URL>
- </MenuItem>
-</CiscoIPPhoneMenu>

@@ -1,16 +1,12 @@
 <?php
   include('config.inc.php');
-  header("Content-type: text/xml");
+  require_once('CiscoIPPhone/Framework.php');
+
+  header('Content-type: text/xml');
+  $obj = new CiscoIPPhoneMenu;
+  $obj->setTitle('Radio Selection');
+  $obj->setPrompt('Choose a radio...');
+  $obj->addItem('radio0: FT-891', $urlbase . '/rig-menu.php?name=' . $cisco_name . '&rig=radio0');
+  $obj->addItem('radio1: TK-790H', $urlbase . '/rig-menu.php?name=' . $cisco_name . '&rig=radio1');
+  echo $obj->toXML();
 ?>
-<CiscoIPPhoneMenu>
- <Title>Radio Selection</Title>
- <Prompt>Select a radio to operate...</Prompt>
-<MenuItem>
-  <Name>radio0 (Yaesu FT-891)</Name>
-  <URL>http://10.11.0.3/cisco/rig-menu.php?rig=radio0</URL>
-</MenuItem>
-<MenuItem>
-  <Name>Main Menu</Name>
-  <URL>http://10.11.0.3/cisco/services.php</URL>
-</MenuItem>
-</CiscoIPPhoneMenu>
