@@ -1,0 +1,41 @@
+INSTALLATION:
+------------------------
+Copy the 'CiscoIPPhone' folder into any folder available to php includes.  The include_path folders can be configured in php.ini if not already setup.
+
+PHP v5 required at minimum to run the framework.
+
+
+USAGE:
+------------------------
+Once all framework files are copied to an appropriate install location, the following will make the framework available to the script:
+   <?php   
+      .....
+   require_once('CiscoIPPhone/Framework.php');
+      .....
+   ?>
+  
+After 'Framework.php' has been required/included, all Cisco XML service objects are available.
+
+
+EXAMPLE:
+------------------------
+code:
+   <?php
+
+   require_once('CiscoIPPhone/Framework.php');
+
+   $obj = new CiscoIPPhoneText();
+   $obj->setTitle("Text Title");
+   $obj->setPrompt("Prompt Message");
+   $obj->setText("This is where body text can be inserted for displaying custom data");
+   echo $obj->toXML();
+
+   ?>
+
+output:
+   <?xml version="1.0" encoding="utf-8"?>
+   <CiscoIPPhoneText>
+     <Title>Text Title</Title>
+     <Prompt>Prompt Message</Prompt>
+     <Text>This is where body text can be inserted for displaying custom data</Text>
+   </CiscoIPPhoneText>

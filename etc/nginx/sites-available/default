@@ -51,6 +51,7 @@ server {
 		try_files $uri $uri/ =404;
 	}
 
+
 	# pass PHP scripts to FastCGI server
 	#
 	location ~ \.php$ {
@@ -70,22 +71,37 @@ server {
 	}
 }
 
+server {
+	listen 6970;
+	root /opt/remotepi/www/cisco;
+	server_name _;
 
-# Virtual Host configuration for example.com
-#
-# You can move that to a different file under sites-available/ and symlink that
-# to sites-enabled/ to enable it.
-#
-#server {
-#	listen 80;
-#	listen [::]:80;
-#
-#	server_name example.com;
-#
-#	root /var/www/example.com;
-#	index index.html;
-#
-#	location / {
-#		try_files $uri $uri/ =404;
-#	}
-#}
+	# Cisco IP Phone XML defaults to our PHP
+	rewrite ^/XMLDefault\.cnf\.xml$ /XMLDefault.cnf.xml.php;
+	rewrite ^/SEP(.*)\.cnf\.xml$ /autoconf.php?$args&mac=$1;
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+	}
+
+
+	# pass PHP scripts to FastCGI server
+	#
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+	#
+	#	# With php-fpm (or other unix sockets):
+		fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+	#	# With php-cgi (or other tcp sockets):
+	#	fastcgi_pass 127.0.0.1:9000;
+	}
+
+	# deny access to .htaccess files, if Apache's document root
+	# concurs with nginx's one
+	#
+	location ~ /\.ht {
+		deny all;
+	}
+}

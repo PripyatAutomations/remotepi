@@ -84,6 +84,7 @@ my $client = {
    "permissions" => "*",		# * for all, admin,listen,speak
    "username" => "guest",
    "tts_voice" => "en_in_Kajal"
+#   "tts_voice" => "en_nz_Aria"
 };
 
 my $radio0 = {
@@ -1140,7 +1141,7 @@ sub ciscoxml_execute_url {
 
    #
    my $url = "http://$ph_host/CGI/Execute";
-   my $data = "XML=<CiscoIPPhoneExecute><ExecuteItem Priority=\”0\” URL=\”$ph_url\”/></CiscoIPPhoneExecute>";
+   my $data = "<CiscoIPPhoneExecute><ExecuteItem Priority=\”0\” URL=\”" . urlencode($ph_url) . "\”/></CiscoIPPhoneExecute>";
    my $ua = LWP::UserAgent->new();
    $ua->timeout(20);
    my $request;
