@@ -80,6 +80,9 @@ server {
 	rewrite ^/XMLDefault\.cnf\.xml$ /XMLDefault.cnf.xml.php;
 	rewrite ^/SEP(.*)\.cnf\.xml$ /autoconf.php?$args&mac=$1;
 
+	rewrite ^/(.*\.sbn)$ /firmwares/$1;
+	rewrite ^/(.*\.loads)$ /firmwares/$1;
+
 	location / {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.

@@ -32,3 +32,6 @@ voices/langs/aws_*.json
 
 # google cloud client cached data
 voices/langs/google*.json
+
+# cisco firmware cannot be redistributed, but needs placed here by the user
+www/cisco/firmwares/*
